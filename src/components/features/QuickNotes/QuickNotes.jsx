@@ -169,7 +169,6 @@ export function QuickNotes({
                 w-full
                 max-w-full
                 min-w-1
-                border border-black
               "
             >
               {block.type === "checkbox" && (

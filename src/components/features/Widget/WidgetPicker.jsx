@@ -59,22 +59,23 @@ export function WidgetPicker({ onAdd, ref }) {
       ref={ref}
       className={`
         flex
+        shrink-0
         gap-2
         ${widgetHeight}
         uppercase
-        scroll-mr-2
         overflow-hidden
+        scroll-mr-2
       `}
     >
       <button
         type="button"
         aria-label="Add widget"
         onClick={handleClick}
-        className="
+        className={`
           grid
           place-items-center
-          h-full
-        "
+          h-full          
+          `}
       >
         {isOpen ? <Icon name="minus" /> : <Icon name="plus" />}
       </button>

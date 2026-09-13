@@ -76,7 +76,7 @@ export const widgetCatalog = {
     Component: Calculator,
     title: "Calculator",
     iconName: "calculator",
-    widgetClassName: bg,
+    widgetClassName: `w-[197px] ${bg}`,
     defaultConfig: {
       display: "0",
     },
@@ -104,7 +104,7 @@ export const widgetCatalog = {
     title: "Water intake",
     Component: WaterIntake,
     iconName: "waterIntake",
-    widgetClassName: bg,
+    widgetClassName: `w-[222.45px] ${bg}`,
     defaultConfig: {},
   },
   breathing: {

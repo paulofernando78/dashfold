@@ -41,9 +41,6 @@ export function TextInput({
       placeholder={placeholder}
       className={`
         block
-        w-full
-        max-w-full
-        min-w-0
         text-lg
         font-['Indie_Flower',cursive]
         resize-none

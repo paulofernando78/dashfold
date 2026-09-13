@@ -168,14 +168,16 @@ export function QuickNotes({
                 gap-2
                 w-full
                 max-w-full
-                min-w-0"
+                min-w-1
+                border border-black
+              "
             >
               {block.type === "checkbox" && (
                 <CheckboxIcon
                   checked={block.checked}
                   onChange={() => toggleBlock(block.id)}
                   ariaLabel={block.content || "Task..."}
-                  className="self-start mt-[0.1rem]"
+                  className="self-start mt-[0.1rem] shrink-0"
                 />
               )}
 
@@ -197,6 +199,7 @@ export function QuickNotes({
                 placeholder={block.type === "checkbox" ? "..." : "..."}
                 className={`
                   flex-1
+                  min-w-0
                   ${
                     block.type === "checkbox" && block.checked
                       ? "line-through text-gray-400"

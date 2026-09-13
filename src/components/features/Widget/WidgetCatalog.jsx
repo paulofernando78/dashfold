@@ -37,7 +37,7 @@ export const widgetCatalog = {
     Component: QuickNotes,
     title: "Quick Notes",
     iconName: "quickNotes",
-    widgetClassName: "w-[222px] paper-texture",
+    widgetClassName: "w-[206px] paper-texture",
     defaultConfig: {
       blocks: [],
     },

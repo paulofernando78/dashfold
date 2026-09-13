@@ -63,7 +63,7 @@ export function SectionPanel({
             w-full
           "
         >
-          <Icon name={isOpen ? "chevronDown" : "chevronRight"} size={23} />
+          <Icon name={isOpen ? "chevronsDownUp" : "chevronsUpDown"} size={23} />
           <h2>{title}</h2>
           {count !== undefined && <span className="ml-1">{count}</span>}
         </button>

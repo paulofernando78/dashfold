@@ -6,7 +6,7 @@ export function Header() {
       <div className="flex items-center gap-2">
         <Icon name="galleryHorizontalEnd" />
         <h1 className="text-lg text-white font-bold uppercase">
-          dashpadly
+          dashfold
         </h1>
       </div>
       <div className="space-x-2 font-bold">

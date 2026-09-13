@@ -154,7 +154,8 @@ export function QuickNotes({
           className="
             flex
             flex-col
-            gap-1
+            w-full
+            min-w-0
             overflow-y-auto
           "
         >
@@ -165,13 +166,16 @@ export function QuickNotes({
                 flex
                 items-center
                 gap-2
-                w-45"
+                w-full
+                max-w-full
+                min-w-0"
             >
               {block.type === "checkbox" && (
                 <CheckboxIcon
                   checked={block.checked}
                   onChange={() => toggleBlock(block.id)}
                   ariaLabel={block.content || "Task..."}
+                  className="self-start mt-[0.1rem]"
                 />
               )}
 
@@ -191,12 +195,14 @@ export function QuickNotes({
                 }
                 onKeyDown={(event) => handleBlockKeyDown(event, blockIndex)}
                 placeholder={block.type === "checkbox" ? "..." : "..."}
-                className="
+                className={`
                   flex-1
-                  bg-transparent
-                  text-lg
-                  text-gray-800
-                  font-['Indie_Flower',cursive]"
+                  ${
+                    block.type === "checkbox" && block.checked
+                      ? "line-through text-gray-400"
+                      : "text-gray-800"
+                  }
+                  `}
               />
             </div>
           ))}

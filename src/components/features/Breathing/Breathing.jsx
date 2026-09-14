@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useEffectEvent } from "react";
 
 import {
   WidgetBody,
-  widgetInnerBorder,
+  // widgetInnerBorder,
   WidgetControls,
 } from "@/components/ui/Widget";
 
@@ -157,11 +157,11 @@ export function Breathing({ onConfigChange }) {
   const displayMinutes = Math.floor(remainingSeconds / 60);
   const displaySeconds = String(remainingSeconds % 60).padStart(2, "0");
 
-  const isDone = !isRunning && remainingSeconds === 0;
+  // const isDone = !isRunning && remainingSeconds === 0;
 
-  const activeDoneClass =
-    "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse";
-  const inactiveDoneClass = "text-gray-400";
+  // const activeDoneClass =
+  //   "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse";
+  // const inactiveDoneClass = "text-gray-400";
 
   const audioContextRef = useRef(null);
 
@@ -507,15 +507,15 @@ export function Breathing({ onConfigChange }) {
           </div>
         )
       }
-      subMiddle={
-        !isEditing && (
-          <div className={`w-full text-center uppercase ${widgetInnerBorder}`}>
-            <span className={isDone ? activeDoneClass : inactiveDoneClass}>
-              done
-            </span>
-          </div>
-        )
-      }
+      // subMiddle={
+      //   !isEditing && (
+      //     <div className={`w-full text-center uppercase ${widgetInnerBorder}`}>
+      //       <span className={isDone ? activeDoneClass : inactiveDoneClass}>
+      //         done
+      //       </span>
+      //     </div>
+      //   )
+      // }
       bottom={
         <WidgetControls>
           <WidgetControls.Play isRunning={isRunning} onClick={handleToggle} />

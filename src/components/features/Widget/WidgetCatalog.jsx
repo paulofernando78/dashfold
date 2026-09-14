@@ -7,7 +7,7 @@ import { Timer } from "@/components/features/Timer";
 
 // Finance
 import { Calculator } from "@/components/features/Calculator";
-import { Purchases } from "@/components/features/Purchases";
+// import { Purchases } from "@/components/features/Purchases";
 import { Markets } from "@/components/features/Markets";
 
 // Health
@@ -89,14 +89,14 @@ export const widgetCatalog = {
     widgetClassName: `w-[339px] ${bg}`,
     defaultConfig: {},
   },
-  purchases: {
-    category: "finance",
-    Component: Purchases,
-    title: "Purchases",
-    iconName: "purchases",
-    widgetClassName: `w-[220px] ${bg}`,
-    defaultConfig: {},
-  },
+  // purchases: {
+  //   category: "finance",
+  //   Component: Purchases,
+  //   title: "Purchases",
+  //   iconName: "purchases",
+  //   widgetClassName: `w-[220px] ${bg}`,
+  //   defaultConfig: {},
+  // },
 
   // Health
   waterIntake: {

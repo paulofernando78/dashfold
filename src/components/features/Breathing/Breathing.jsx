@@ -184,11 +184,17 @@ export function Breathing({ onConfigChange }) {
     const sampleRate = audioContext.sampleRate;
     const length = sampleRate * duration;
 
-    const impulse = audioContext.createBuffer(
-      2,
-      length,
-      sampleRate
-    );
+    const impulse = audioContext.createBuffer(2, length, sampleRate);
+
+    // Fill right / left channels
+    for (let channel = 0; channel < 2; channel++) {
+      const data = impulse.getChannelData(channel);
+
+      for (let i = 0; i < length; i++) {
+        const decay = Math.pow(1 - i / length, 3);
+        data[i] = (Math.random() * 2 - 1) * decay;
+      }
+    }
 
     return impulse;
   }
@@ -201,10 +207,14 @@ export function Breathing({ onConfigChange }) {
     }
 
     const now = audioContext.currentTime;
-    const masterGain = audioContext.createGain();
 
+    // mastergain
+    const masterGain = audioContext.createGain();
     masterGain.connect(audioContext.destination);
     masterGain.gain.setValueAtTime(0.25, now);
+
+    const reverb = audioContext.createConvolver();
+    reverb
 
     // Hertz
     const frequencies = [200, 430, 600, 882];
@@ -216,7 +226,7 @@ export function Breathing({ onConfigChange }) {
       // oscillator → toneGain → masterGain → speakers
       const toneGain = audioContext.createGain();
 
-      const bowlDuration = 14
+      const bowlDuration = 14;
 
       toneGain.gain.setValueAtTime(0.2, now);
       toneGain.gain.exponentialRampToValueAtTime(0.0001, now + bowlDuration);

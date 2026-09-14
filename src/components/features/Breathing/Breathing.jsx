@@ -1,10 +1,6 @@
 import { useEffect, useState, useRef, useEffectEvent } from "react";
 
-import {
-  WidgetBody,
-  // widgetInnerBorder,
-  WidgetControls,
-} from "@/components/ui/Widget";
+import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 
 const presets = {
   relaxed: {
@@ -224,7 +220,7 @@ export function Breathing({ onConfigChange }) {
 
     // Hertz
     const frequencies = [200, 430, 600, 882];
-    frequencies.forEach((frequency) => {
+    frequencies.forEach((frequency, index) => {
       const oscillator = audioContext.createOscillator();
       oscillator.type = "sine";
       oscillator.frequency.setValueAtTime(frequency, now);
@@ -232,10 +228,20 @@ export function Breathing({ onConfigChange }) {
       // oscillator → toneGain → masterGain → speakers
       const toneGain = audioContext.createGain();
 
-      const bowlDuration = 8;
+      const bowlDuration = 16;
 
       toneGain.gain.setValueAtTime(0.2, now);
       toneGain.gain.exponentialRampToValueAtTime(0.0001, now + bowlDuration);
+
+      const wobble = audioContext.createOscillator();
+      const wobbleDepth = audioContext.createGain();
+
+      wobble.type = "sine";
+      wobble.frequency.setValueAtTime(0.35 + index * 0.05, now);
+      wobbleDepth.gain.setValueAtTime(1.2, now);
+
+      wobble.connect(wobbleDepth);
+      wobbleDepth.connect(oscillator.frequency);
 
       // Connect
       oscillator.connect(toneGain);
@@ -263,10 +269,10 @@ export function Breathing({ onConfigChange }) {
     const masterGain = audioContext.createGain();
 
     masterGain.gain.setValueAtTime(0.0001, now);
-    masterGain.gain.exponentialRampToValueAtTime(0.04, now + 3);
+    masterGain.gain.exponentialRampToValueAtTime(0.06, now + 3);
     masterGain.connect(audioContext.destination);
 
-    const frequencies = [55, 82.5, 110.8];
+    const frequencies = [110, 164.8, 221.6];
     const volumes = [0.5, 0.2, 0.08];
 
     const oscillators = frequencies.map((frequency, index) => {
@@ -359,10 +365,10 @@ export function Breathing({ onConfigChange }) {
 
       if (isSoundEnabled) {
         startBackgroundGong();
-      }
 
-      if (!hasStarted) {
-        playSingBowl();
+        if (!hasStarted) {
+          playSingBowl();
+        }
       }
 
       if (remainingSeconds === 0) {
@@ -578,15 +584,6 @@ export function Breathing({ onConfigChange }) {
           </div>
         )
       }
-      // subMiddle={
-      //   !isEditing && (
-      //     <div className={`w-full text-center uppercase ${widgetInnerBorder}`}>
-      //       <span className={isDone ? activeDoneClass : inactiveDoneClass}>
-      //         done
-      //       </span>
-      //     </div>
-      //   )
-      // }
       bottom={
         <WidgetControls>
           <WidgetControls.Play isRunning={isRunning} onClick={handleToggle} />

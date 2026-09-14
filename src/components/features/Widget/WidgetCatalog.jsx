@@ -107,9 +107,10 @@ export const widgetCatalog = {
     iconName: "dumbbell",
     widgetClassName: `w-[235.19px] ${bg}`,
     defaultConfig: {
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
+      countdownSeconds: 5,
+      goSeconds: 20,
+      restSeconds: 10,
+      tabataGoal: 8,
     },
   },
   waterIntake: {

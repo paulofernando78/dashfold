@@ -1,71 +1,179 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   WidgetBody,
   WidgetControls,
   widgetInnerBorder,
 } from "@/components/ui/Widget";
-
-import { Icon } from "@/components/ui/Icon";
-
-import { playAlarm } from "@/utils/audio";
-
 import { NumberInput } from "@/components/ui/NumberInput";
+import { playTick } from "@/utils/audio";
+
+const DEFAULT_COUNTDOWN_SECONDS = 5;
+const DEFAULT_GO_SECONDS = 20;
+const DEFAULT_REST_SECONDS = 10;
+const DEFAULT_TABATA_GOAL = 8;
+
+const durationTitle = "flex flex-col justify-self-center";
+const durationDisplay = "font-['Segoe_UI',sans-serif] font-bold";
+const inactiveModeClass = "text-gray-400";
+
+function calculateSessionDuration({
+  countdownSeconds,
+  goSeconds,
+  restSeconds,
+  tabataGoal,
+}) {
+  return (
+    countdownSeconds +
+    tabataGoal * goSeconds +
+    Math.max(tabataGoal - 1, 0) * restSeconds
+  );
+}
+
+function formatTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
 
 export function Tabata({
-  hours = 0,
-  minutes = 0,
-  seconds = 0,
+  countdownSeconds: initialCountdownSeconds = DEFAULT_COUNTDOWN_SECONDS,
+  goSeconds: initialGoSeconds = DEFAULT_GO_SECONDS,
+  restSeconds: initialRestSeconds = DEFAULT_REST_SECONDS,
+  tabataGoal: initialTabataGoal = DEFAULT_TABATA_GOAL,
   onConfigChange,
   onClose,
 }) {
-  const initialTime = hours * 3600 + minutes * 60 + seconds;
+  const [countdownSeconds, setCountdownSeconds] = useState(
+    initialCountdownSeconds,
+  );
+  const [goSeconds, setGoSeconds] = useState(initialGoSeconds);
+  const [restSeconds, setRestSeconds] = useState(initialRestSeconds);
+  const [tabataGoal, setTabataGoal] = useState(initialTabataGoal);
 
-  const [time, setTime] = useState(initialTime);
-
-  // Editing
-  const [isEditing, setIsEditing] = useState(false);
-  const [editHours, setEditHours] = useState(0);
-  const [editMinutes, setEditMinutes] = useState(0);
-  const [editSeconds, setEditSeconds] = useState(0);
-
+  const [time, setTime] = useState(initialCountdownSeconds);
+  const [mode, setMode] = useState("countdown");
+  const [completedRounds, setCompletedRounds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [isAlarmPlaying, setIsAlarmPlaying] = useState(false);
-  const [mode, setMode] = useState("idle");
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [editCountdownSeconds, setEditCountdownSeconds] = useState(
+    initialCountdownSeconds,
+  );
+  const [editGoSeconds, setEditGoSeconds] = useState(initialGoSeconds);
+  const [editRestSeconds, setEditRestSeconds] = useState(initialRestSeconds);
+  const [editTabataGoal, setEditTabataGoal] = useState(initialTabataGoal);
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const intervalID = setInterval(() => {
+      if (isSoundEnabled) playTick();
+
+      setTime((current) => {
+        if (current > 1) return current - 1;
+
+        if (mode === "countdown") {
+          setMode("go");
+          return goSeconds;
+        }
+
+        if (mode === "go") {
+          const nextCompletedRounds = completedRounds + 1;
+          setCompletedRounds(nextCompletedRounds);
+
+          if (nextCompletedRounds >= tabataGoal) {
+            setMode("done");
+            setIsRunning(false);
+            return 0;
+          }
+
+          setMode("rest");
+          return restSeconds;
+        }
+
+        if (mode === "rest") {
+          setMode("go");
+          return goSeconds;
+        }
+
+        return current;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalID);
+  }, [
+    isRunning,
+    isSoundEnabled,
+    mode,
+    completedRounds,
+    tabataGoal,
+    goSeconds,
+    restSeconds,
+  ]);
+
+  const displayedRound = Math.min(completedRounds + 1, tabataGoal);
+
+  const editingSessionDuration = calculateSessionDuration({
+    countdownSeconds: editCountdownSeconds,
+    goSeconds: editGoSeconds,
+    restSeconds: editRestSeconds,
+    tabataGoal: editTabataGoal,
+  });
+
+  function getRemainingSessionDuration() {
+    if (mode === "done") return 0;
+
+    if (mode === "countdown") {
+      return (
+        time +
+        tabataGoal * goSeconds +
+        Math.max(tabataGoal - 1, 0) * restSeconds
+      );
+    }
+
+    const roundsAfterCurrent = Math.max(
+      tabataGoal - completedRounds - (mode === "go" ? 1 : 0),
+      0,
+    );
+    const futureRests = Math.max(tabataGoal - completedRounds - 1, 0);
+
+    return time + roundsAfterCurrent * goSeconds + futureRests * restSeconds;
+  }
+
+  const totalTime = formatTime(
+    isEditing ? editingSessionDuration : getRemainingSessionDuration(),
+  );
 
   function handleEdit() {
     setIsRunning(false);
-    setIsAlarmPlaying(false);
-
-    setEditHours(Math.floor(time / 3600));
-    setEditMinutes(Math.floor((time % 3600) / 60));
-    setEditSeconds(time % 60);
-
+    setEditCountdownSeconds(countdownSeconds);
+    setEditGoSeconds(goSeconds);
+    setEditRestSeconds(restSeconds);
+    setEditTabataGoal(tabataGoal);
     setIsEditing(true);
   }
 
   function applyEditSettings(shouldStart) {
-    const nextHours = Math.max(0, Number(editHours));
-    const nextMinutes = Math.min(59, Math.max(0, Number(editMinutes)));
-    const nextSeconds = Math.min(59, Math.max(0, Number(editSeconds)));
+    const nextConfig = {
+      countdownSeconds: editCountdownSeconds,
+      goSeconds: editGoSeconds,
+      restSeconds: editRestSeconds,
+      tabataGoal: editTabataGoal,
+    };
 
-    const newTime = nextHours * 3600 + nextMinutes * 60 + nextSeconds;
-
-    setTime(newTime);
-    setMode("idle");
-    setIsAlarmPlaying(false);
+    setCountdownSeconds(nextConfig.countdownSeconds);
+    setGoSeconds(nextConfig.goSeconds);
+    setRestSeconds(nextConfig.restSeconds);
+    setTabataGoal(nextConfig.tabataGoal);
+    setTime(nextConfig.countdownSeconds);
+    setCompletedRounds(0);
+    setMode("countdown");
+    setIsRunning(shouldStart);
     setIsEditing(false);
-    setIsRunning(shouldStart && newTime > 0);
-
-    onConfigChange?.({
-      hours: nextHours,
-      minutes: nextMinutes,
-      seconds: nextSeconds,
-    });
-  }
-
-  function handleConfirmEdit() {
-    applyEditSettings(false);
+    onConfigChange?.(nextConfig);
   }
 
   function handleToggle() {
@@ -74,204 +182,129 @@ export function Tabata({
       return;
     }
 
-    if (time === 0) return;
-
+    if (mode === "done") return;
     setIsRunning((current) => !current);
-  }
-
-  function addMinutes(minutesToAdd) {
-    const secondsToAdd = minutesToAdd * 60;
-    const nextTime = Math.max(0, time + secondsToAdd);
-
-    const nextHours = Math.floor(nextTime / 3600);
-    const nextMinutes = Math.floor((nextTime % 3600) / 60);
-    const nextSeconds = nextTime % 60;
-
-    setTime(nextTime);
-
-    onConfigChange?.({
-      hours: nextHours,
-      minutes: nextMinutes,
-      seconds: nextSeconds,
-    });
   }
 
   function handleReset() {
     setIsRunning(false);
-    setIsAlarmPlaying(false);
-
-    setTime(0);
-
-    setEditHours(0);
-    setEditMinutes(0);
-    setEditSeconds(0);
-
-    setMode("idle");
-
-    onConfigChange?.({
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-    });
+    setIsEditing(false);
+    setCompletedRounds(0);
+    setMode("countdown");
+    setTime(countdownSeconds);
   }
 
-  useEffect(() => {
-    if (!isRunning) return;
-
-    const intervalID = setInterval(() => {
-      setTime((current) => {
-        if (current > 1) {
-          return current - 1;
-        }
-
-        setIsRunning(false);
-        setMode("done");
-        setIsAlarmPlaying(true);
-        return 0;
-      });
-    }, 1000);
-
-    return () => clearInterval(intervalID);
-  }, [isRunning]);
-
-  useEffect(() => {
-    if (!isAlarmPlaying) return;
-
-    playAlarm();
-
-    const alarmIntervalID = setInterval(() => {
-      playAlarm();
-    }, 1500);
-
-    return () => clearInterval(alarmIntervalID);
-  }, [isAlarmPlaying]);
-
-  const hoursLeft = Math.floor(time / 3600);
-  const minutesLeft = Math.floor((time % 3600) / 60);
-  const secondsLeft = time % 60;
-
-  const getFormattedTime = `
-    ${String(hoursLeft).padStart(2, "0")}:${String(minutesLeft).padStart(2, "0")}:${String(secondsLeft).padStart(2, "0")}
-    `;
-
-  const activeTimerDoneModeClass =
-    "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse";
-  const inactiveModeClass = "text-gray-400";
-
-  const shortCuts = [0.5, 1, 5];
-
-  function formatShortcut(minutes) {
-    if (minutes < 1) {
-      return `0:${String(minutes * 60).padStart(2, "0")}`;
-    }
-
-    return `${minutes}:00`;
-  }
+  const activeModeClass = {
+    countdown: "text-blue-400 [text-shadow:0_0_10px_rgba(96,165,250,1)]",
+    go: "text-green-400 [text-shadow:0_0_8px_rgba(0,225,0,0.8)]",
+    rest: "text-yellow-400 [text-shadow:0_0_8px_rgba(255,255,0,0.8)]",
+    done: "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse",
+  };
 
   return (
     <WidgetBody
       onClose={onClose}
-      top={<span>{getFormattedTime}</span>}
+      top={
+        <div className="flex flex-col items-center justify-center gap-4">
+          <span>{totalTime}</span>
+          {!isEditing && (
+            <WidgetControls.Sound
+              isSoundEnabled={isSoundEnabled}
+              onClick={() => setIsSoundEnabled((current) => !current)}
+            />
+          )}
+        </div>
+      }
       middle={
-        !isEditing ? (
-          <div
-            className={`
-            flex
-            flex-col
-            items-center
-            gap-2.75
-            `}
-          >
-            <div className="flex flex-col gap-2">
-              {shortCuts.map((minutes) => (
-                <div
-                  key={minutes}
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    gap-2
-                    
-                  "
-                >
-                  <button
-                    type="button"
-                    onClick={() => addMinutes(-minutes)}
-                    className="clickable"
-                  >
-                    <Icon name="minus" />
-                  </button>
-                  <span>{formatShortcut(minutes)}</span>
-                  <button
-                    type="button"
-                    onClick={() => addMinutes(minutes)}
-                    className="clickable"
-                  >
-                    <Icon name="plus" />
-                  </button>
-                </div>
-              ))}
+        <div className="text-center uppercase">
+          {isEditing ? (
+            <div className="mx-auto grid w-max grid-cols-[1fr_auto] gap-4">
+              <span className="place-self-center">countdown</span>
+              <NumberInput
+                hideLabel
+                label="Countdown seconds"
+                name="countdown-seconds"
+                value={editCountdownSeconds}
+                onChange={setEditCountdownSeconds}
+                min={1}
+              />
+              <span className="place-self-center">go</span>
+              <NumberInput
+                hideLabel
+                label="Go seconds"
+                name="go-seconds"
+                value={editGoSeconds}
+                onChange={setEditGoSeconds}
+                min={1}
+              />
+              <span className="place-self-center">rest</span>
+              <NumberInput
+                hideLabel
+                label="Rest seconds"
+                name="rest-seconds"
+                value={editRestSeconds}
+                onChange={setEditRestSeconds}
+                min={1}
+              />
+              <span className="place-self-center">rounds</span>
+              <NumberInput
+                hideLabel
+                label="Rounds"
+                name="tabata-rounds"
+                value={editTabataGoal}
+                onChange={setEditTabataGoal}
+                min={1}
+              />
             </div>
-          </div>
-        ) : (
-          <div
-            className="
-              grid
-              grid-cols-[1fr_auto]
-              gap-4
-              mx-auto
-              uppercase
-            "
-          >
-            <span className="place-self-center">hour</span>
-            <NumberInput
-              hideLabel
-              label="hour"
-              name="hour"
-              value={editHours}
-              onChange={setEditHours}
-            />
-            <span className="place-self-center">minute</span>
-            <NumberInput
-              hideLabel
-              label="minute"
-              name="minute"
-              value={editMinutes}
-              onChange={setEditMinutes}
-            />
-            <span className="place-self-center">second</span>
-            <NumberInput
-              hideLabel
-              label="second"
-              name="second"
-              value={editSeconds}
-              onChange={setEditSeconds}
-            />
-          </div>
-        )
+          ) : (
+            <div className="flex h-full flex-col gap-4">
+              <p>No pain, no gain!</p>
+              {/* <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
+                {mode}
+              </p>
+              <p className="font-['Segoe_UI',sans-serif] text-5xl font-bold">
+                {formatTime(time)}
+              </p> */}
+            </div>
+          )}
+        </div>
       }
       subMiddle={
-        <div className={`grid gap-2 w-full ${widgetInnerBorder}`}>
-          <label>
-            <input
-              type="text"
-              className="
-                      w-full
-                      px-[0.6rem] py-[0.4rem]
-                      text-gray-500
-                      font-[Arial]
-                      border
-                      border-gray-500
-                      rounded-sm
-                      placeholder:italic
-                      paper-texture
-                    "
-              placeholder="ex: boiling water..."
-            />
-          </label>
+        <div
+          className={`grid place-items-center gap-2 uppercase ${widgetInnerBorder}`}
+        >
+          <span>
+            round {displayedRound} of {tabataGoal}
+          </span>
+          <div className="flex gap-4">
+            {[
+              ["countdown", countdownSeconds],
+              ["go", goSeconds],
+              ["rest", restSeconds],
+            ].map(([phase, duration]) => (
+              <div
+                key={phase}
+                className={`grid place-items-center gap-2 ${durationTitle}`}
+              >
+                <span
+                  className={`text-[1rem] ${
+                    mode === phase && isRunning
+                      ? activeModeClass[phase]
+                      : inactiveModeClass
+                  }`}
+                >
+                  {phase}
+                </span>
+                <span className={durationDisplay}>
+                  {formatTime(mode === phase ? time : duration)}
+                </span>
+              </div>
+            ))}
+          </div>
           <span
-            className={`uppercase justify-self-center
-              ${mode === "done" ? activeTimerDoneModeClass : inactiveModeClass}`}
+            className={`uppercase ${
+              mode === "done" ? activeModeClass.done : inactiveModeClass
+            }`}
           >
             done
           </span>
@@ -287,7 +320,7 @@ export function Tabata({
           <WidgetControls.Edit
             isEditing={isEditing}
             onEdit={handleEdit}
-            onConfirm={handleConfirmEdit}
+            onConfirm={() => applyEditSettings(false)}
           />
           <WidgetControls.Reset onClick={handleReset} />
         </WidgetControls>

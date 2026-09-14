@@ -11,6 +11,7 @@ import { Calculator } from "@/components/features/Calculator";
 import { Markets } from "@/components/features/Markets";
 
 // Health
+import { Tabata } from "@/components/features/Tabata";
 import { WaterIntake } from "@/components/features/WaterIntake";
 import { Breathing } from "@/components/features/Breathing";
 
@@ -22,7 +23,7 @@ export const widgetCatalog = {
   clock: {
     category: "utilities",
     Component: Clock,
-    title: "Clock",
+    title: "clock",
     iconName: "clock",
     widgetClassName: `w-[318.03px] ${bg}`,
     defaultConfig: {
@@ -35,7 +36,7 @@ export const widgetCatalog = {
   quickNotes: {
     category: "productivity",
     Component: QuickNotes,
-    title: "Quick Notes",
+    title: "quick notes",
     iconName: "quickNotes",
     widgetClassName: "w-[206px] paper-texture",
     defaultConfig: {
@@ -47,7 +48,7 @@ export const widgetCatalog = {
   pomodoro: {
     category: "productivity",
     Component: Pomodoro,
-    title: "Pomodoro",
+    title: "pomodoro",
     iconName: "pomodoro",
     widgetClassName: bg,
     defaultConfig: {
@@ -60,7 +61,7 @@ export const widgetCatalog = {
   timer: {
     category: "productivity",
     Component: Timer,
-    title: "Timer",
+    title: "timer",
     iconName: "timer",
     widgetClassName: `w-[235.19px] ${bg}`,
     defaultConfig: {
@@ -74,7 +75,7 @@ export const widgetCatalog = {
   calculator: {
     category: "finance",
     Component: Calculator,
-    title: "Calculator",
+    title: "calculator",
     iconName: "calculator",
     widgetClassName: `w-[197px] ${bg}`,
     defaultConfig: {
@@ -84,7 +85,7 @@ export const widgetCatalog = {
   markets: {
     category: "finance",
     Component: Markets,
-    title: "Markets",
+    title: "markets",
     iconName: "markets",
     widgetClassName: `w-[339px] ${bg}`,
     defaultConfig: {},
@@ -99,9 +100,21 @@ export const widgetCatalog = {
   // },
 
   // Health
+  tabata: {
+    category: "health",
+    Component: Tabata,
+    title: "tabata",
+    iconName: "dumbbell",
+    widgetClassName: `w-[235.19px] ${bg}`,
+    defaultConfig: {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    },
+  },
   waterIntake: {
     category: "health",
-    title: "Water intake",
+    title: "water intake",
     Component: WaterIntake,
     iconName: "waterIntake",
     widgetClassName: `w-[222.45px] ${bg}`,
@@ -109,7 +122,7 @@ export const widgetCatalog = {
   },
   breathing: {
     category: "health",
-    title: "Breathing",
+    title: "breathing",
     Component: Breathing,
     iconName: "breathing",
     widgetClassName: `w-[232px] ${bg}`,

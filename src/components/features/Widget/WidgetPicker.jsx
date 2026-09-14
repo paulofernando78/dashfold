@@ -136,7 +136,7 @@ export function WidgetPicker({ onAdd, ref }) {
                       style={widget.widgetStyle}
                       className={`clickable ${widgetPickerBorder} bg-slate-500`}
                     >
-                      <span>{widget.title}</span>
+                      <span className="uppercase">{widget.title}</span>
                     </button>
                   ))}
                 </div>

@@ -28,6 +28,7 @@ import {
   Divide,
   Dot,
   Droplet,
+  Dumbbell,
   Equal,
   // E
   Ellipsis,
@@ -254,6 +255,7 @@ const icons = {
   delete: Delete,
   divide: Divide,
   dot: Dot,
+  dumbbell: Dumbbell,
   waterIntake: Droplet,
   equal: Equal,
   // E

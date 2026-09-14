@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
   WidgetBody,
@@ -76,87 +76,13 @@ export function Breathing({ onConfigChange }) {
   const [phaseSeconds, setPhaseSeconds] = useState(
     Math.ceil(presets.relaxed.phases[0].duration / 1000),
   );
+  const [isResetting, setIsResetting] = useState(false);
   const currentPhase = currentPreset.phases[phaseIndex];
 
   const audioRef = useRef(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const circlesRef = useRef(null);
-  const fadeFrameRef = useRef(null);
-  const fadeTimeoutRef = useRef(null);
-  const fadeTokenRef = useRef(0);
-
-  function cancelAudioFade() {
-    fadeTokenRef.current += 1;
-
-    if (fadeFrameRef.current !== null) {
-      cancelAnimationFrame(fadeFrameRef.current);
-      fadeFrameRef.current = null;
-    }
-
-    if (fadeTimeoutRef.current !== null) {
-      clearTimeout(fadeTimeoutRef.current);
-      fadeTimeoutRef.current = null;
-    }
-  }
-
-  function fadeOutAudio(duration = 1000, resetToStart = false) {
-    const audio = audioRef.current;
-
-    if (!audio) return;
-
-    cancelAudioFade();
-
-    const fadeToken = fadeTokenRef.current;
-    const startVolume = audio.volume;
-    const startTime = performance.now();
-
-    function finishFade() {
-      if (fadeToken !== fadeTokenRef.current) return;
-
-      audio.pause();
-
-      if (resetToStart) {
-        audio.currentTime = 0;
-      }
-
-      audio.volume = startVolume;
-
-      if (fadeFrameRef.current !== null) {
-        cancelAnimationFrame(fadeFrameRef.current);
-      }
-
-      if (fadeTimeoutRef.current !== null) {
-        clearTimeout(fadeTimeoutRef.current);
-      }
-
-      fadeFrameRef.current = null;
-      fadeTimeoutRef.current = null;
-    }
-
-    function fadeStep(currentTime) {
-      if (fadeToken !== fadeTokenRef.current) return;
-
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-
-      audio.volume = startVolume * (1 - progress);
-
-      if (progress >= 1) {
-        finishFade();
-        return;
-      }
-
-      fadeFrameRef.current = requestAnimationFrame(fadeStep);
-    }
-
-    fadeFrameRef.current = requestAnimationFrame(fadeStep);
-    fadeTimeoutRef.current = setTimeout(finishFade, duration + 100);
-  }
-
-  const fadeOutAtSessionEnd = useEffectEvent(() => {
-    fadeOutAudio(1000, true);
-  });
 
   useEffect(() => {
     if (!isRunning || phaseSeconds <= 0) return;
@@ -183,19 +109,19 @@ export function Breathing({ onConfigChange }) {
   useEffect(() => {
     if (!isRunning || remainingSeconds <= 0) return;
 
-    if (remainingSeconds === 1) {
-      fadeOutAtSessionEnd();
-    }
-
     const timer = setTimeout(() => {
       if (remainingSeconds === 1) {
         setRemainingSeconds(0);
         setIsRunning(false);
         setHasStarted(false);
         setPhaseIndex(0);
-        setPhaseSeconds(
-          Math.ceil(currentPreset.phases[0].duration / 1000),
-        );
+        setPhaseSeconds(Math.ceil(currentPreset.phases[0].duration / 1000));
+
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
+
         return;
       }
 
@@ -211,13 +137,13 @@ export function Breathing({ onConfigChange }) {
     });
 
     animations?.forEach((animation) => {
-      if (isRunning) {
+      if (isRunning || !hasStarted) {
         animation.play();
       } else {
         animation.pause();
       }
     });
-  }, [isRunning, phaseIndex]);
+  }, [isRunning, phaseIndex, hasStarted]);
 
   const isExpanded = hasStarted && currentPhase.scale === "scale-145";
 
@@ -256,8 +182,6 @@ export function Breathing({ onConfigChange }) {
       setHasStarted(true);
       setIsEditing(false);
 
-      cancelAudioFade();
-
       if (remainingSeconds === 0) {
         setRemainingSeconds(sessionMinutes * 60);
         setPhaseIndex(0);
@@ -268,14 +192,14 @@ export function Breathing({ onConfigChange }) {
         audioRef.current?.play();
       }
     } else {
-      fadeOutAudio(1000);
+      audioRef.current?.pause();
     }
   }
 
   function handleEdit() {
     setIsEditing(true);
     setIsRunning(false);
-    fadeOutAudio(1000);
+    audioRef.current?.pause();
   }
 
   function handleSelectPreset(id) {
@@ -301,12 +225,18 @@ export function Breathing({ onConfigChange }) {
   function handleReset() {
     setIsEditing(false);
     setIsRunning(false);
+    setHasStarted(false);
     setPhaseIndex(0);
     setRemainingSeconds(sessionMinutes * 60);
 
     setPhaseSeconds(Math.ceil(currentPreset.phases[0].duration / 1000));
 
-    fadeOutAudio(1000, true);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+
+    setIsResetting(true);
   }
 
   return (
@@ -353,6 +283,8 @@ export function Breathing({ onConfigChange }) {
                   "
                 >
                   {/* 3 divs animation */}
+
+                  {/* Labels */}
                   <div
                     className="
                       grid
@@ -369,56 +301,32 @@ export function Breathing({ onConfigChange }) {
                     <span>{phaseSeconds}s</span>
                   </div>
 
+                  {/* Circle */}
                   <div
                     className={`
                     ${circle}
-                      bg-gray-200
+                      bg-gray-300
                       shadow-[0_0_5px_1px_rgba(255,255,255,0.7)]
-                      z-4
-                    `}
-                  ></div>
-
-                  <div
-                    className={`
-                    ${circle}
-                      bg-gray-400
                       transition-transform
                       ease-linear
-                      z-3
-                      ${isExpanded ? "scale-115" : "scale-100"}
+                      ${isExpanded ? "scale-145" : "scale-100"}
+                      z-4
                     `}
-                    style={{
+                     style={{
                       transitionDuration: `${currentPhase.duration}ms`,
                     }}
                   ></div>
 
+                 
+                  {/* Outer border */}
                   <div
                     className={`
-                    ${circle}
-                      bg-gray-600
-                      transition-transform
-                      z-2
-                      ${isExpanded ? "scale-130" : "scale-100"}
+                      absolute
+                      w-45
+                      h-45
+                      bg-[radial-gradient(circle_at_center,gray,black)]
+                      rounded-full
                     `}
-                    style={{
-                      transitionDuration: `${currentPhase.duration}ms`,
-                    }}
-                  ></div>
-                  <div
-                    className={`
-                    ${circle}
-                      bg-gray-800
-                                            ease-linear
-                      z-1
-                      ${
-                        isExpanded
-                          ? "scale-145 shadow-white shadow-[0_0_5px_1px_rgba(255,255,255,0.7)]"
-                          : "scale-100 shadow-none"
-                      }
-                    `}
-                    style={{
-                      transitionDuration: `${currentPhase.duration}ms`,
-                    }}
                   ></div>
                 </div>
               </div>

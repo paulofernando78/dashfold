@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useEffectEvent, useState, useRef } from "react";
 
 import {
   WidgetBody,
@@ -64,6 +64,7 @@ const presets = {
 export function Breathing({ onConfigChange }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const [sessionMinutes, setSessionMinutes] = useState(1);
   const [remainingSeconds, setRemainingSeconds] = useState(60);
@@ -80,31 +81,121 @@ export function Breathing({ onConfigChange }) {
   const audioRef = useRef(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
+  const circlesRef = useRef(null);
+  const fadeFrameRef = useRef(null);
+  const fadeTimeoutRef = useRef(null);
+  const fadeTokenRef = useRef(0);
+
+  function cancelAudioFade() {
+    fadeTokenRef.current += 1;
+
+    if (fadeFrameRef.current !== null) {
+      cancelAnimationFrame(fadeFrameRef.current);
+      fadeFrameRef.current = null;
+    }
+
+    if (fadeTimeoutRef.current !== null) {
+      clearTimeout(fadeTimeoutRef.current);
+      fadeTimeoutRef.current = null;
+    }
+  }
+
+  function fadeOutAudio(duration = 1000, resetToStart = false) {
+    const audio = audioRef.current;
+
+    if (!audio) return;
+
+    cancelAudioFade();
+
+    const fadeToken = fadeTokenRef.current;
+    const startVolume = audio.volume;
+    const startTime = performance.now();
+
+    function finishFade() {
+      if (fadeToken !== fadeTokenRef.current) return;
+
+      audio.pause();
+
+      if (resetToStart) {
+        audio.currentTime = 0;
+      }
+
+      audio.volume = startVolume;
+
+      if (fadeFrameRef.current !== null) {
+        cancelAnimationFrame(fadeFrameRef.current);
+      }
+
+      if (fadeTimeoutRef.current !== null) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
+
+      fadeFrameRef.current = null;
+      fadeTimeoutRef.current = null;
+    }
+
+    function fadeStep(currentTime) {
+      if (fadeToken !== fadeTokenRef.current) return;
+
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
+
+      audio.volume = startVolume * (1 - progress);
+
+      if (progress >= 1) {
+        finishFade();
+        return;
+      }
+
+      fadeFrameRef.current = requestAnimationFrame(fadeStep);
+    }
+
+    fadeFrameRef.current = requestAnimationFrame(fadeStep);
+    fadeTimeoutRef.current = setTimeout(finishFade, duration + 100);
+  }
+
+  const fadeOutAtSessionEnd = useEffectEvent(() => {
+    fadeOutAudio(1000, true);
+  });
+
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isRunning || phaseSeconds <= 0) return;
 
     const timer = setTimeout(() => {
-      const nextIndex = (phaseIndex + 1) % currentPreset.phases.length;
+      if (phaseSeconds === 1) {
+        const nextIndex = (phaseIndex + 1) % currentPreset.phases.length;
 
-      setPhaseIndex(nextIndex);
+        setPhaseIndex(nextIndex);
 
-      setPhaseSeconds(
-        Math.ceil(currentPreset.phases[nextIndex].duration / 1000),
-      );
-    }, currentPhase.duration);
+        setPhaseSeconds(
+          Math.ceil(currentPreset.phases[nextIndex].duration / 1000),
+        );
+
+        return;
+      }
+
+      setPhaseSeconds((seconds) => seconds - 1);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isRunning, phaseIndex, currentPhase.duration, currentPreset]);
+  }, [isRunning, phaseSeconds, phaseIndex, currentPreset]);
 
   useEffect(() => {
     if (!isRunning || remainingSeconds <= 0) return;
+
+    if (remainingSeconds === 1) {
+      fadeOutAtSessionEnd();
+    }
 
     const timer = setTimeout(() => {
       if (remainingSeconds === 1) {
         setRemainingSeconds(0);
         setIsRunning(false);
+        setHasStarted(false);
         setPhaseIndex(0);
-        audioRef.current?.pause();
+        setPhaseSeconds(
+          Math.ceil(currentPreset.phases[0].duration / 1000),
+        );
         return;
       }
 
@@ -112,19 +203,23 @@ export function Breathing({ onConfigChange }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isRunning, remainingSeconds]);
+  }, [isRunning, remainingSeconds, currentPreset]);
 
   useEffect(() => {
-    if (!isRunning || phaseSeconds <= 0) return;
+    const animations = circlesRef.current?.getAnimations({
+      subtree: true,
+    });
 
-    const timer = setTimeout(() => {
-      setPhaseSeconds((seconds) => seconds - 1);
-    }, 1000);
+    animations?.forEach((animation) => {
+      if (isRunning) {
+        animation.play();
+      } else {
+        animation.pause();
+      }
+    });
+  }, [isRunning, phaseIndex]);
 
-    return () => clearTimeout(timer);
-  }, [isRunning, phaseSeconds]);
-
-  const isExpanded = isRunning && currentPhase.scale === "scale-145";
+  const isExpanded = hasStarted && currentPhase.scale === "scale-145";
 
   const displayMinutes = Math.floor(remainingSeconds / 60);
   const displaySeconds = String(remainingSeconds % 60).padStart(2, "0");
@@ -158,19 +253,29 @@ export function Breathing({ onConfigChange }) {
     setIsRunning(nextRunning);
 
     if (nextRunning) {
+      setHasStarted(true);
+      setIsEditing(false);
+
+      cancelAudioFade();
+
       if (remainingSeconds === 0) {
         setRemainingSeconds(sessionMinutes * 60);
         setPhaseIndex(0);
       }
 
-      audioRef.current?.play();
+      if (audioRef.current) {
+        audioRef.current.volume = 1;
+        audioRef.current?.play();
+      }
     } else {
-      audioRef.current?.pause();
+      fadeOutAudio(1000);
     }
   }
 
   function handleEdit() {
     setIsEditing(true);
+    setIsRunning(false);
+    fadeOutAudio(1000);
   }
 
   function handleSelectPreset(id) {
@@ -198,7 +303,10 @@ export function Breathing({ onConfigChange }) {
     setIsRunning(false);
     setPhaseIndex(0);
     setRemainingSeconds(sessionMinutes * 60);
-    audioRef.current?.pause();
+
+    setPhaseSeconds(Math.ceil(currentPreset.phases[0].duration / 1000));
+
+    fadeOutAudio(1000, true);
   }
 
   return (
@@ -210,7 +318,7 @@ export function Breathing({ onConfigChange }) {
           </span>
           <audio
             ref={audioRef}
-            src="/assets/poly-ambient-boy.mp3"
+            src="/assets/audio/meditation.mp3"
             loop
             preload="auto"
           />
@@ -235,6 +343,7 @@ export function Breathing({ onConfigChange }) {
             >
               <div className="mx-auto">
                 <div
+                  ref={circlesRef}
                   className="
                     relative
                     grid
@@ -243,6 +352,7 @@ export function Breathing({ onConfigChange }) {
                     h-50
                   "
                 >
+                  {/* 3 divs animation */}
                   <div
                     className="
                       grid
@@ -258,6 +368,7 @@ export function Breathing({ onConfigChange }) {
                     <span>{currentPhase.label}</span>
                     <span>{phaseSeconds}s</span>
                   </div>
+
                   <div
                     className={`
                     ${circle}
@@ -266,12 +377,13 @@ export function Breathing({ onConfigChange }) {
                       z-4
                     `}
                   ></div>
+
                   <div
                     className={`
                     ${circle}
                       bg-gray-400
-                      transition-all
-                      ease-in-out
+                      transition-transform
+                      ease-linear
                       z-3
                       ${isExpanded ? "scale-115" : "scale-100"}
                     `}
@@ -279,12 +391,12 @@ export function Breathing({ onConfigChange }) {
                       transitionDuration: `${currentPhase.duration}ms`,
                     }}
                   ></div>
+
                   <div
                     className={`
                     ${circle}
                       bg-gray-600
-                      transition-all
-                      ease-in-out
+                      transition-transform
                       z-2
                       ${isExpanded ? "scale-130" : "scale-100"}
                     `}
@@ -296,8 +408,7 @@ export function Breathing({ onConfigChange }) {
                     className={`
                     ${circle}
                       bg-gray-800
-                      transition-all
-                      ease-in-out
+                                            ease-linear
                       z-1
                       ${
                         isExpanded

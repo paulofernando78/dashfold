@@ -6,7 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { SectionPanel } from "@/components/ui/SectionPanel";
 
 //Calendar
-import { Calendar } from "@/components/features/Calendar";
+// import { Calendar } from "@/components/features/Calendar";
 
 // Widget / ui
 import { WidgetContainer, WidgetCard } from "@/components/ui/Widget";
@@ -17,7 +17,7 @@ import { widgetCatalog, WidgetPicker } from "@/components/features/Widget";
 import { TaskBoard } from "@/components/features/TaskBoard";
 
 // Notes
-import { Notes } from "@/components/features/Notes";
+// import { Notes } from "@/components/features/Notes";
 
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
@@ -145,9 +145,9 @@ function App() {
       <Header />
 
       {/* Calendar */}
-      <SectionPanel title="Calendar" storageKey="section-calendar">
+      {/* <SectionPanel title="Calendar" storageKey="section-calendar">
         <Calendar />
-      </SectionPanel>
+      </SectionPanel> */}
 
       {/* Widgets */}
       <SectionPanel
@@ -185,10 +185,10 @@ function App() {
       </SectionPanel>
 
       {/* Notes */}
-      <SectionPanel title="Notes" storageKey="section-notes">
+      {/* <SectionPanel title="Notes" storageKey="section-notes">
         <Notes />
         <Notes />
-      </SectionPanel>
+      </SectionPanel> */}
     </div>
   );
 }

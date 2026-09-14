@@ -194,6 +194,10 @@ export function Breathing({ onConfigChange }) {
     return impulse;
   }
 
+  const playRandomBowl = useEffectEvent(() => {
+    playSingBowl();
+  });
+
   async function playSingBowl() {
     const audioContext = getAudioContext();
 
@@ -243,11 +247,73 @@ export function Breathing({ onConfigChange }) {
     });
   }
 
+  const backgroundGongRef = useRef(null);
   const randomBowlTimeRef = useRef(null);
 
-  const playRandomBowl = useEffectEvent(() => {
-    playSingBowl();
-  });
+  async function startBackgroundGong() {
+    if (backgroundGongRef.current) return;
+
+    const audioContext = getAudioContext();
+
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    const now = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+
+    masterGain.gain.setValueAtTime(0.0001, now);
+    masterGain.gain.exponentialRampToValueAtTime(0.04, now + 3);
+    masterGain.connect(audioContext.destination);
+
+    const frequencies = [55, 82.5, 110.8];
+    const volumes = [0.5, 0.2, 0.08];
+
+    const oscillators = frequencies.map((frequency, index) => {
+      const oscillator = audioContext.createOscillator();
+      const toneGain = audioContext.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, now);
+
+      toneGain.gain.setValueAtTime(volumes[index], now);
+
+      oscillator.connect(toneGain);
+      toneGain.connect(masterGain);
+
+      oscillator.start(now);
+
+      return oscillator;
+    });
+
+    backgroundGongRef.current = {
+      oscillators,
+      masterGain,
+    };
+  }
+
+  function stopBackgroundGong() {
+    const gong = backgroundGongRef.current;
+
+    if (!gong) return;
+
+    const audioContext = getAudioContext();
+    const now = audioContext.currentTime;
+    const fadeDuration = 1.5;
+
+    gong.masterGain.gain.cancelAndHoldAtTime(now);
+
+    gong.masterGain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      now + fadeDuration,
+    );
+
+    gong.oscillators.forEach((oscillator) => {
+      oscillator.stop(now + fadeDuration);
+    });
+
+    backgroundGongRef.current = null;
+  }
 
   useEffect(() => {
     if (!isRunning || !isSoundEnabled) return;
@@ -291,7 +357,11 @@ export function Breathing({ onConfigChange }) {
       setHasStarted(true);
       setIsEditing(false);
 
-      if (isSoundEnabled && !hasStarted) {
+      if (isSoundEnabled) {
+        startBackgroundGong();
+      }
+
+      if (!hasStarted) {
         playSingBowl();
       }
 
@@ -305,6 +375,7 @@ export function Breathing({ onConfigChange }) {
         audioRef.current?.play();
       }
     } else {
+      stopBackgroundGong();
       audioRef.current?.pause();
     }
   }

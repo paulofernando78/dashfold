@@ -84,12 +84,17 @@ export function Breathing({ onConfigChange }) {
 
   const circlesRef = useRef(null);
 
+  // const timer
   useEffect(() => {
     if (!isRunning || phaseSeconds <= 0) return;
 
     const timer = setTimeout(() => {
       if (phaseSeconds === 1) {
         const nextIndex = (phaseIndex + 1) % currentPreset.phases.length;
+
+        if (nextIndex === 0 && isSoundEnabled) {
+          playSingBowl();
+        }
 
         setPhaseIndex(nextIndex);
 
@@ -163,6 +168,69 @@ export function Breathing({ onConfigChange }) {
     rounded-full
   `;
 
+  const audioContextRef = useRef(null);
+
+  // Tibet Bowl sound
+  function getAudioContext() {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
+    }
+
+    return audioContextRef.current;
+  }
+
+  function createReverbImpulse(audioContext) {
+    const duration = 4;
+    const sampleRate = audioContext.sampleRate;
+    const length = sampleRate * duration;
+
+    const impulse = audioContext.createBuffer(
+      2,
+      length,
+      sampleRate
+    );
+
+    return impulse;
+  }
+
+  async function playSingBowl() {
+    const audioContext = getAudioContext();
+
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    const now = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+
+    masterGain.connect(audioContext.destination);
+    masterGain.gain.setValueAtTime(0.25, now);
+
+    // Hertz
+    const frequencies = [200, 430, 600, 882];
+    frequencies.forEach((frequency) => {
+      const oscillator = audioContext.createOscillator();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, now);
+
+      // oscillator → toneGain → masterGain → speakers
+      const toneGain = audioContext.createGain();
+
+      const bowlDuration = 14
+
+      toneGain.gain.setValueAtTime(0.2, now);
+      toneGain.gain.exponentialRampToValueAtTime(0.0001, now + bowlDuration);
+
+      // Connect
+      oscillator.connect(toneGain);
+      toneGain.connect(masterGain);
+
+      // Start
+      oscillator.start(now);
+      oscillator.stop(now + 8);
+    });
+  }
+
   function handleToggleSound() {
     const nextEnabled = !isSoundEnabled;
 
@@ -197,9 +265,8 @@ export function Breathing({ onConfigChange }) {
   }
 
   function handleEdit() {
+    handleReset();
     setIsEditing(true);
-    setIsRunning(false);
-    audioRef.current?.pause();
   }
 
   function handleSelectPreset(id) {
@@ -221,6 +288,16 @@ export function Breathing({ onConfigChange }) {
     onConfigChange?.({});
     setIsEditing(false);
   }
+
+  useEffect(() => {
+    if (!isResetting) return;
+
+    const frame = requestAnimationFrame(() => {
+      setIsResetting(false);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [isResetting]);
 
   function handleReset() {
     setIsEditing(false);
@@ -246,12 +323,12 @@ export function Breathing({ onConfigChange }) {
           <span>
             {displayMinutes}:{displaySeconds}
           </span>
-          <audio
+          {/* <audio
             ref={audioRef}
             src="/assets/audio/meditation.mp3"
             loop
             preload="auto"
-          />
+          /> */}
           {!isEditing && (
             <WidgetControls.Sound
               isSoundEnabled={isSoundEnabled}
@@ -307,17 +384,15 @@ export function Breathing({ onConfigChange }) {
                     ${circle}
                       bg-gray-300
                       shadow-[0_0_5px_1px_rgba(255,255,255,0.7)]
-                      transition-transform
-                      ease-linear
+                      ${isResetting ? "transition-none" : "transition-transform"}
                       ${isExpanded ? "scale-145" : "scale-100"}
                       z-4
                     `}
-                     style={{
+                    style={{
                       transitionDuration: `${currentPhase.duration}ms`,
                     }}
                   ></div>
 
-                 
                   {/* Outer border */}
                   <div
                     className={`
@@ -398,7 +473,15 @@ export function Breathing({ onConfigChange }) {
       }
       bottom={
         <WidgetControls>
-          <WidgetControls.Play isRunning={isRunning} onClick={handleToggle} />
+          <WidgetControls.Play
+            isRunning={isRunning}
+            onClick={() => {
+              if (!isRunning) {
+                playSingBowl();
+              }
+              handleToggle();
+            }}
+          />
           <WidgetControls.Edit
             isEditing={isEditing}
             onEdit={handleEdit}

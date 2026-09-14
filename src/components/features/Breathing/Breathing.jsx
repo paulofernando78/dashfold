@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useEffectEvent } from "react";
 
 import {
   WidgetBody,
@@ -83,6 +83,12 @@ export function Breathing({ onConfigChange }) {
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const circlesRef = useRef(null);
+  const circle = `
+    absolute
+    w-30
+    h-30
+    rounded-full
+  `;
 
   // const timer
   useEffect(() => {
@@ -91,10 +97,6 @@ export function Breathing({ onConfigChange }) {
     const timer = setTimeout(() => {
       if (phaseSeconds === 1) {
         const nextIndex = (phaseIndex + 1) % currentPreset.phases.length;
-
-        if (nextIndex === 0 && isSoundEnabled) {
-          playSingBowl();
-        }
 
         setPhaseIndex(nextIndex);
 
@@ -161,13 +163,6 @@ export function Breathing({ onConfigChange }) {
     "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse";
   const inactiveDoneClass = "text-gray-400";
 
-  const circle = `
-    absolute
-    w-30
-    h-30
-    rounded-full
-  `;
-
   const audioContextRef = useRef(null);
 
   // Tibet Bowl sound
@@ -214,7 +209,14 @@ export function Breathing({ onConfigChange }) {
     masterGain.gain.setValueAtTime(0.25, now);
 
     const reverb = audioContext.createConvolver();
-    reverb
+    reverb.buffer = createReverbImpulse(audioContext);
+
+    const reverbGain = audioContext.createGain();
+    reverbGain.gain.setValueAtTime(0.6, now);
+
+    masterGain.connect(reverb);
+    reverb.connect(reverbGain);
+    reverbGain.connect(audioContext.destination);
 
     // Hertz
     const frequencies = [200, 430, 600, 882];
@@ -226,7 +228,7 @@ export function Breathing({ onConfigChange }) {
       // oscillator → toneGain → masterGain → speakers
       const toneGain = audioContext.createGain();
 
-      const bowlDuration = 14;
+      const bowlDuration = 8;
 
       toneGain.gain.setValueAtTime(0.2, now);
       toneGain.gain.exponentialRampToValueAtTime(0.0001, now + bowlDuration);
@@ -237,9 +239,38 @@ export function Breathing({ onConfigChange }) {
 
       // Start
       oscillator.start(now);
-      oscillator.stop(now + 8);
+      oscillator.stop(now + bowlDuration);
     });
   }
+
+  const randomBowlTimeRef = useRef(null);
+
+  const playRandomBowl = useEffectEvent(() => {
+    playSingBowl();
+  });
+
+  useEffect(() => {
+    if (!isRunning || !isSoundEnabled) return;
+
+    function scheduleNextBowl() {
+      const minimumDelay = 12000;
+      const maximumDelay = 25000;
+
+      const randomDelay =
+        Math.random() * (maximumDelay - minimumDelay) + minimumDelay;
+
+      randomBowlTimeRef.current = setTimeout(() => {
+        playRandomBowl();
+        scheduleNextBowl();
+      }, randomDelay);
+    }
+
+    scheduleNextBowl();
+
+    return () => {
+      clearTimeout(randomBowlTimeRef.current);
+    };
+  }, [isRunning, isSoundEnabled]);
 
   function handleToggleSound() {
     const nextEnabled = !isSoundEnabled;
@@ -259,6 +290,10 @@ export function Breathing({ onConfigChange }) {
     if (nextRunning) {
       setHasStarted(true);
       setIsEditing(false);
+
+      if (isSoundEnabled && !hasStarted) {
+        playSingBowl();
+      }
 
       if (remainingSeconds === 0) {
         setRemainingSeconds(sessionMinutes * 60);
@@ -483,15 +518,7 @@ export function Breathing({ onConfigChange }) {
       }
       bottom={
         <WidgetControls>
-          <WidgetControls.Play
-            isRunning={isRunning}
-            onClick={() => {
-              if (!isRunning) {
-                playSingBowl();
-              }
-              handleToggle();
-            }}
-          />
+          <WidgetControls.Play isRunning={isRunning} onClick={handleToggle} />
           <WidgetControls.Edit
             isEditing={isEditing}
             onEdit={handleEdit}

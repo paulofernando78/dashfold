@@ -425,6 +425,9 @@ export function Breathing({ onConfigChange }) {
     setIsEditing(false);
     setIsRunning(false);
     setHasStarted(false);
+
+    stopBackgroundGong();
+    
     setPhaseIndex(0);
     setRemainingSeconds(sessionMinutes * 60);
 

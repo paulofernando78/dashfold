@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 import {
   WidgetBody,
@@ -13,8 +13,6 @@ const DEFAULT_GO_SECONDS = 20;
 const DEFAULT_REST_SECONDS = 10;
 const DEFAULT_TABATA_GOAL = 8;
 
-const durationTitle = "flex flex-col justify-self-center";
-const durationDisplay = "font-['Segoe_UI',sans-serif] font-bold";
 const inactiveModeClass = "text-gray-400";
 
 function calculateSessionDuration({
@@ -66,48 +64,71 @@ export function Tabata({
   const [editRestSeconds, setEditRestSeconds] = useState(initialRestSeconds);
   const [editTabataGoal, setEditTabataGoal] = useState(initialTabataGoal);
 
+  const speak = useEffectEvent((message) => {
+    if (!isSoundEnabled) return;
+
+    window.speechSynthesis.cancel();
+
+    const voiceMessage = new SpeechSynthesisUtterance(message);
+
+    voiceMessage.lang = "en-US";
+    voiceMessage.rate = 1;
+    voiceMessage.pitch = 1;
+    voiceMessage.volume = 1;
+
+    window.speechSynthesis.speak(voiceMessage);
+  });
+
   useEffect(() => {
     if (!isRunning) return;
 
-    const intervalID = setInterval(() => {
-      if (isSoundEnabled) playTick();
+    const timeoutID = setTimeout(() => {
+      if (mode === "countdown" && isSoundEnabled) playTick();
 
-      setTime((current) => {
-        if (current > 1) return current - 1;
+      if (time > 1) {
+        setTime(time - 1);
+        return;
+      }
 
-        if (mode === "countdown") {
-          setMode("go");
-          return goSeconds;
+      if (mode === "countdown") {
+        speak("Go");
+        setMode("go");
+        setTime(goSeconds);
+        return;
+      }
+
+      if (mode === "go") {
+        const nextCompletedRounds = completedRounds + 1;
+
+        setCompletedRounds(nextCompletedRounds);
+
+        if (nextCompletedRounds >= tabataGoal) {
+          speak("Workout complete");
+          setMode("done");
+          setIsRunning(false);
+          setTime(0);
+          return;
         }
 
-        if (mode === "go") {
-          const nextCompletedRounds = completedRounds + 1;
-          setCompletedRounds(nextCompletedRounds);
+        speak("Rest");
+        setMode("rest");
+        setTime(restSeconds);
+        return;
+      }
 
-          if (nextCompletedRounds >= tabataGoal) {
-            setMode("done");
-            setIsRunning(false);
-            return 0;
-          }
-
-          setMode("rest");
-          return restSeconds;
-        }
-
-        if (mode === "rest") {
-          setMode("go");
-          return goSeconds;
-        }
-
-        return current;
-      });
+      if (mode === "rest") {
+        speak("Go");
+        setMode("go");
+        setTime(goSeconds);
+      }
     }, 1000);
 
-    return () => clearInterval(intervalID);
+    return () => clearTimeout(timeoutID);
   }, [
     isRunning,
     isSoundEnabled,
     mode,
+    time,
     completedRounds,
     tabataGoal,
     goSeconds,
@@ -257,57 +278,25 @@ export function Tabata({
               />
             </div>
           ) : (
-            <div className="flex h-full flex-col gap-4">
-              <p>No pain, no gain!</p>
-              {/* <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
+            <div className={`${widgetInnerBorder} flex h-full flex-col gap-4`}>
+              <span className="p-2 text-2xl font-bold">
+                round {displayedRound} of {tabataGoal}
+              </span>
+              <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
                 {mode}
               </p>
               <p className="font-['Segoe_UI',sans-serif] text-5xl font-bold">
                 {formatTime(time)}
-              </p> */}
+              </p>
+              <span
+                className={`pb-2  ${
+                  mode === "done" ? activeModeClass.done : inactiveModeClass
+                }`}
+              >
+                done
+              </span>
             </div>
           )}
-        </div>
-      }
-      subMiddle={
-        <div
-          className={`grid place-items-center gap-2 uppercase ${widgetInnerBorder}`}
-        >
-          <span>
-            round {displayedRound} of {tabataGoal}
-          </span>
-          <div className="flex gap-4">
-            {[
-              ["countdown", countdownSeconds],
-              ["go", goSeconds],
-              ["rest", restSeconds],
-            ].map(([phase, duration]) => (
-              <div
-                key={phase}
-                className={`grid place-items-center gap-2 ${durationTitle}`}
-              >
-                <span
-                  className={`text-[1rem] ${
-                    mode === phase && isRunning
-                      ? activeModeClass[phase]
-                      : inactiveModeClass
-                  }`}
-                >
-                  {phase}
-                </span>
-                <span className={durationDisplay}>
-                  {formatTime(mode === phase ? time : duration)}
-                </span>
-              </div>
-            ))}
-          </div>
-          <span
-            className={`uppercase ${
-              mode === "done" ? activeModeClass.done : inactiveModeClass
-            }`}
-          >
-            done
-          </span>
         </div>
       }
       bottom={

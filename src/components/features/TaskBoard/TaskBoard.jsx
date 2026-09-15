@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/Icon";
 import { useLanguage } from "@/i18n";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   DragDropProvider,
@@ -59,6 +59,27 @@ export function TaskBoard() {
     setTasks((currentTasks) => move(currentTasks, event));
   }
 
+  function addTask(columnId, text) {
+    const newTask = {
+      id: crypto.randomUUID(),
+      text,
+    };
+
+    setTasks((currentTasks) => ({
+      ...currentTasks,
+      [columnId]: [...currentTasks[columnId], newTask],
+    }));
+  }
+
+  function editTask(columnId, taskId, text) {
+    setTasks((currentTasks) => ({
+      ...currentTasks,
+      [columnId]: currentTasks[columnId].map((task) =>
+        task.id === taskId ? { ...task, text } : task,
+      ),
+    }));
+  }
+
   const { t } = useLanguage();
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
@@ -77,6 +98,8 @@ export function TaskBoard() {
                 status={status}
                 tasks={tasks[status.id]}
                 t={t}
+                onAddTask={addTask}
+                onEditTask={editTask}
               />
             ))}
           </div>
@@ -103,7 +126,7 @@ function TaskBoardNotice({ text }) {
   );
 }
 
-function TaskBoardColumn({ status, tasks, t }) {
+function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
   const { ref, isDropTarget } = useDroppable({
     id: status.id,
     data: {
@@ -147,17 +170,25 @@ function TaskBoardColumn({ status, tasks, t }) {
               task={task}
               index={index}
               columnId={status.id}
+              onEditTask={onEditTask}
             />
           ))}
         </div>
 
-        <TaskComposer color={status.color} placeholder={t("addTask")} />
+        <TaskComposer
+          color={status.color}
+          placeholder={t("addTask")}
+          onAddTask={(text) => onAddTask(status.id, text)}
+        />
       </div>
     </section>
   );
 }
 
-function TaskCard({ task, index, columnId }) {
+function TaskCard({ task, index, columnId, onEditTask }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(task.text);
+  const cancelOnBlurRef = useRef(false);
   const { ref: draggableRef, isDragging } = useDraggable({
     id: task.id,
     data: {
@@ -180,6 +211,38 @@ function TaskCard({ task, index, columnId }) {
     droppableRef(element);
   }
 
+  function startEditing() {
+    setDraft(task.text);
+    setIsEditing(true);
+  }
+
+  function cancelEditing() {
+    setDraft(task.text);
+    setIsEditing(false);
+  }
+
+  function handleBlur(event) {
+    if (cancelOnBlurRef.current) {
+      cancelOnBlurRef.current = false;
+      return;
+    }
+
+    saveTask(event);
+  }
+
+  function saveTask(event) {
+    event?.preventDefault();
+    const text = draft.trim();
+
+    if (!text) {
+      cancelEditing();
+      return;
+    }
+
+    onEditTask(columnId, task.id, text);
+    setIsEditing(false);
+  }
+
   return (
     <article
       ref={setTaskRef}
@@ -197,14 +260,63 @@ function TaskCard({ task, index, columnId }) {
         ${isDragging ? "opacity-40" : ""}
       `}
     >
-      {task.text}
+      {isEditing ? (
+        <form onSubmit={saveTask}>
+          <input
+            type="text"
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onBlur={handleBlur}
+            onPointerDown={(event) => event.stopPropagation()}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                cancelOnBlurRef.current = true;
+                cancelEditing();
+              }
+            }}
+            aria-label="Editar tarefa"
+            className="w-full rounded border border-blue-400 bg-gray-900 px-2 py-1 outline-none"
+            autoFocus
+          />
+        </form>
+      ) : (
+        <div className="flex items-start justify-between gap-2">
+          <p className="min-w-0 flex-1" onDoubleClick={startEditing}>
+            {task.text}
+          </p>
+          <button
+            type="button"
+            onClick={startEditing}
+            onPointerDown={(event) => event.stopPropagation()}
+            className="cursor-pointer rounded px-1 text-slate-400 hover:bg-white/10 hover:text-white"
+            aria-label={`Editar ${task.text}`}
+            title="Editar tarefa"
+          >
+            ✎
+          </button>
+        </div>
+      )}
     </article>
   );
 }
 
-function TaskComposer({ color, placeholder }) {
+function TaskComposer({ color, placeholder, onAddTask }) {
+  const [text, setText] = useState("");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const taskText = text.trim();
+
+    if (!taskText) return;
+
+    onAddTask(taskText);
+    setText("");
+  }
+
   return (
-    <div
+    <form
+      onSubmit={handleSubmit}
       className={`
         flex
         items-center
@@ -219,11 +331,18 @@ function TaskComposer({ color, placeholder }) {
       <Icon name="plus" />
       <input
         type="text"
-        name=""
-        id=""
+        value={text}
+        onChange={(event) => setText(event.target.value)}
         placeholder={placeholder}
-        className="pl-2 w-full"
+        aria-label={placeholder}
+        className="w-full bg-transparent pl-2 outline-none placeholder:text-slate-400"
       />
-    </div>
+      <button
+        type="submit"
+        className="cursor-pointer rounded px-2 py-1 text-xs font-bold hover:bg-white/10"
+      >
+        Enter
+      </button>
+    </form>
   );
 }

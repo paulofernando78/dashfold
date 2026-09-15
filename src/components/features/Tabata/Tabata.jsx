@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useState } from "react";
+import { useLanguage } from "@/i18n";
 
 import {
   WidgetBody,
@@ -41,6 +42,7 @@ export function Tabata({
   onConfigChange,
   onClose,
 }) {
+  const { language, t } = useLanguage();
   const [countdownSeconds, setCountdownSeconds] = useState(
     initialCountdownSeconds,
   );
@@ -69,7 +71,7 @@ export function Tabata({
 
     const voiceMessage = new SpeechSynthesisUtterance(message);
 
-    voiceMessage.lang = "en-US";
+    voiceMessage.lang = language === "pt" ? "pt-BR" : "en-US";
     voiceMessage.rate = 1;
     voiceMessage.pitch = 1;
     voiceMessage.volume = 1;
@@ -89,7 +91,7 @@ export function Tabata({
       }
 
       if (mode === "countdown") {
-        speak("Go");
+        speak(t("go"));
         setMode("go");
         setTime(goSeconds);
         return;
@@ -101,14 +103,14 @@ export function Tabata({
         setCompletedRounds(nextCompletedRounds);
 
         if (nextCompletedRounds >= tabataGoal) {
-          speak("Workout complete");
+          speak(t("workoutComplete"));
           setMode("done");
           setIsRunning(false);
           setTime(0);
           return;
         }
 
-        speak("Rest");
+        speak(t("rest"));
         setMode("rest");
         setTime(restSeconds);
         return;
@@ -131,6 +133,7 @@ export function Tabata({
     tabataGoal,
     goSeconds,
     restSeconds,
+    t,
   ]);
 
   const displayedRound = Math.min(completedRounds + 1, tabataGoal);
@@ -238,7 +241,7 @@ export function Tabata({
         <div className="text-center uppercase">
           {isEditing ? (
             <div className="mx-auto grid w-max grid-cols-[1fr_auto] gap-4">
-              <span className="place-self-center">countdown</span>
+              <span className="place-self-center">{t("countdown")}</span>
               <NumberInput
                 hideLabel
                 label="Countdown seconds"
@@ -247,7 +250,7 @@ export function Tabata({
                 onChange={setEditCountdownSeconds}
                 min={1}
               />
-              <span className="place-self-center">go</span>
+              <span className="place-self-center">{t("go")}</span>
               <NumberInput
                 hideLabel
                 label="Go seconds"
@@ -256,7 +259,7 @@ export function Tabata({
                 onChange={setEditGoSeconds}
                 min={1}
               />
-              <span className="place-self-center">rest</span>
+              <span className="place-self-center">{t("rest")}</span>
               <NumberInput
                 hideLabel
                 label="Rest seconds"
@@ -265,7 +268,7 @@ export function Tabata({
                 onChange={setEditRestSeconds}
                 min={1}
               />
-              <span className="place-self-center">rounds</span>
+              <span className="place-self-center">{t("rounds")}</span>
               <NumberInput
                 hideLabel
                 label="Rounds"
@@ -280,10 +283,10 @@ export function Tabata({
               className={`${widgetGlassMorphism} flex h-full flex-col gap-4`}
             >
               <span className="p-2 text-2xl font-bold">
-                round {displayedRound} of {tabataGoal}
+                {t("round")} {displayedRound} {t("of")} {tabataGoal}
               </span>
               <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
-                {mode}
+                {t(mode)}
               </p>
               <p
                 className="

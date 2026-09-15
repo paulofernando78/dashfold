@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/i18n";
 
 import {
   WidgetBody,
@@ -51,6 +52,7 @@ export function Pomodoro({
   onConfigChange,
   onClose,
 }) {
+  const { t } = useLanguage();
   const [focusMinutes, setFocusMinutes] = useState(initialFocusMinutes);
   const [breakMinutes, setBreakMinutes] = useState(initialBreakMinutes);
   const [longBreakMinutes, setLongBreakMinutes] = useState(
@@ -311,7 +313,7 @@ export function Pomodoro({
                   w-max
                 "
               >
-                <span className="place-self-center">focus</span>
+                <span className="place-self-center">{t("focus")}</span>
                 <NumberInput
                   hideLabel
                   label="Pomodoro Goal"
@@ -320,7 +322,7 @@ export function Pomodoro({
                   onChange={setEditPomodoroGoal}
                   min={1}
                 />
-                <span className="place-self-center">minutes</span>
+                <span className="place-self-center">{t("minutes")}</span>
                 <NumberInput
                   hideLabel
                   label="focus"
@@ -329,7 +331,7 @@ export function Pomodoro({
                   onChange={setEditFocusMinutes}
                   min={1}
                 />
-                <span className="place-self-center">break</span>
+                <span className="place-self-center">{t("break")}</span>
                 <NumberInput
                   hideLabel
                   label="break"
@@ -338,7 +340,7 @@ export function Pomodoro({
                   onChange={setEditBreakMinutes}
                   min={0}
                 />
-                <span className="place-self-center">long</span>
+                <span className="place-self-center">{t("long")}</span>
                 <NumberInput
                   hideLabel
                   label="long break"
@@ -358,10 +360,10 @@ export function Pomodoro({
                   `}
               >
                 <span className="p-2 text-2xl font-bold">
-                  focus {displayedPomodoro} of {pomodoroGoal}
+                  {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
                 </span>
                 <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
-                  {mode}
+                  {t(mode)}
                 </p>
                 <span className={`text-5xl ${durationDisplay}`}>
                   {formatTime(time)}

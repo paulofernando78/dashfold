@@ -22,6 +22,7 @@ import { TaskBoard } from "@/components/features/TaskBoard";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
+import { useLanguage } from "@/i18n";
 
 const WIDGETS_STORAGE_KEY = "widgets";
 
@@ -80,6 +81,7 @@ function SortableWidget({
 }
 
 function App() {
+  const { t } = useLanguage();
   const [widgets, setWidgets] = useState(getSavedWidgets);
   const widgetPickerRef = useRef(null);
 
@@ -151,7 +153,7 @@ function App() {
 
       {/* Widgets */}
       <SectionPanel
-        title="Widgets"
+        title={t("widgets")}
         widgetClassName
         storageKey="section-widget"
         count={widgets.length}
@@ -180,7 +182,7 @@ function App() {
       </SectionPanel>
 
       {/* Task Board */}
-      <SectionPanel title="Task Board" storageKey="section-task-board">
+      <SectionPanel title={t("taskBoard")} storageKey="section-task-board">
         <TaskBoard />
       </SectionPanel>
 

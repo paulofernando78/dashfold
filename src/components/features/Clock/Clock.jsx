@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/i18n";
 
 import {
   WidgetBody,
@@ -52,8 +53,8 @@ function formatHourTime(time) {
   return time.slice(11, 16);
 }
 
-function formatWeekday(date) {
-  return new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
+function formatWeekday(date, locale) {
+  return new Date(`${date}T12:00:00`).toLocaleDateString(locale, {
     weekday: "short",
   });
 }
@@ -68,6 +69,7 @@ export function Clock({
   onConfigChange,
   onClose,
 }) {
+  const { locale, t } = useLanguage();
   const locationInputRef = useRef(null);
 
   // Clock
@@ -95,14 +97,14 @@ export function Clock({
     return () => clearInterval(intervalID);
   }, []);
 
-  const currentTime = time.toLocaleTimeString("en-US", {
+  const currentTime = time.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: true,
+    hour12: locale === "en-US",
     timeZone: selectedTimezone,
   });
 
-  const currentDate = time.toLocaleDateString("en-US", {
+  const currentDate = time.toLocaleDateString(locale, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -305,7 +307,7 @@ export function Clock({
                     gap-2
                   "
                 >
-                  <span className="text-sm">Now</span>
+                  <span className="text-sm">{t("now")}</span>
                   <span>{weather.current.temperature}°</span>
                   <Icon
                     name={getWeatherIconName(
@@ -359,8 +361,8 @@ export function Clock({
                       text-sm
                     "
                 >
-                  <span className="row-start-2">max</span>
-                  <span className="row-start-3">min</span>
+                  <span className="row-start-2">{t("maximum")}</span>
+                  <span className="row-start-3">{t("minimum")}</span>
                 </div>
                 {weather.nextDays.map((day) => (
                   <div
@@ -371,7 +373,7 @@ export function Clock({
                         gap-2
                       "
                   >
-                    <span className="text-sm">{formatWeekday(day.date)}</span>
+                    <span className="text-sm">{formatWeekday(day.date, locale)}</span>
                     <span>{day.max}°</span>
                     <span>{day.min}°</span>
                     <Icon
@@ -400,7 +402,7 @@ export function Clock({
                   onKeyDown={(event) =>
                     submitOnEnter(event, handleConfirmWeather)
                   }
-                  placeholder="Type location"
+                  placeholder={t("typeLocation")}
                   className="
                     w-full
                     px-2

@@ -4,8 +4,10 @@ import { Icon } from "@/components/ui/Icon";
 import { widgetCatalog } from "./WidgetCatalog";
 
 import { widgetHeight, widgetBorder } from "@/components/ui/Widget";
+import { useLanguage } from "@/i18n";
 
 export function WidgetPicker({ onAdd, ref }) {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const pickerRef = useRef(null);
 
@@ -69,7 +71,7 @@ export function WidgetPicker({ onAdd, ref }) {
     >
       <button
         type="button"
-        aria-label="Add widget"
+        aria-label={t("addWidget")}
         onClick={handleClick}
         className={`
           grid
@@ -93,7 +95,7 @@ export function WidgetPicker({ onAdd, ref }) {
           `}
         >
           <header className="header grid text-center">
-            <span>Select</span>
+            <span>{t("select")}</span>
           </header>
           <div
             className={`
@@ -118,7 +120,7 @@ export function WidgetPicker({ onAdd, ref }) {
                     font-bold
                   "
                 >
-                  {category}
+                  {t(category)}
                 </h3>
 
                 <div
@@ -136,7 +138,7 @@ export function WidgetPicker({ onAdd, ref }) {
                       style={widget.widgetStyle}
                       className={`clickable ${widgetPickerBorder} bg-slate-500`}
                     >
-                      <span className="uppercase">{widget.title}</span>
+                      <span className="uppercase">{t(widget.title)}</span>
                     </button>
                   ))}
                 </div>

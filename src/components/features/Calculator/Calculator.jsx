@@ -2,12 +2,14 @@ import { useState } from "react";
 
 import { WidgetBody } from "@/components/ui/Widget";
 import { Icon } from "@/components/ui/Icon";
+import { useLanguage } from "@/i18n";
 
 export function Calculator({
   display: savedDisplay = "0",
   onConfigChange,
   onClose,
 }) {
+  const { language, t } = useLanguage();
   const [display, setDisplay] = useState(savedDisplay);
   const [shouldResetDisplay, setShouldResetDisplay] = useState(false);
   const [history, setHistory] = useState([]);
@@ -178,11 +180,19 @@ export function Calculator({
     iconSize = 20,
     iconClassName = "text-whie",
   ) {
+    if (value === "Error") {
+      return <span>{t("error")}</span>;
+    }
+
     return value.split("").map((character, index) => {
       const iconName = getOperatorIconName(character);
 
       if (!iconName) {
-        return <span key={`${character}-${index}`}>{character}</span>;
+        const localizedCharacter =
+          language === "pt" && character === "." ? "," : character;
+        return (
+          <span key={`${character}-${index}`}>{localizedCharacter}</span>
+        );
       }
 
       return (
@@ -543,7 +553,7 @@ export function Calculator({
             0
           </button>
           <button onClick={inputDecimal} className={`clickable ${button}`}>
-            .
+            {language === "pt" ? "," : "."}
           </button>
           <button onClick={deleteLastDigit} className={`clickable ${button}`}>
             <Icon name="delete" className="text-white" />

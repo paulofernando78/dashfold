@@ -36,7 +36,7 @@ export const widgetCatalog = {
   quickNotes: {
     category: "productivity",
     Component: QuickNotes,
-    title: "quick notes",
+    title: "quickNotes",
     iconName: "quickNotes",
     widgetClassName: "w-[206px] paper-texture",
     defaultConfig: {
@@ -115,7 +115,7 @@ export const widgetCatalog = {
   },
   waterIntake: {
     category: "health",
-    title: "water intake",
+    title: "waterIntake",
     Component: WaterIntake,
     iconName: "waterIntake",
     widgetClassName: `w-[222.45px] ${bg}`,

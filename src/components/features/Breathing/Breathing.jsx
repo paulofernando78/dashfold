@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useEffectEvent } from "react";
 
 import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
+import { useLanguage } from "@/i18n";
 
 const START_COUNTDOWN_SECONDS = 5;
 const presets = {
@@ -59,6 +60,7 @@ const presets = {
 };
 
 export function Breathing({ onConfigChange }) {
+  const { language, t } = useLanguage();
   const [countdownSeconds, setCountdownSeconds] = useState(
     START_COUNTDOWN_SECONDS,
   );
@@ -156,9 +158,12 @@ export function Breathing({ onConfigChange }) {
     const timer = setTimeout(() => {
       if (remainingSeconds === 1) {
         stopBreathingAudio();
+
         setRemainingSeconds(0);
         setIsRunning(false);
         setHasStarted(false);
+        setCountdownSeconds(START_COUNTDOWN_SECONDS);
+
         setPhaseIndex(0);
         setPhaseSeconds(Math.ceil(currentPreset.phases[0].duration / 1000));
 
@@ -358,6 +363,7 @@ export function Breathing({ onConfigChange }) {
     backgroundGongRef.current = null;
   }
 
+  // Random sound timing
   useEffect(() => {
     if (!isRunning || !isSoundEnabled) return;
 
@@ -530,12 +536,12 @@ export function Breathing({ onConfigChange }) {
                     <span className="text-sm">{currentPreset.label}</span>
                     {!hasStarted ? (
                       <>
-                        <span>ready?</span>
+                        <span>{t("ready")}</span>
                         <span>{countdownSeconds}</span>
                       </>
                     ) : (
                       <>
-                        <span>{currentPhase.label}</span>
+                        <span>{t(currentPhase.id)}</span>
                         <span>{phaseSeconds}s</span>
                       </>
                     )}
@@ -581,7 +587,7 @@ export function Breathing({ onConfigChange }) {
                 gap-2
               "
             >
-              <span className="text-center">Breathing pattern</span>
+              <span className="text-center">{t("breathingPattern")}</span>
 
               {Object.entries(presets).map(([id, preset]) => (
                 <button
@@ -606,7 +612,7 @@ export function Breathing({ onConfigChange }) {
                 gap-2
               "
             >
-              <span className="text-center">Session duration</span>
+              <span className="text-center">{t("sessionDuration")}</span>
 
               {[1, 2, 3, 4, 5].map((minutes) => (
                 <button
@@ -618,7 +624,8 @@ export function Breathing({ onConfigChange }) {
           ${sessionMinutes === minutes ? "font-bold" : "opacity-50"}
         `}
                 >
-                  {minutes} minute{minutes > 1 ? "s" : ""}
+                  {minutes} {t("minute")}
+                  {language === "en" && minutes > 1 ? "s" : ""}
                 </button>
               ))}
             </div>

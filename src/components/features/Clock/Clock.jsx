@@ -276,6 +276,7 @@ export function Clock({
               gap-4
               w-full
               h-full
+              min-h-0
             "
           >
             <div
@@ -456,15 +457,13 @@ export function Clock({
         )
       }
       bottom={
-        <div>
-          <WidgetControls>
-            <WidgetControls.Edit
-              isEditing={isEditingWeather}
-              onEdit={handleEditWeather}
-              onConfirm={handleConfirmWeather}
-            />
-          </WidgetControls>
-        </div>
+        <WidgetControls>
+          <WidgetControls.Edit
+            isEditing={isEditingWeather}
+            onEdit={handleEditWeather}
+            onConfirm={handleConfirmWeather}
+          />
+        </WidgetControls>
       }
     />
   );

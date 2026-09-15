@@ -143,7 +143,7 @@ export function Calculator({
         ...currentHistory,
       ]);
 
-      (formattedExpression);
+      formattedExpression;
       updateDisplay(formattedResult);
       setShouldResetDisplay(true);
     } catch {
@@ -370,7 +370,17 @@ export function Calculator({
     border-0
     text-white
   `;
-  // const numberButton = "!bg-gray-900/70 hover:!bg-gray-800";
+
+  function getDisplayFontSize(value) {
+    const length = value.replaceAll(" ", "").length;
+
+    if (length >= 11) return "text-xl";
+    if (length >= 9) return "text-2xl";
+    if (length >= 8) return "text-3xl";
+
+    return "text-3xl";
+  }
+
   const utilityButton =
     "!border !border-slate-600 !bg-slate-600/70 hover:!bg-slate-500";
   const operatorButton =
@@ -384,13 +394,15 @@ export function Calculator({
       onClose={onClose}
       top={
         <div
-          className="
+          className={`
             flex
             justify-end
             mr-2
-          "
+            overflow-hidden
+            ${getDisplayFontSize(display)}
+          `}
         >
-          <div className="grid">
+          <div className="grid h-[30px]">
             <span
               className="
                 flex
@@ -548,35 +560,37 @@ export function Calculator({
       bottom={
         <div
           className="
-            relative
-            h-25.25
-            mb-4
-            p-1.75
-            text-sm
-            border
-            border-gray-300
-            paper-texture
-            rounded
-            overflow-y-auto
-          "
+              relative
+              h-35.25
+              p-1.75
+              text-sm
+              border
+              border-gray-00
+              paper-texture
+              rounded
+              overflow-auto
+            "
         >
-          <Icon
-                name="listClock"
-                color="gray"
-                className="absolute top-1 right-1"
-                aria-hidden="true"
-              />
           {history.map((calculation) => (
             <div
               key={calculation.id}
               className="
-                flex text-[1.43rem] font-['Indie_Flower',cursive]
-              "
+                  flex
+                  text-[1.43rem]
+                  font-['Indie_Flower',cursive]
+                  space-x-2
+                "
             >
-              <span className="flex text-gray-800">
-                {renderDisplayValue(calculation.expression, 14, "")}
+              <span
+                className="
+                  flex
+                text-gray-800
+                "
+              >
+                {renderDisplayValue(calculation.expression, 14, "")}{" "}
+                <span className="pl-2">=</span>
               </span>
-              <span className="ml-1 text-gray-900/50">= {calculation.result}</span>
+              <span className="text-gray-900/50">{calculation.result}</span>
             </div>
           ))}
         </div>

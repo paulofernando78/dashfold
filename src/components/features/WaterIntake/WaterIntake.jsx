@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
+import {
+  WidgetBody,
+  WidgetControls,
+  widgetGlassMorphism,
+} from "@/components/ui/Widget";
 import { Icon } from "@/components/ui/Icon";
 import { NumberInput } from "@/components/ui/NumberInput";
 
@@ -84,58 +88,62 @@ export function WaterIntake({ onConfigChange, onClose }) {
         </span>
       }
       middle={
-        !isEditing ? (
-          <div className="grid grid-cols-2 gap-2">
-            {glasses.map((glass, index) => {
-              const isCompleted = index < completedGlasses;
+        <div
+          className={`${widgetGlassMorphism} flex h-full items-center justify-center`}
+        >
+          {!isEditing ? (
+            <div className="grid grid-cols-2 gap-2">
+              {glasses.map((glass, index) => {
+                const isCompleted = index < completedGlasses;
 
-              return (
-                <button
-                  type="button"
-                  key={index}
-                  onClick={() => handleGlassClick(index)}
-                >
-                  <div
-                    className="
+                return (
+                  <button
+                    type="button"
+                    key={index}
+                    onClick={() => handleGlassClick(index)}
+                  >
+                    <div
+                      className="
                       flex
                       items-center
                       justify-center
                       gap-2
                       clickable
                     "
-                  >
-                    <span>{glass.ml}</span>
-                    <Icon
-                      name="glassWater"
-                      className={
-                        isCompleted ? "text-blue-500" : "text-gray-400"
-                      }
-                    />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="flex gap-2 justify-center">
-            <NumberInput
-              label="ml"
-              name="glass-ml"
-              value={editGlassMl}
-              onChange={setEditGlassMl}
-              min={1}
-              className="w-12"
-            />
+                    >
+                      <span>{glass.ml}</span>
+                      <Icon
+                        name="glassWater"
+                        className={
+                          isCompleted ? "text-blue-500" : "text-gray-400"
+                        }
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex justify-center gap-2">
+              <NumberInput
+                label="ml"
+                name="glass-ml"
+                value={editGlassMl}
+                onChange={setEditGlassMl}
+                min={1}
+                className="w-12"
+              />
 
-            <NumberInput
-              label="goal"
-              name="goal-glasses"
-              value={editGoalGlasses}
-              onChange={setEditGoalGlasses}
-              min={1}
-            />
-          </div>
-        )
+              <NumberInput
+                label="goal"
+                name="goal-glasses"
+                value={editGoalGlasses}
+                onChange={setEditGoalGlasses}
+                min={1}
+              />
+            </div>
+          )}
+        </div>
       }
       bottom={
         <WidgetControls>

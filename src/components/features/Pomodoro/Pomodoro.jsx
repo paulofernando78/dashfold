@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   WidgetBody,
   WidgetControls,
-  widgetInnerBorder,
+  widgetGlassMorphism,
 } from "@/components/ui/Widget";
 
 import { NumberInput } from "@/components/ui/NumberInput";
@@ -370,7 +370,7 @@ export function Pomodoro({
           <>
             {/* Focus • Break • Long  */}
             <div
-              className={`grid place-items-center gap-2 uppercase ${widgetInnerBorder}`}
+              className={`grid place-items-center gap-2 uppercase ${widgetGlassMorphism}`}
             >
               {/* 1 OF 4 */}
               <span>

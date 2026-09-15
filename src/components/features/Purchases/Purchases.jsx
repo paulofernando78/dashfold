@@ -4,7 +4,7 @@ const csvUrl = "/assets/data/purchases.csv";
 
 import {
   WidgetBody,
-  widgetInnerBorder,
+  widgetGlassMorphism,
   // WidgetControls,
 } from "@/components/ui/Widget";
 
@@ -107,7 +107,7 @@ export function Purchases() {
               <div
                 key={purchase.id}
                 className={`
-                  ${widgetInnerBorder}
+                  ${widgetGlassMorphism}
                   relative
                   grid
                   gap-1

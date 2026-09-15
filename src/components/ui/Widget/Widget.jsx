@@ -3,7 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 export function WidgetContainer({ children }) {
   return <div className="flex gap-2">{children}</div>;
 }
-export const widgetHeight = `h-[440px]`;
+export const widgetHeight = `h-[]`;
 
 // + WidgetPicker
 export const widgetBorder = `
@@ -21,6 +21,17 @@ export const widgetInnerBorder = `
   from-[#111417]
   to-[#222531]
   rounded-md
+`;
+
+export const widgetGlassMorphism = `
+  p-3
+  rounded-xl
+  border
+  border-white/15
+  bg-white/8
+  backdrop-blur-md
+  shadow-lg
+  shadow-black/20
 `;
 
 export function WidgetCard({

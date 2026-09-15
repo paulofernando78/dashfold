@@ -3,7 +3,7 @@ import { useEffect, useEffectEvent, useState } from "react";
 import {
   WidgetBody,
   WidgetControls,
-  widgetInnerBorder,
+  widgetGlassMorphism,
 } from "@/components/ui/Widget";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { playTick } from "@/utils/audio";
@@ -12,8 +12,6 @@ const DEFAULT_COUNTDOWN_SECONDS = 5;
 const DEFAULT_GO_SECONDS = 20;
 const DEFAULT_REST_SECONDS = 10;
 const DEFAULT_TABATA_GOAL = 8;
-
-const inactiveModeClass = "text-gray-400";
 
 function calculateSessionDuration({
   countdownSeconds,
@@ -278,7 +276,9 @@ export function Tabata({
               />
             </div>
           ) : (
-            <div className={`${widgetInnerBorder} flex h-full flex-col gap-4`}>
+            <div
+              className={`${widgetGlassMorphism} flex h-full flex-col gap-4`}
+            >
               <span className="p-2 text-2xl font-bold">
                 round {displayedRound} of {tabataGoal}
               </span>

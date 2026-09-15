@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   WidgetBody,
   WidgetControls,
-  widgetInnerBorder,
+  widgetGlassMorphism,
 } from "@/components/ui/Widget";
 import { Icon } from "@/components/ui/Icon";
 
@@ -273,9 +273,9 @@ export function Clock({
             className="
               flex
               flex-col
-              gap-1
+              gap-4
               w-full
-              h-60
+              h-full
             "
           >
             <div
@@ -474,7 +474,7 @@ function WeatherWrapper({ children, className }) {
   return (
     <div
       className={`
-        ${widgetInnerBorder}
+        ${widgetGlassMorphism}
         ${className}
       `}
     >

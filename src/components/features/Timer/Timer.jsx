@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   WidgetBody,
   WidgetControls,
-  widgetInnerBorder,
+  widgetGlassMorphism,
 } from "@/components/ui/Widget";
 
 import { Icon } from "@/components/ui/Icon";
@@ -251,7 +251,7 @@ export function Timer({
         )
       }
       subMiddle={
-        <div className={`grid gap-2 w-full ${widgetInnerBorder}`}>
+        <div className={`grid gap-2 w-full ${widgetGlassMorphism}`}>
           <label>
             <input
               type="text"

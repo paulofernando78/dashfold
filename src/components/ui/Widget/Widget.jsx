@@ -3,7 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 export function WidgetContainer({ children }) {
   return <div className="flex gap-2">{children}</div>;
 }
-export const widgetHeight = `h-[]`;
+export const widgetHeight = `h-[468px]`;
 
 // + WidgetPicker
 export const widgetBorder = `

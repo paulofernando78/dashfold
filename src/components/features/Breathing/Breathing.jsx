@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useEffectEvent } from "react";
 
 import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 
+const START_COUNTDOWN_SECONDS = 5;
 const presets = {
   relaxed: {
     label: "4-2-4",
@@ -58,6 +59,9 @@ const presets = {
 };
 
 export function Breathing({ onConfigChange }) {
+  const [countdownSeconds, setCountdownSeconds] = useState(
+    START_COUNTDOWN_SECONDS,
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
@@ -86,9 +90,45 @@ export function Breathing({ onConfigChange }) {
     rounded-full
   `;
 
-  // const timer
+  const startBreathingAudio = useEffectEvent(() => {
+    if (!isSoundEnabled) return;
+
+    startBackgroundGong();
+    playSingBowl();
+  });
+
+  const stopBreathingAudio = useEffectEvent(() => {
+    stopBackgroundGong();
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  });
+
   useEffect(() => {
-    if (!isRunning || phaseSeconds <= 0) return;
+    if (!isRunning || hasStarted) return;
+
+    const timer = setTimeout(() => {
+      if (countdownSeconds > 1) {
+        setCountdownSeconds((seconds) => seconds - 1);
+        return;
+      }
+
+      setCountdownSeconds(0);
+      setHasStarted(true);
+
+      if (isSoundEnabled) {
+        startBreathingAudio();
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [isRunning, hasStarted, isSoundEnabled, countdownSeconds]);
+
+  // phaseSeconds
+  useEffect(() => {
+    if (!isRunning || !hasStarted || phaseSeconds <= 0) return;
 
     const timer = setTimeout(() => {
       if (phaseSeconds === 1) {
@@ -107,23 +147,20 @@ export function Breathing({ onConfigChange }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isRunning, phaseSeconds, phaseIndex, currentPreset]);
+  }, [isRunning, hasStarted, phaseSeconds, phaseIndex, currentPreset]);
 
+  // remainingSeconds
   useEffect(() => {
-    if (!isRunning || remainingSeconds <= 0) return;
+    if (!isRunning || !hasStarted || remainingSeconds <= 0) return;
 
     const timer = setTimeout(() => {
       if (remainingSeconds === 1) {
+        stopBreathingAudio();
         setRemainingSeconds(0);
         setIsRunning(false);
         setHasStarted(false);
         setPhaseIndex(0);
         setPhaseSeconds(Math.ceil(currentPreset.phases[0].duration / 1000));
-
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-        }
 
         return;
       }
@@ -132,7 +169,7 @@ export function Breathing({ onConfigChange }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isRunning, remainingSeconds, currentPreset]);
+  }, [isRunning, hasStarted, remainingSeconds, currentPreset]);
 
   useEffect(() => {
     const animations = circlesRef.current?.getAnimations({
@@ -360,25 +397,17 @@ export function Breathing({ onConfigChange }) {
     setIsRunning(nextRunning);
 
     if (nextRunning) {
-      setHasStarted(true);
       setIsEditing(false);
-
-      if (isSoundEnabled) {
-        startBackgroundGong();
-
-        if (!hasStarted) {
-          playSingBowl();
-        }
-      }
 
       if (remainingSeconds === 0) {
         setRemainingSeconds(sessionMinutes * 60);
         setPhaseIndex(0);
+        setCountdownSeconds(START_COUNTDOWN_SECONDS);
+        setHasStarted(false);
       }
 
-      if (audioRef.current) {
-        audioRef.current.volume = 1;
-        audioRef.current?.play();
+      if (hasStarted && isSoundEnabled) {
+        startBackgroundGong();
       }
     } else {
       stopBackgroundGong();
@@ -427,7 +456,7 @@ export function Breathing({ onConfigChange }) {
     setHasStarted(false);
 
     stopBackgroundGong();
-    
+
     setPhaseIndex(0);
     setRemainingSeconds(sessionMinutes * 60);
 
@@ -499,8 +528,17 @@ export function Breathing({ onConfigChange }) {
                     "
                   >
                     <span className="text-sm">{currentPreset.label}</span>
-                    <span>{currentPhase.label}</span>
-                    <span>{phaseSeconds}s</span>
+                    {!hasStarted ? (
+                      <>
+                        <span>ready?</span>
+                        <span>{countdownSeconds}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{currentPhase.label}</span>
+                        <span>{phaseSeconds}s</span>
+                      </>
+                    )}
                   </div>
 
                   {/* Circle */}

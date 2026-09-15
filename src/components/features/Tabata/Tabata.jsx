@@ -288,13 +288,6 @@ export function Tabata({
               <p className="font-['Segoe_UI',sans-serif] text-5xl font-bold">
                 {formatTime(time)}
               </p>
-              <span
-                className={`pb-2  ${
-                  mode === "done" ? activeModeClass.done : inactiveModeClass
-                }`}
-              >
-                done
-              </span>
             </div>
           )}
         </div>

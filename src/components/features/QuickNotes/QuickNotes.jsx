@@ -6,15 +6,6 @@ import { Icon } from "@/components/ui/Icon";
 import { TextInput } from "@/components/ui/TextInput";
 import { CheckboxIcon } from "@/components/ui/CheckboxIcon";
 
-function createBlock(type = "text", content = "") {
-  return {
-    id: crypto.randomUUID(),
-    type,
-    content,
-    checked: false,
-  };
-}
-
 export function QuickNotes({
   note = "",
   blocks: savedBlocks = [],
@@ -22,7 +13,7 @@ export function QuickNotes({
   onClose,
 }) {
   const inputRefs = useRef(new Map());
-  const [openMenu, setOpenMenu] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [blocks, setBlocks] = useState(() =>
     savedBlocks.length > 0 ? savedBlocks : [createBlock("text", note)],
   );
@@ -30,7 +21,7 @@ export function QuickNotes({
   const [future, setFuture] = useState([]);
 
   function handleOpenMenu() {
-    setOpenMenu((current) => !current);
+    setIsMenuOpen((current) => !current);
   }
 
   function handleAddBlock(type) {
@@ -44,7 +35,7 @@ export function QuickNotes({
       : [...blocks, newBlock];
 
     saveBlocks(nextBlocks);
-    setOpenMenu(false);
+    setIsMenuOpen(false);
 
     requestAnimationFrame(() => {
       inputRefs.current.get(newBlock.id)?.focus();
@@ -194,7 +185,7 @@ export function QuickNotes({
                   })
                 }
                 onKeyDown={(event) => handleBlockKeyDown(event, blockIndex)}
-                placeholder={block.type === "checkbox" ? "..." : "..."}
+                placeholder={block.type === "checkbox" ? "..." : "type '/' to select"}
                 className={`
                   flex-1
                   min-w-0
@@ -212,7 +203,7 @@ export function QuickNotes({
       bottom={
         <WidgetControls>
           <div className="relative">
-            {openMenu && <QuickNotesMenu handleAddBlock={handleAddBlock} />}
+            {isMenuOpen && <QuickNotesMenu handleAddBlock={handleAddBlock} />}
             <WidgetControls.Add onClick={handleOpenMenu} />
           </div>
           <WidgetControls.Undo onClick={handleUndo} />
@@ -222,6 +213,15 @@ export function QuickNotes({
       }
     />
   );
+}
+
+function createBlock(type = "text", content = "") {
+  return {
+    id: crypto.randomUUID(),
+    type,
+    content,
+    checked: false,
+  };
 }
 
 function QuickNotesMenu({ handleAddBlock }) {

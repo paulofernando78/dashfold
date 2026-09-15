@@ -8,6 +8,7 @@ h4,
 p,
 span {
   line-height: 1;
+  scrollbar-gutter: stable both-edges;
 }
 
 body {

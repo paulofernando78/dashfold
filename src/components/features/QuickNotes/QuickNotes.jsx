@@ -179,7 +179,6 @@ export function QuickNotes({
                   className="self-start mt-[0.1rem] shrink-0"
                 />
               )}
-
               <TextInput
                 inputRef={(element) => {
                   if (element) {
@@ -213,37 +212,7 @@ export function QuickNotes({
       bottom={
         <WidgetControls>
           <div className="relative">
-            {openMenu && (
-              <div
-                className="
-                  absolute
-                  bottom-12
-                  grid
-                  gap-2
-                  p-2
-                  bg-[#333333]
-                  rounded
-                  z-10
-                "
-              >
-                <button
-                  type="button"
-                  onClick={() => handleAddBlock("text")}
-                  className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
-                >
-                  <Icon name="type" />
-                  <span>Text</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleAddBlock("checkbox")}
-                  className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
-                >
-                  <Icon name="squareCheck" />
-                  <span>Checkbox</span>
-                </button>
-              </div>
-            )}
+            {openMenu && <QuickNotesMenu handleAddBlock={handleAddBlock} />}
             <WidgetControls.Add onClick={handleOpenMenu} />
           </div>
           <WidgetControls.Undo onClick={handleUndo} />
@@ -252,5 +221,39 @@ export function QuickNotes({
         </WidgetControls>
       }
     />
+  );
+}
+
+function QuickNotesMenu({ handleAddBlock }) {
+  return (
+    <div
+      className="
+        absolute
+        bottom-12
+        grid
+        gap-2
+        p-2
+        bg-[#333333]
+        rounded
+        z-10
+      "
+    >
+      <button
+        type="button"
+        onClick={() => handleAddBlock("text")}
+        className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
+      >
+        <Icon name="type" />
+        <span>Text</span>
+      </button>
+      <button
+        type="button"
+        onClick={() => handleAddBlock("checkbox")}
+        className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
+      >
+        <Icon name="squareCheck" />
+        <span>Checkbox</span>
+      </button>
+    </div>
   );
 }

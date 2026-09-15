@@ -3,11 +3,7 @@ import { useLanguage } from "@/i18n";
 
 import { useRef, useState } from "react";
 
-import {
-  DragDropProvider,
-  useDraggable,
-  useDroppable,
-} from "@dnd-kit/react";
+import { DragDropProvider, useDraggable, useDroppable } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 
 const statusOptions = [
@@ -163,6 +159,7 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
           <Icon name="ellipsis" className="translate-y-[-0.4rem]" />
         </div>
 
+        {/* TaskCard */}
         <div className="flex flex-col gap-2">
           {tasks.map((task, index) => (
             <TaskCard
@@ -301,6 +298,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
   );
 }
 
+// Add task...
 function TaskComposer({ color, placeholder, onAddTask }) {
   const [text, setText] = useState("");
 

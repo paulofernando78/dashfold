@@ -24,6 +24,7 @@ export const widgetInnerBorder = `
 `;
 
 export const widgetGlassMorphism = `
+  h-[176px]  
   p-3
   rounded-xl
   border

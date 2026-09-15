@@ -6,11 +6,11 @@ import App from './App.jsx'
 
 // Supports weights 100-900
 import '@fontsource-variable/montserrat/wght.css';
-
 // Supports weights 200-700
 import '@fontsource-variable/oswald/wght.css';
-
 import '@fontsource/indie-flower';
+// Supports weights 100-800
+import '@fontsource-variable/jetbrains-mono/wght.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

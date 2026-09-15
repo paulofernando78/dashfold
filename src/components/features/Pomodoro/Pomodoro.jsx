@@ -354,7 +354,6 @@ export function Pomodoro({
                     flex
                     flex-col
                     gap-4
-                    h-full
                     ${widgetGlassMorphism}
                   `}
               >
@@ -364,11 +363,9 @@ export function Pomodoro({
                 <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
                   {mode}
                 </p>
-                {mode !== "done" && (
-                  <span className={`text-5xl ${durationDisplay}`}>
-                    {formatTime(time)}
-                  </span>
-                )}
+                <span className={`text-5xl ${durationDisplay}`}>
+                  {formatTime(time)}
+                </span>
               </div>
             )}
           </div>

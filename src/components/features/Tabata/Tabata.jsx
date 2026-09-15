@@ -285,7 +285,11 @@ export function Tabata({
               <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
                 {mode}
               </p>
-              <p className="font-['Segoe_UI',sans-serif] text-5xl font-bold">
+              <p
+                className="
+                  font-['Segoe_UI',sans-serif]
+                  text-5xl
+                  font-bold">
                 {formatTime(time)}
               </p>
             </div>

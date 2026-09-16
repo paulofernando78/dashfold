@@ -49,7 +49,6 @@ export function WidgetPicker({ onAdd }) {
         gap-2
         uppercase
         overflow-hidden
-        scroll-mr-2
       `}
     >
       <button

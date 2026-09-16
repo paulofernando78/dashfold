@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import "./App.css";
 import { Header } from "@/components/layout/Header";
@@ -83,10 +83,24 @@ function SortableWidget({
 function App() {
   const { t } = useLanguage();
   const [widgets, setWidgets] = useState(getSavedWidgets);
+  const widgetsEndRef = useRef(null);
+  const shouldScrollToEndRef = useRef(false);
 
   useEffect(() => {
     localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(widgets));
   }, [widgets]);
+
+  useEffect(() => {
+    if (!shouldScrollToEndRef.current) return;
+
+    widgetsEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "end",
+    });
+
+    shouldScrollToEndRef.current = false;
+  }, [widgets.length]);
 
   function addWidget(type) {
     const definition = widgetCatalog[type];
@@ -99,6 +113,7 @@ function App() {
       config: { ...definition.defaultConfig },
     };
 
+    shouldScrollToEndRef.current = true;
     setWidgets((currentWidgets) => [...currentWidgets, newWidget]);
   }
 
@@ -147,7 +162,7 @@ function App() {
         title={t("widgets")}
         storageKey="section-widget"
         count={widgets.length}
-        headerAction={<WidgetPicker onAdd={addWidget}/>}
+        headerAction={<WidgetPicker onAdd={addWidget} />}
       >
         <DragDropProvider onDragEnd={handleDragEnd}>
           <WidgetContainer>
@@ -167,6 +182,11 @@ function App() {
                 />
               );
             })}
+            <div
+              ref={widgetsEndRef}
+              className="w-px shrink-0 "
+              aria-hidden="true"
+            />
           </WidgetContainer>
         </DragDropProvider>
       </SectionPanel>

@@ -10,17 +10,8 @@ const DEFAULT_GO_SECONDS = 20;
 const DEFAULT_REST_SECONDS = 10;
 const DEFAULT_TABATA_GOAL = 8;
 
-function calculateSessionDuration({
-  countdownSeconds,
-  goSeconds,
-  restSeconds,
-  tabataGoal,
-}) {
-  return (
-    countdownSeconds +
-    tabataGoal * goSeconds +
-    Math.max(tabataGoal - 1, 0) * restSeconds
-  );
+function calculateSessionDuration({ goSeconds, restSeconds, tabataGoal }) {
+  return tabataGoal * goSeconds + Math.max(tabataGoal - 1, 0) * restSeconds;
 }
 
 function formatTime(totalSeconds) {
@@ -135,7 +126,6 @@ export function Tabata({
   const displayedRound = Math.min(completedRounds + 1, tabataGoal);
 
   const editingSessionDuration = calculateSessionDuration({
-    countdownSeconds: editCountdownSeconds,
     goSeconds: editGoSeconds,
     restSeconds: editRestSeconds,
     tabataGoal: editTabataGoal,
@@ -144,12 +134,20 @@ export function Tabata({
   function getRemainingSessionDuration() {
     if (mode === "done") return 0;
 
+    // if (mode === "countdown") {
+    //   return (
+    //     time +
+    //     tabataGoal * goSeconds +
+    //     Math.max(tabataGoal - 1, 0) * restSeconds
+    //   );
+    // }
+
     if (mode === "countdown") {
-      return (
-        time +
-        tabataGoal * goSeconds +
-        Math.max(tabataGoal - 1, 0) * restSeconds
-      );
+      return calculateSessionDuration({
+        goSeconds,
+        restSeconds,
+        tabataGoal,
+      });
     }
 
     const roundsAfterCurrent = Math.max(
@@ -298,9 +296,7 @@ export function Tabata({
               <span className="text-xl font-bold">
                 {t("round")} {displayedRound} {t("of")} {tabataGoal}
               </span>
-              <p className={`text-2xl font-bold ${modeClass}`}>
-                {t(mode)}
-              </p>
+              <p className={`text-2xl font-bold ${modeClass}`}>{t(mode)}</p>
               <p
                 className="
                   font-['Segoe_UI',sans-serif]
@@ -309,7 +305,6 @@ export function Tabata({
               >
                 {formatTime(time)}
               </p>
-              
             </div>
           )}
         </div>

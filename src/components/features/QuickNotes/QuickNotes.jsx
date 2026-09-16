@@ -14,6 +14,7 @@ export function QuickNotes({
 }) {
   const inputRefs = useRef(new Map());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuTargetBlockId, setMenuTargetBlockId] = useState(null);
   const [blocks, setBlocks] = useState(() =>
     savedBlocks.length > 0 ? savedBlocks : [createBlock("text", note)],
   );
@@ -21,38 +22,62 @@ export function QuickNotes({
   const [future, setFuture] = useState([]);
 
   function handleOpenMenu() {
+    setMenuTargetBlockId(null);
     setIsMenuOpen((current) => !current);
   }
 
   function handleCloseMenu() {
     setIsMenuOpen(false);
+    setMenuTargetBlockId(null);
   }
 
   function handleAddBlock(type) {
-    const newBlock = createBlock(type);
+    let nextBlocks;
+    let blockToFocusId;
 
-    const hasOnlyOneEmptyBlock =
-      blocks.length === 1 && blocks[0].content.trim() === "";
+    if (menuTargetBlockId) {
+      nextBlocks = blocks.map((block) => {
+        if (block.id !== menuTargetBlockId) return block;
 
-    const nextBlocks = hasOnlyOneEmptyBlock
-      ? [newBlock]
-      : [...blocks, newBlock];
+        const slashIndex = block.content.lastIndexOf("/");
+        const content =
+          slashIndex === -1
+            ? block.content
+            : block.content.slice(0, slashIndex) +
+              block.content.slice(slashIndex + 1);
+
+        return { ...block, type, content };
+      });
+
+      blockToFocusId = menuTargetBlockId;
+    } else {
+      const newBlock = createBlock(type);
+      const hasOnlyOneEmptyBlock =
+        blocks.length === 1 && blocks[0].content.trim() === "";
+
+      nextBlocks = hasOnlyOneEmptyBlock
+        ? [newBlock]
+        : [...blocks, newBlock];
+      blockToFocusId = newBlock.id;
+    }
 
     saveBlocks(nextBlocks);
     setIsMenuOpen(false);
+    setMenuTargetBlockId(null);
 
     requestAnimationFrame(() => {
-      inputRefs.current.get(newBlock.id)?.focus();
+      inputRefs.current.get(blockToFocusId)?.focus();
     });
   }
 
-  function handleKeyDown(event) {
+  function handleKeyDown(event, blockId = null) {
     if (event.key === "/") {
+      setMenuTargetBlockId(blockId);
       setIsMenuOpen(true);
     }
 
     if (event.key === "Escape") {
-      setIsMenuOpen(false);
+      handleCloseMenu();
     }
   }
 
@@ -199,7 +224,7 @@ export function QuickNotes({
                   })
                 }
                 onKeyDown={(event) => {
-                  handleKeyDown(event);
+                  handleKeyDown(event, block.id);
                   handleBlockKeyDown(event, blockIndex);
                 }}
                 placeholder={

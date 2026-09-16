@@ -219,6 +219,18 @@ export function Tabata({
     done: "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse",
   };
 
+  const inactiveModeClass = {
+    countdown: "text-yellow-400/25 [text-shadow:none]",
+    go: "text-green-400/25 [text-shadow:none]",
+    rest: "text-blue-400/25 [text-shadow:none]",
+    done: "text-red-400/25 [text-shadow:none]",
+  };
+
+  const modeClass =
+    isRunning || mode === "done"
+      ? activeModeClass[mode]
+      : inactiveModeClass[mode];
+
   return (
     <WidgetBody
       onClose={onClose}
@@ -283,7 +295,7 @@ export function Tabata({
                 gap-4
               `}
             >
-              <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
+              <p className={`text-3xl font-bold ${modeClass}`}>
                 {t(mode)}
               </p>
               <p

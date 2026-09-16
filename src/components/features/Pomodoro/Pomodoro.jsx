@@ -159,6 +159,18 @@ export function Pomodoro({
     done: activePomodoroDoneModeClass,
   };
 
+  const inactiveModeClass = {
+    focus: "text-green-400/25 [text-shadow:none]",
+    break: "text-yellow-400/25 [text-shadow:none]",
+    long: "text-blue-400/25 [text-shadow:none]",
+    done: "text-red-400/25 [text-shadow:none]",
+  };
+
+  const modeClass =
+    isRunning || mode === "done"
+      ? activeModeClass[mode]
+      : inactiveModeClass[mode];
+
   function formatTime(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
@@ -355,7 +367,7 @@ export function Pomodoro({
                   `}
               >
                 <p
-                  className={`text-3xl font-bold uppercase ${activeModeClass[mode]}`}
+                  className={`text-3xl font-bold uppercase ${modeClass}`}
                 >
                   {t(mode)}
                 </p>

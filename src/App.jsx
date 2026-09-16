@@ -17,7 +17,7 @@ import { widgetCatalog, WidgetPicker } from "@/components/features/Widget";
 import { TaskBoard } from "@/components/features/TaskBoard";
 
 // Notes
-// import { Notes } from "@/components/features/Notes";
+import { Notes } from "@/components/features/Notes";
 
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
@@ -187,10 +187,10 @@ function App() {
       </SectionPanel>
 
       {/* Notes */}
-      {/* <SectionPanel title="Notes" storageKey="section-notes">
+      <SectionPanel title="Notes" storageKey="section-notes">
         <Notes />
         <Notes />
-      </SectionPanel> */}
+      </SectionPanel>
     </div>
   );
 }

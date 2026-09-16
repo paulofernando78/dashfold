@@ -42,6 +42,16 @@ export function QuickNotes({
     });
   }
 
+  function handleKeyDown(event) {
+    if (event.key === "/") {
+      setIsMenuOpen(true);
+    }
+
+    if (event.key === "Escape") {
+      setIsMenuOpen(false);
+    }
+  }
+
   function handleBlockKeyDown(event, blockIndex) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -184,8 +194,13 @@ export function QuickNotes({
                     content: event.target.value,
                   })
                 }
-                onKeyDown={(event) => handleBlockKeyDown(event, blockIndex)}
-                placeholder={block.type === "checkbox" ? "..." : "type '/' to select"}
+                onKeyDown={(event) => {
+                  handleKeyDown(event);
+                  handleBlockKeyDown(event, blockIndex);
+                }}
+                placeholder={
+                  block.type === "checkbox" ? "..." : "type '/' to select"
+                }
                 className={`
                   flex-1
                   min-w-0
@@ -194,7 +209,7 @@ export function QuickNotes({
                       ? "line-through text-gray-400"
                       : "text-gray-800"
                   }
-                  `}
+                `}
               />
             </div>
           ))}

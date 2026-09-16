@@ -3,7 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 export function WidgetContainer({ children }) {
   return <div className="flex gap-2">{children}</div>;
 }
-export const widgetHeight = `h-[482px]`;
+export const widgetHeight = `h-[416px]`;
 
 // + WidgetPicker
 export const widgetBorder = `
@@ -161,7 +161,6 @@ function WidgetIcons({ iconName, className }) {
 }
 
 export function WidgetBody({
-  hFull = true,
   top,
   middlePosition,
   middle,
@@ -176,7 +175,7 @@ export function WidgetBody({
         flex
         flex-col
         gap-4
-        ${hFull ? "h-full" : ""}
+        h-full
         p-4
         ${className ?? ""}
       `}
@@ -200,8 +199,8 @@ export function WidgetBody({
           className={`
             flex
             flex-col
-            ${bottom ? "flex-1" : "h-full"}
             ${middlePosition === "top" ? "justify-start" : "justify-center"}
+            h-full
             w-full
             min-h-0
           `}

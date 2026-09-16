@@ -190,9 +190,7 @@ export function Calculator({
       if (!iconName) {
         const localizedCharacter =
           language === "pt" && character === "." ? "," : character;
-        return (
-          <span key={`${character}-${index}`}>{localizedCharacter}</span>
-        );
+        return <span key={`${character}-${index}`}>{localizedCharacter}</span>;
       }
 
       return (
@@ -412,7 +410,7 @@ export function Calculator({
             ${getDisplayFontSize(display)}
           `}
         >
-          <div className="grid h-[30px]">
+          <div className="grid h-7.5">
             <span
               className="
                 flex
@@ -441,168 +439,170 @@ export function Calculator({
       middle={
         <div
           className="
-            grid
-            grid-cols-4
-            gap-1
-            w-full
+            flex
+            flex-col
+            gap-4
+            h-full
           "
         >
-          <button
-            onClick={clearCalculator}
-            className={`clickable ${button} ${utilityButton}`}
+          <div
+            className="
+              grid
+              grid-cols-4
+              gap-1
+            "
           >
-            AC
-          </button>
-          <button
-            onClick={inputParentheses}
-            className={`clickable ${button} ${utilityButton}`}
-          >
-            <Icon name="parentheses" className="text-white" />
-          </button>
-          <button
-            onClick={inputPercent}
-            className={`clickable ${button} ${utilityButton}`}
-          >
-            %
-          </button>
-          <button
-            onClick={() => chooseOperator("/")}
-            className={`clickable ${button} ${operatorButton}`}
-          >
-            <Icon name="divide" className="text-white" />
-          </button>
+            <button
+              onClick={clearCalculator}
+              className={`clickable ${button} ${utilityButton}`}
+            >
+              AC
+            </button>
+            <button
+              onClick={inputParentheses}
+              className={`clickable ${button} ${utilityButton}`}
+            >
+              <Icon name="parentheses" className="text-white" />
+            </button>
+            <button
+              onClick={inputPercent}
+              className={`clickable ${button} ${utilityButton}`}
+            >
+              %
+            </button>
+            <button
+              onClick={() => chooseOperator("/")}
+              className={`clickable ${button} ${operatorButton}`}
+            >
+              <Icon name="divide" className="text-white" />
+            </button>
 
-          <button
-            onClick={() => inputDigit("7")}
-            className={`clickable ${button}`}
-          >
-            7
-          </button>
-          <button
-            onClick={() => inputDigit("8")}
-            className={`clickable ${button}`}
-          >
-            8
-          </button>
-          <button
-            onClick={() => inputDigit("9")}
-            className={`clickable ${button}`}
-          >
-            9
-          </button>
-          <button
-            onClick={() => chooseOperator("*")}
-            className={`clickable ${button} ${operatorButton}`}
-          >
-            <Icon name="x" className="text-white" />
-          </button>
+            <button
+              onClick={() => inputDigit("7")}
+              className={`clickable ${button}`}
+            >
+              7
+            </button>
+            <button
+              onClick={() => inputDigit("8")}
+              className={`clickable ${button}`}
+            >
+              8
+            </button>
+            <button
+              onClick={() => inputDigit("9")}
+              className={`clickable ${button}`}
+            >
+              9
+            </button>
+            <button
+              onClick={() => chooseOperator("*")}
+              className={`clickable ${button} ${operatorButton}`}
+            >
+              <Icon name="x" className="text-white" />
+            </button>
 
-          <button
-            onClick={() => inputDigit("4")}
-            className={`clickable ${button}`}
-          >
-            4
-          </button>
-          <button
-            onClick={() => inputDigit("5")}
-            className={`clickable ${button}`}
-          >
-            5
-          </button>
-          <button
-            onClick={() => inputDigit("6")}
-            className={`clickable ${button}`}
-          >
-            6
-          </button>
+            <button
+              onClick={() => inputDigit("4")}
+              className={`clickable ${button}`}
+            >
+              4
+            </button>
+            <button
+              onClick={() => inputDigit("5")}
+              className={`clickable ${button}`}
+            >
+              5
+            </button>
+            <button
+              onClick={() => inputDigit("6")}
+              className={`clickable ${button}`}
+            >
+              6
+            </button>
 
-          <button
-            onClick={() => chooseOperator("-")}
-            className={`clickable ${button} ${operatorButton}`}
-          >
-            <Icon name="minus" className="text-white" />
-          </button>
-          <button
-            onClick={() => inputDigit("1")}
-            className={`clickable ${button}`}
-          >
-            1
-          </button>
-          <button
-            onClick={() => inputDigit("2")}
-            className={`clickable ${button}`}
-          >
-            2
-          </button>
-          <button
-            onClick={() => inputDigit("3")}
-            className={`clickable ${button}`}
-          >
-            3
-          </button>
-          <button
-            onClick={() => chooseOperator("+")}
-            className={`clickable ${button} ${operatorButton}`}
-          >
-            <Icon name="plus" className="text-white" />
-          </button>
-          <button
-            onClick={() => inputDigit("0")}
-            className={`clickable ${button}`}
-          >
-            0
-          </button>
-          <button onClick={inputDecimal} className={`clickable ${button}`}>
-            {language === "pt" ? "," : "."}
-          </button>
-          <button onClick={deleteLastDigit} className={`clickable ${button}`}>
-            <Icon name="delete" className="text-white" />
-          </button>
-          <button
-            onClick={calculate}
-            className={`clickable ${button} ${equalButton}`}
-          >
-            <Icon name="equal" className="text-white" />
-          </button>
-        </div>
-      }
-      bottomPosition="left"
-      bottom={
-        <div
-          className="
-              relative
-              h-35.25
+            <button
+              onClick={() => chooseOperator("-")}
+              className={`clickable ${button} ${operatorButton}`}
+            >
+              <Icon name="minus" className="text-white" />
+            </button>
+            <button
+              onClick={() => inputDigit("1")}
+              className={`clickable ${button}`}
+            >
+              1
+            </button>
+            <button
+              onClick={() => inputDigit("2")}
+              className={`clickable ${button}`}
+            >
+              2
+            </button>
+            <button
+              onClick={() => inputDigit("3")}
+              className={`clickable ${button}`}
+            >
+              3
+            </button>
+            <button
+              onClick={() => chooseOperator("+")}
+              className={`clickable ${button} ${operatorButton}`}
+            >
+              <Icon name="plus" className="text-white" />
+            </button>
+            <button
+              onClick={() => inputDigit("0")}
+              className={`clickable ${button}`}
+            >
+              0
+            </button>
+            <button onClick={inputDecimal} className={`clickable ${button}`}>
+              {language === "pt" ? "," : "."}
+            </button>
+            <button onClick={deleteLastDigit} className={`clickable ${button}`}>
+              <Icon name="delete" className="text-white" />
+            </button>
+            <button
+              onClick={calculate}
+              className={`clickable ${button} ${equalButton}`}
+            >
+              <Icon name="equal" className="text-white" />
+            </button>
+          </div>
+          <div
+            className="
               p-1.75
               text-sm
-              border
-              border-gray-00
+              h-full
               paper-texture
               rounded
               overflow-auto
             "
-        >
-          {history.map((calculation) => (
-            <div
-              key={calculation.id}
-              className="
+          >
+            {history.map((calculation) => (
+              <div
+                key={calculation.id}
+                className="
                   flex
                   text-[1.43rem]
                   font-['Indie_Flower',cursive]
                   space-x-2
                 "
-            >
-              <span
-                className="
+              >
+                <span
+                  className="
                   flex
                 text-gray-800
                 "
-              >
-                {renderDisplayValue(calculation.expression, 14, "")}{" "}
-                <span className="pl-2">=</span>
-              </span>
-              <span className="text-gray-900/50">{calculation.result}</span>
-            </div>
-          ))}
+                >
+                  {renderDisplayValue(calculation.expression, 14, "")}{" "}
+                  <span className="pl-2">=</span>
+                </span>
+                <span className="text-gray-900/50">{calculation.result}</span>
+              </div>
+            ))}
+          </div>
         </div>
       }
     />

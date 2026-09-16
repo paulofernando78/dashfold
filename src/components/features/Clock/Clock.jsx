@@ -88,6 +88,7 @@ export function Clock({
   const [isEditingWeather, setIsEditingWeather] = useState(false);
   const [editLocation, setEditLocation] = useState("");
   const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [weatherSlide, setWeatherSlide] = useState(0);
 
   useEffect(() => {
     const intervalID = setInterval(() => {
@@ -259,6 +260,20 @@ export function Clock({
     setIsEditingWeather(false);
   }
 
+  // Slider
+
+  function showPreviousWeatherSlide() {
+    setWeatherSlide((currentSlide) =>
+      currentSlide === 0 ? 1 : currentSlide - 1,
+    );
+  }
+
+  function showNextWeatherSlide() {
+    setWeatherSlide((currentSlide) =>
+      currentSlide === 0 ? 1 : currentSlide + 1,
+    );
+  }
+
   return (
     <WidgetBody
       width="clock"
@@ -273,12 +288,9 @@ export function Clock({
         !isEditingWeather ? (
           <div
             className="
-              flex
-              flex-col
+              grid
               gap-4
               w-full
-              h-full
-              min-h-0
             "
           >
             <div
@@ -291,98 +303,173 @@ export function Clock({
               <Icon name="mapPin" />
               <span className="truncate">{selectedLocation}</span>
             </div>
+
             {weather && (
-              <WeatherWrapper
-                className="
-                  grid
-                  grid-cols-7
-                  gap-2                  
-                "
-              >
+              <>
                 <div
                   className="
-                    flex
-                    flex-col
-                    items-center
-                    gap-2
+                  grid
+                  overflow-hidden
                   "
                 >
-                  <span className="text-sm">{t("now")}</span>
-                  <span>{weather.current.temperature}°</span>
-                  <Icon
-                    name={getWeatherIconName(
-                      weather.current.weatherCode,
-                      weather.current.isDay === 1,
-                    )}
-                    size={WEATHER_ICON_SIZE}
-                  />
-                  <span className="text-sm">
-                    {weather.current.precipitationProbability}%
-                  </span>
-                </div>
-                {weather.nextHours.map((hour) => (
                   <div
-                    key={hour.time}
                     className="
-                      grid
-                      place-items-center
-                      gap-2                    "
-                  >
-                    <span className="text-sm">{formatHourTime(hour.time)}</span>
-                    <span>{hour.temperature}°</span>
-                    <Icon
-                      name={getWeatherIconName(
-                        hour.weatherCode,
-                        hour.isDay === 1,
-                      )}
-                      size={WEATHER_ICON_SIZE}
-                    />
-                    <span className="text-sm">
-                      {hour.precipitationProbability}%
-                    </span>
-                  </div>
-                ))}
-              </WeatherWrapper>
-            )}
-            {weather && (
-              <WeatherWrapper
-                className="
-                  grid
-                  grid-cols-8
-                  gap-2
-                "
-              >
-                <div
-                  className="
-                      justify-self-center
-                      grid
-                      grid-rows-4
-                      gap-1
-                      text-sm
+                      flex
+                      items-center
+                      transition-transform
+                      duration-300
+                      ease-out
                     "
-                >
-                  <span className="row-start-2">{t("maximum")}</span>
-                  <span className="row-start-3">{t("minimum")}</span>
-                </div>
-                {weather.nextDays.map((day) => (
-                  <div
-                    key={day.date}
-                    className="
+                    style={{
+                      transform: `translateX(-${weatherSlide * 100}%)`,
+                    }}
+                  >
+                    {/* Hour Weather */}
+                    <div className="shrink-0 w-full px-1">
+                      <WeatherWrapper
+                        className="
                         grid
-                        place-items-center
+                        grid-cols-7
                         gap-2
+                        h-max
+                      "
+                      >
+                        <div
+                          className="
+                          flex
+                          flex-col
+                          items-center
+                          gap-2
+                        "
+                        >
+                          <span className="text-sm">{t("now")}</span>
+                          <span>{weather.current.temperature}°</span>
+                          <Icon
+                            name={getWeatherIconName(
+                              weather.current.weatherCode,
+                              weather.current.isDay === 1,
+                            )}
+                            size={WEATHER_ICON_SIZE}
+                          />
+                          <span className="text-sm">
+                            {weather.current.precipitationProbability}%
+                          </span>
+                        </div>
+                        {weather.nextHours.map((hour) => (
+                          <div
+                            key={hour.time}
+                            className="
+                            grid
+                            place-items-center
+                            gap-2                    "
+                          >
+                            <span className="text-sm">
+                              {formatHourTime(hour.time)}
+                            </span>
+                            <span>{hour.temperature}°</span>
+                            <Icon
+                              name={getWeatherIconName(
+                                hour.weatherCode,
+                                hour.isDay === 1,
+                              )}
+                              size={WEATHER_ICON_SIZE}
+                            />
+                            <span className="text-sm">
+                              {hour.precipitationProbability}%
+                            </span>
+                          </div>
+                        ))}
+                      </WeatherWrapper>
+                    </div>
+                    {/* Day Weather */}
+                    <div
+                      className="
+                        shrink-0
+                        w-ful
+                        px-1
+                      "
+                    >
+                      <WeatherWrapper
+                        className="
+                        grid
+                        grid-cols-8
+                        gap-2
+                        h-max
+                      "
+                      >
+                        <div
+                          className="
+                            justify-self-center
+                            grid
+                            grid-rows-4
+                            gap-1
+                            text-sm
+                          "
+                        >
+                          <span className="row-start-2">{t("maximum")}</span>
+                          <span className="row-start-3">{t("minimum")}</span>
+                        </div>
+                        {weather.nextDays.map((day) => (
+                          <div
+                            key={day.date}
+                            className="
+                              grid
+                              place-items-center
+                              gap-2
+                            "
+                          >
+                            <span className="text-sm">
+                              {formatWeekday(day.date, locale)}
+                            </span>
+                            <span>{day.max}°</span>
+                            <span>{day.min}°</span>
+                            <Icon
+                              name={getWeatherIconName(day.weatherCode)}
+                              size={WEATHER_ICON_SIZE}
+                            />
+                          </div>
+                        ))}
+                      </WeatherWrapper>
+                    </div>
+                  </div>
+                </div>
+                {/* Buttons */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={showPreviousWeatherSlide}
+                    aria-label="Previsão anterior"
+                    className="
+                        absolute
+                        left-1
+                        top-1/2
+                        -translate-y-1/2
+                        rounded-full
+                        bg-black/50
+                        p-1
                       "
                   >
-                    <span className="text-sm">{formatWeekday(day.date, locale)}</span>
-                    <span>{day.max}°</span>
-                    <span>{day.min}°</span>
-                    <Icon
-                      name={getWeatherIconName(day.weatherCode)}
-                      size={WEATHER_ICON_SIZE}
-                    />
-                  </div>
-                ))}
-              </WeatherWrapper>
+                    <Icon name="dot" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={showNextWeatherSlide}
+                    aria-label="Próxima previsão"
+                    className="
+                        absolute
+                        right-1
+                        top-1/2
+                        -translate-y-1/2
+                        rounded-full
+                        bg-black/50
+                        p-1
+                      "
+                  >
+                    <Icon name="dot" />
+                  </button>
+                </div>
+              </>
             )}
           </div>
         ) : (

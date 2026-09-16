@@ -260,23 +260,6 @@ export function Timer({
             h-max
           `}
         >
-          <label>
-            <input
-              type="text"
-              className="
-                      w-full
-                      px-[0.6rem] py-[0.4rem]
-                      text-gray-500
-                      font-[Arial]
-                      border
-                      border-gray-500
-                      rounded-sm
-                      placeholder:italic
-                      paper-texture
-                    "
-              placeholder="ex: boiling water..."
-            />
-          </label>
           <span
             className={`
               justify-self-center

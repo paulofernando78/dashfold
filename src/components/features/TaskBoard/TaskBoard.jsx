@@ -15,17 +15,17 @@ const statusOptions = [
   {
     id: "in-progress",
     label: "inProgress",
-    color: "border-green-500/20 bg-green-500/10",
+    color: "border-gray-500/50 bg-gray-500/20",
   },
   {
     id: "delegate",
     label: "delegate",
-    color: "border-yellow-500/20 bg-yellow-500/10",
+    color: "border-gray-500/50 bg-gray-500/20",
   },
   {
     id: "done",
     label: "done",
-    color: "border-red-500/20 bg-red-500/10",
+    color: "border-gray-500/50 bg-gray-500/20",
   },
 ];
 
@@ -138,7 +138,7 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
         min-h-40
         flex-col
         gap-2
-        rounded
+        rounded-lg
         transition-colors
         ${isDropTarget ? "bg-white/10" : ""}
       `}
@@ -147,7 +147,7 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
         className={`
           min-h-40
           p-2
-          global-border
+          rounded-lg
           ${status.color}
         `}
       >
@@ -159,24 +159,26 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
           <Icon name="ellipsis" className="translate-y-[-0.4rem]" />
         </div>
 
-        {/* TaskCard */}
-        <div className="flex flex-col gap-2">
-          {tasks.map((task, index) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              index={index}
-              columnId={status.id}
-              onEditTask={onEditTask}
-            />
-          ))}
-        </div>
-
-        <TaskComposer
-          color={status.color}
-          placeholder={t("addTask")}
-          onAddTask={(text) => onAddTask(status.id, text)}
-        />
+        {/* Box for TaskCard */}
+       <div className="space-y-2">
+          <div className="flex flex-col gap-2">
+            {tasks.map((task, index) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                index={index}
+                columnId={status.id}
+                onEditTask={onEditTask}
+              />
+            ))}
+          </div>
+  
+          <TaskComposer
+            color={status.color}
+            placeholder={t("addTask")}
+            onAddTask={(text) => onAddTask(status.id, text)}
+          />
+       </div>
       </div>
     </section>
   );
@@ -273,12 +275,17 @@ function TaskCard({ task, index, columnId, onEditTask }) {
               }
             }}
             aria-label="Editar tarefa"
-            className="w-full rounded border border-blue-400 bg-gray-900 px-2 py-1 outline-none"
             autoFocus
           />
         </form>
       ) : (
-        <div className="flex items-start justify-between gap-2">
+        <div
+          className="
+            flex
+            items-start
+            justify-between
+          "
+        >
           <p className="min-w-0 flex-1" onDoubleClick={startEditing}>
             {task.text}
           </p>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import "./App.css";
 import { Header } from "@/components/layout/Header";
@@ -83,19 +83,10 @@ function SortableWidget({
 function App() {
   const { t } = useLanguage();
   const [widgets, setWidgets] = useState(getSavedWidgets);
-  const widgetPickerRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(widgets));
   }, [widgets]);
-
-  useEffect(() => {
-    widgetPickerRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "end",
-    });
-  }, [widgets.length]);
 
   function addWidget(type) {
     const definition = widgetCatalog[type];
@@ -154,9 +145,9 @@ function App() {
       {/* Widgets */}
       <SectionPanel
         title={t("widgets")}
-        widgetClassName
         storageKey="section-widget"
         count={widgets.length}
+        headerAction={<WidgetPicker onAdd={addWidget}/>}
       >
         <DragDropProvider onDragEnd={handleDragEnd}>
           <WidgetContainer>
@@ -176,7 +167,6 @@ function App() {
                 />
               );
             })}
-            <WidgetPicker ref={widgetPickerRef} onAdd={addWidget} />
           </WidgetContainer>
         </DragDropProvider>
       </SectionPanel>

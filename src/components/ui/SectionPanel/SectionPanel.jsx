@@ -9,6 +9,7 @@ export function SectionPanel({
   defaultOpen = true,
   storageKey,
   count,
+  headerAction
 }) {
   const headingId = useId();
   const dragScroll = useDragScroll();
@@ -54,20 +55,27 @@ export function SectionPanel({
            ${isOpen ? "pb-3" : ""}
           `}
       >
+        {/* ChevronUpDown */}
         <button
+          type="button"
           onClick={handleToggle}
           className="
+            flex-1
             flex
             items-center
             gap-2
-            w-full
           "
         >
           <Icon name={isOpen ? "chevronsDownUp" : "chevronsUpDown"} size={23} />
-          <h2>{title}</h2>
+
+          <h2 id={headingId}>{title}</h2>
+
           {count !== undefined && <span className="ml-1">{count}</span>}
         </button>
+
+        {headerAction}
       </header>
+
       {isOpen && (
         <div
           {...dragScroll}

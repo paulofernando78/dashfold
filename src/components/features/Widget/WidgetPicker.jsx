@@ -1,35 +1,17 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useLanguage } from "@/i18n";
+
 import { Icon } from "@/components/ui/Icon";
+import { Dialog } from "@/components/ui/Dialog";
 
 import { widgetCatalog } from "./WidgetCatalog";
 
-import { widgetHeight } from "@/components/ui/Widget";
-import { useLanguage } from "@/i18n";
-
-export function WidgetPicker({ onAdd, ref }) {
+export function WidgetPicker({ onAdd }) {
   const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef(null);
-
-  function handleClick() {
-    setIsOpen((currentIsOpen) => {
-      const nextIsOpen = !currentIsOpen;
-
-      if (nextIsOpen) {
-        requestAnimationFrame(() => {
-          pickerRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "end",
-          });
-        });
-      }
-
-      return nextIsOpen;
-    });
-  }
+  const dialogRef = useRef(null);
 
   const widgetsByCategory = Object.entries(widgetCatalog).reduce(
+    // O reduce transforma grupos
     (categories, [widgetId, widget]) => {
       const category = widget.category;
 
@@ -48,8 +30,11 @@ export function WidgetPicker({ onAdd, ref }) {
   );
 
   function handleAdd(type) {
+    // Pede ao App para adicionar o widget selecionado.
     onAdd(type);
-    setIsOpen(false);
+
+    // Fecha o elemento <dialog> depois da escolha.
+    dialogRef.current?.clode();
   }
 
   const widgetPickerBorder = `
@@ -58,12 +43,10 @@ export function WidgetPicker({ onAdd, ref }) {
 
   return (
     <div
-      ref={ref}
       className={`
         flex
         shrink-0
         gap-2
-        ${widgetHeight}
         uppercase
         overflow-hidden
         scroll-mr-2
@@ -72,85 +55,79 @@ export function WidgetPicker({ onAdd, ref }) {
       <button
         type="button"
         aria-label={t("addWidget")}
-        onClick={handleClick}
+        onClick={() => dialogRef.current?.showModal()}
         className={`
           grid
           place-items-center
           h-full          
           `}
       >
-        {isOpen ? <Icon name="minus" /> : <Icon name="plus" />}
+        <Icon name="plus" />
       </button>
-      {isOpen && (
-        <div
-          ref={pickerRef}
-          className={`
-            flex
-            flex-col
-            h-full
-            min-h-0
-            font-['Oswald_Variable']
-            scroll-mr-2
-          `}
+      <Dialog dialogRef={dialogRef} className="relative max-w-md">
+        <button
+          type="button"
+          aria-label="Close widget picker"
+          onClick={() => dialogRef.current?.close()}
+          className="
+            absolute
+            top-2
+            right-2
+            cursor-pointer
+            rounded
+            p-1
+            hover:bg-white/10
+          "
         >
-          <header className="header grid text-center">
-            <span>{t("select")}</span>
-          </header>
-          <div
-            className={`
-              min-h-0
-              flex-1
+          <Icon name="x" />
+        </button>
+
+        <div
+          className={`
               flex
               flex-col
               gap-4
-              pt-2
-              pr-1
-              pb-2
-              pl-2
-              bg-gray-900
-              rounded-tr-0
-              rounded-tl-0
-              rounded-br-lg
-              rounded-bl-lg
+              pt-4
+              pb-1
+              font-['Oswald_Variable']
               overflow-y-auto
               `}
-          >
-            {Object.entries(widgetsByCategory).map(([category, widgets]) => (
-              <section key={category}>
-                <h3
-                  className="
+        >
+          {Object.entries(widgetsByCategory).map(([category, widgets]) => (
+            <section key={category}>
+              <h3
+                className="
                     mb-2
                     text-sm
                     font-bold
                   "
-                >
-                  {t(category)}
-                </h3>
+              >
+                {t(category)}
+              </h3>
 
-                <div
-                  className="
+              <div
+                className="
                     flex
                     flex-col
                     gap-2
                   "
-                >
-                  {widgets.map(({ widgetId, widget }) => (
-                    <button
-                      key={widgetId}
-                      type="button"
-                      onClick={() => handleAdd(widgetId)}
-                      style={widget.widgetStyle}
-                      className={`clickable ${widgetPickerBorder} bg-slate-500`}
-                    >
-                      <span className="uppercase">{t(widget.title)}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
+              >
+                {widgets.map(({ widgetId, widget }) => (
+                  <button
+                    key={widgetId}
+                    type="button"
+                    onClick={() => handleAdd(widgetId)}
+                    style={widget.widgetStyle}
+                    className={`clickable ${widgetPickerBorder} bg-slate-500`}
+                  >
+                    <span className="uppercase">{t(widget.title)}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
-      )}
+      </Dialog>
     </div>
   );
 }

@@ -160,7 +160,7 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
         </div>
 
         {/* Box for TaskCard */}
-       <div className="space-y-2">
+        <div className="space-y-2">
           <div className="flex flex-col gap-2">
             {tasks.map((task, index) => (
               <TaskCard
@@ -172,13 +172,13 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
               />
             ))}
           </div>
-  
+
           <TaskComposer
             color={status.color}
             placeholder={t("addTask")}
             onAddTask={(text) => onAddTask(status.id, text)}
           />
-       </div>
+        </div>
       </div>
     </section>
   );
@@ -328,23 +328,38 @@ function TaskComposer({ color, placeholder, onAddTask }) {
         gap-1
         w-full
         p-1
+        text-gray-900
+        paper-texture
         border
         rounded
         ${color}
       `}
     >
-      <Icon name="plus" />
+      <Icon name="plus" className="text-gray-900" />
       <input
         type="text"
         value={text}
         onChange={(event) => setText(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full bg-transparent pl-2 outline-none placeholder:text-slate-400"
+        className="
+          w-full
+          pl-2
+          outline-none
+          rounded-sm
+          placeholder:text-gray-900
+        "
       />
       <button
         type="submit"
-        className="cursor-pointer rounded px-2 py-1 text-xs font-bold hover:bg-white/10"
+        className="
+          cursor-pointer
+          px-2
+          py-1
+          text-xs
+          font-bold
+          rounded
+        hover:bg-white/10"
       >
         Enter
       </button>

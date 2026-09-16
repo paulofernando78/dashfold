@@ -24,6 +24,10 @@ export function QuickNotes({
     setIsMenuOpen((current) => !current);
   }
 
+  function handleCloseMenu() {
+    setIsMenuOpen(false);
+  }
+
   function handleAddBlock(type) {
     const newBlock = createBlock(type);
 
@@ -217,8 +221,13 @@ export function QuickNotes({
       }
       bottom={
         <WidgetControls>
-          <div className="relative">
-            {isMenuOpen && <QuickNotesMenu handleAddBlock={handleAddBlock} />}
+          <div className="relative" onKeyDown={handleKeyDown}>
+            {isMenuOpen && (
+              <QuickNotesMenu
+                handleAddBlock={handleAddBlock}
+                handleCloseMenu={handleCloseMenu}
+              />
+            )}
             <WidgetControls.Add onClick={handleOpenMenu} />
           </div>
           <WidgetControls.Undo onClick={handleUndo} />
@@ -239,7 +248,7 @@ function createBlock(type = "text", content = "") {
   };
 }
 
-function QuickNotesMenu({ handleAddBlock }) {
+function QuickNotesMenu({ handleAddBlock, handleCloseMenu }) {
   return (
     <div
       className="
@@ -247,9 +256,10 @@ function QuickNotesMenu({ handleAddBlock }) {
         bottom-12
         grid
         gap-2
+        w-44
         p-2
         bg-[#333333]
-        rounded
+        rounded-lg
         z-10
       "
     >
@@ -269,6 +279,19 @@ function QuickNotesMenu({ handleAddBlock }) {
         <Icon name="squareCheck" />
         <span>Checkbox</span>
       </button>
+      <hr />
+      <div
+        className="
+          flex
+          justify-between
+          px-1
+          pb-[0.1rem]
+          text-sm
+        "
+      >
+        <button onClick={handleCloseMenu}>Close menu</button>
+        <span className="text-gray-400">esc</span>
+      </div>
     </div>
   );
 }

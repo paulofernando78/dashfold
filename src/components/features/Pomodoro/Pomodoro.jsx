@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/i18n";
 
-import {
-  WidgetBody,
-  WidgetControls,
-  widgetGlassMorphism,
-} from "@/components/ui/Widget";
+import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 
 import { NumberInput } from "@/components/ui/NumberInput";
 
@@ -356,17 +352,18 @@ export function Pomodoro({
                     flex
                     flex-col
                     gap-4
-                    ${widgetGlassMorphism}
                   `}
               >
-                <span className="p-2 text-2xl font-bold">
-                  {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
-                </span>
-                <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
+                <p
+                  className={`text-3xl font-bold uppercase ${activeModeClass[mode]}`}
+                >
                   {t(mode)}
                 </p>
-                <span className={`text-5xl ${durationDisplay}`}>
+                <span className={`text-2xl ${durationDisplay}`}>
                   {formatTime(time)}
+                </span>
+                <span className="p- text-xl font-bold">
+                  {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
                 </span>
               </div>
             )}

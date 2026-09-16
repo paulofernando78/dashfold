@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 
-import {
-  WidgetBody,
-  WidgetControls,
-  widgetGlassMorphism,
-} from "@/components/ui/Widget";
+import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 
 import { Icon } from "@/components/ui/Icon";
 
@@ -212,6 +208,18 @@ export function Timer({
                 </div>
               ))}
             </div>
+            <span
+              className={`
+              justify-self-center
+              text-2xl
+              font-bold
+              uppercase
+              pt-6
+              ${mode === "done" ? activeTimerDoneModeClass : inactiveModeClass}
+            `}
+            >
+              done
+            </span>
           </div>
         ) : (
           <div
@@ -249,29 +257,6 @@ export function Timer({
             />
           </div>
         )
-      }
-      subMiddle={
-        <div
-          className={`
-            grid
-            gap-2
-            w-full
-            ${widgetGlassMorphism}
-            h-max
-          `}
-        >
-          <span
-            className={`
-              justify-self-center
-              text-3xl
-              font-bold
-              uppercase
-              ${mode === "done" ? activeTimerDoneModeClass : inactiveModeClass}
-            `}
-          >
-            done
-          </span>
-        </div>
       }
       bottom={
         <WidgetControls>

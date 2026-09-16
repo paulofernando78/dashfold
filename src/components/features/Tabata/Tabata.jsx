@@ -1,11 +1,7 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import { useLanguage } from "@/i18n";
 
-import {
-  WidgetBody,
-  WidgetControls,
-  widgetGlassMorphism,
-} from "@/components/ui/Widget";
+import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { playTick } from "@/utils/audio";
 
@@ -217,9 +213,9 @@ export function Tabata({
   }
 
   const activeModeClass = {
-    countdown: "text-blue-400 [text-shadow:0_0_10px_rgba(96,165,250,1)]",
+    countdown: "text-yellow-400 [text-shadow:0_0_10px_rgba(250,204,21,0.8)]",
     go: "text-green-400 [text-shadow:0_0_8px_rgba(0,225,0,0.8)]",
-    rest: "text-yellow-400 [text-shadow:0_0_8px_rgba(255,255,0,0.8)]",
+    rest: "text-blue-400 [text-shadow:0_0_8px_rgba(96,165,250,0.8)]",
     done: "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse",
   };
 
@@ -280,21 +276,27 @@ export function Tabata({
             </div>
           ) : (
             <div
-              className={`${widgetGlassMorphism} flex h-full flex-col gap-4`}
+              className={`
+                flex
+                h-full
+                flex-col
+                gap-4
+              `}
             >
-              <span className="p-2 text-2xl font-bold">
-                {t("round")} {displayedRound} {t("of")} {tabataGoal}
-              </span>
               <p className={`text-3xl font-bold ${activeModeClass[mode]}`}>
                 {t(mode)}
               </p>
               <p
                 className="
                   font-['Segoe_UI',sans-serif]
-                  text-5xl
-                  font-bold">
+                  text-2xl
+                  font-bold"
+              >
                 {formatTime(time)}
               </p>
+              <span className="text-xl font-bold">
+                {t("round")} {displayedRound} {t("of")} {tabataGoal}
+              </span>
             </div>
           )}
         </div>

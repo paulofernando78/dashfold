@@ -256,7 +256,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
         rounded
         border
         bg-gray-800
-        p-2
+        py-2
         transition-opacity
         active:cursor-grabbing
 
@@ -288,18 +288,23 @@ function TaskCard({ task, index, columnId, onEditTask }) {
         <div
           className="
             flex
-            items-start
+            min-w-0
             justify-between
           "
         >
-          <p className="min-w-0 flex-1" onDoubleClick={startEditing}>
+          <p
+            className="flex items-center min-w-0 h-4.75 truncate"
+            onDoubleClick={startEditing}
+            onPointerDown={(event) => event.stopPropagation()}
+            title={task.text}
+          >
             {task.text}
           </p>
           <button
             type="button"
             onClick={startEditing}
             onPointerDown={(event) => event.stopPropagation()}
-            className="cursor-pointer rounded px-1 text-slate-400 hover:bg-white/10 hover:text-white"
+            className="shrink-0 cursor-pointer rounded px-1 text-slate-400 hover:bg-white/10 hover:text-white"
             aria-label={`Editar ${task.text}`}
             title="Editar tarefa"
           >
@@ -333,15 +338,17 @@ function TaskComposer({ color, placeholder, onAddTask }) {
         items-center
         gap-1
         w-full
+        h-9.25px
         p-1
         text-gray-900
         paper-texture
         border
         rounded
+        group
         ${color}
       `}
     >
-      <Icon name="plus" className="text-gray-900" />
+      {/* <Icon name="plus" className="text-gray-900" /> */}
       <input
         type="text"
         value={text}
@@ -356,19 +363,22 @@ function TaskComposer({ color, placeholder, onAddTask }) {
           placeholder:text-gray-900
         "
       />
-      <button
-        type="submit"
-        className="
-          cursor-pointer
+        <button
+          type="submit"
+          className="
+          invisible
           px-2
           py-1
           text-xs
           font-bold
           rounded
-        hover:bg-white/10"
-      >
-        Enter
-      </button>
+          cursor-pointer
+        hover:bg-white/10
+          group-focus-within:visible
+        "
+        >
+          Enter
+        </button>
     </form>
   );
 }

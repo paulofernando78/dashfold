@@ -55,9 +55,7 @@ export function QuickNotes({
       const hasOnlyOneEmptyBlock =
         blocks.length === 1 && blocks[0].content.trim() === "";
 
-      nextBlocks = hasOnlyOneEmptyBlock
-        ? [newBlock]
-        : [...blocks, newBlock];
+      nextBlocks = hasOnlyOneEmptyBlock ? [newBlock] : [...blocks, newBlock];
       blockToFocusId = newBlock.id;
     }
 
@@ -245,20 +243,17 @@ export function QuickNotes({
         </div>
       }
       bottom={
-        <WidgetControls>
-          <div className="relative" onKeyDown={handleKeyDown}>
-            {isMenuOpen && (
-              <QuickNotesMenu
-                handleAddBlock={handleAddBlock}
-                handleCloseMenu={handleCloseMenu}
-              />
-            )}
-            <WidgetControls.Add onClick={handleOpenMenu} />
-          </div>
-          <WidgetControls.Undo onClick={handleUndo} />
-          <WidgetControls.Redo onClick={handleRedo} />
-          <WidgetControls.Reset onClick={handleReset} />
-        </WidgetControls>
+        <>
+          <QuickNotesMenu
+            handleAddBlock={handleAddBlock}
+            handleCloseMenu={handleCloseMenu}
+          />
+          <WidgetControls>
+            <WidgetControls.Undo onClick={handleUndo} />
+            <WidgetControls.Redo onClick={handleRedo} />
+            <WidgetControls.Reset onClick={handleReset} />
+          </WidgetControls>
+        </>
       }
     />
   );
@@ -273,50 +268,34 @@ function createBlock(type = "text", content = "") {
   };
 }
 
-function QuickNotesMenu({ handleAddBlock, handleCloseMenu }) {
+function QuickNotesMenu({ handleAddBlock }) {
   return (
-    <div
-      className="
-        absolute
-        bottom-12
-        grid
-        gap-2
-        w-44
-        p-2
-        bg-[#333333]
-        rounded-lg
-        z-10
-      "
-    >
-      <button
-        type="button"
-        onClick={() => handleAddBlock("text")}
-        className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
-      >
-        <Icon name="type" />
-        <span>Text</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => handleAddBlock("checkbox")}
-        className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
-      >
-        <Icon name="squareCheck" />
-        <span>Checkbox</span>
-      </button>
-      <hr />
+    <>
+      {/* <hr className="bg-black" /> */}
       <div
         className="
           flex
-          justify-between
-          px-1
-          pb-[0.1rem]
-          text-sm
+          gap-2
+          w-44
+          py-2
+          border-t border-gray-300
         "
       >
-        <button onClick={handleCloseMenu}>Close menu</button>
-        <span className="text-gray-400">esc</span>
+        <button
+          type="button"
+          onClick={() => handleAddBlock("text")}
+          className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
+        >
+          <Icon name="type" className="text-gray-400"/>
+        </button>
+        <button
+          type="button"
+          onClick={() => handleAddBlock("checkbox")}
+          className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
+        >
+          <Icon name="squareCheck"  className="text-gray-400"/>
+        </button>
       </div>
-    </div>
+    </>
   );
 }

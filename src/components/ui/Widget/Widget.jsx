@@ -131,14 +131,14 @@ function WindowControls({ onClose }) {
       >
         <Icon name="x" size={10} className="text-gray-600" />
       </button>
-      <button
+      {/* <button
         type="button"
         title="maximize"
         aria-label="maximize widget"
         className={`${windowControl} bg-green-600`}
       >
         <Icon name="maximize2" size={10} />
-      </button>
+      </button> */}
       {/* <button
         type="button"
         title="minimize"

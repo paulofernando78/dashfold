@@ -151,12 +151,18 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
           ${status.color}
         `}
       >
-        <div className="flex items-center justify-between">
+        <div
+          className="
+            flex
+            gap-2
+          "
+        >
           <span className="mb-2 block font-bold uppercase">
             {t(status.label)}
           </span>
+          <span>{tasks.length}</span>
 
-          <Icon name="ellipsis" className="translate-y-[-0.4rem]" />
+          {/* <Icon name="ellipsis" className="translate-y-[-0.4rem]" /> */}
         </div>
 
         {/* Box for TaskCard */}

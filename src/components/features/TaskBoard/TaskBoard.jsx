@@ -290,6 +290,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
             flex
             min-w-0
             justify-between
+            mr-2
           "
         >
           <p

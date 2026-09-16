@@ -211,7 +211,7 @@ export function Timer({
             <span
               className={`
               justify-self-center
-              text-3xl
+              text-2xl
               font-bold
               uppercase
               pt-6

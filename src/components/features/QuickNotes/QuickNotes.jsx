@@ -13,7 +13,7 @@ export function QuickNotes({
   onClose,
 }) {
   const inputRefs = useRef(new Map());
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuTargetBlockId, setMenuTargetBlockId] = useState(null);
   const [blocks, setBlocks] = useState(() =>
     savedBlocks.length > 0 ? savedBlocks : [createBlock("text", note)],
@@ -21,15 +21,15 @@ export function QuickNotes({
   const [past, setPast] = useState([]);
   const [future, setFuture] = useState([]);
 
-  function handleOpenMenu() {
-    setMenuTargetBlockId(null);
-    setIsMenuOpen((current) => !current);
-  }
+  // function handleOpenMenu() {
+  //   setMenuTargetBlockId(null);
+  //   setIsMenuOpen((current) => !current);
+  // }
 
-  function handleCloseMenu() {
-    setIsMenuOpen(false);
-    setMenuTargetBlockId(null);
-  }
+  // function handleCloseMenu() {
+  //   setIsMenuOpen(false);
+  //   setMenuTargetBlockId(null);
+  // }
 
   function handleAddBlock(type) {
     let nextBlocks;
@@ -60,7 +60,7 @@ export function QuickNotes({
     }
 
     saveBlocks(nextBlocks);
-    setIsMenuOpen(false);
+    // setIsMenuOpen(false);
     setMenuTargetBlockId(null);
 
     requestAnimationFrame(() => {
@@ -71,12 +71,12 @@ export function QuickNotes({
   function handleKeyDown(event, blockId = null) {
     if (event.key === "/") {
       setMenuTargetBlockId(blockId);
-      setIsMenuOpen(true);
+      // setIsMenuOpen(true);
     }
 
-    if (event.key === "Escape") {
-      handleCloseMenu();
-    }
+    // if (event.key === "Escape") {
+    //   handleCloseMenu();
+    // }
   }
 
   function handleBlockKeyDown(event, blockIndex) {
@@ -246,7 +246,7 @@ export function QuickNotes({
         <>
           <QuickNotesMenu
             handleAddBlock={handleAddBlock}
-            handleCloseMenu={handleCloseMenu}
+            // handleCloseMenu={handleCloseMenu}
           />
           <WidgetControls>
             <WidgetControls.Undo onClick={handleUndo} />

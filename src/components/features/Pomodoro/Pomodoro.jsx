@@ -366,16 +366,14 @@ export function Pomodoro({
                     gap-4
                   `}
               >
-                <p
-                  className={`text-3xl font-bold uppercase ${modeClass}`}
-                >
-                  {t(mode)}
-                </p>
-                <span className={`text-2xl ${durationDisplay}`}>
-                  {formatTime(time)}
-                </span>
                 <span className="p- text-xl font-bold">
                   {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
+                </span>
+                <p className={`text-2xl font-bold uppercase ${modeClass}`}>
+                  {t(mode)}
+                </p>
+                <span className={`text-3xl ${durationDisplay}`}>
+                  {formatTime(time)}
                 </span>
               </div>
             )}

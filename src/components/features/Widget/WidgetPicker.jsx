@@ -3,7 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 
 import { widgetCatalog } from "./WidgetCatalog";
 
-import { widgetHeight, widgetBorder } from "@/components/ui/Widget";
+import { widgetHeight } from "@/components/ui/Widget";
 import { useLanguage } from "@/i18n";
 
 export function WidgetPicker({ onAdd, ref }) {
@@ -86,12 +86,11 @@ export function WidgetPicker({ onAdd, ref }) {
           ref={pickerRef}
           className={`
             flex
+            flex-col
             h-full
             min-h-0
-            flex-col
             font-['Oswald_Variable']
             scroll-mr-2
-            ${widgetBorder}
           `}
         >
           <header className="header grid text-center">
@@ -108,6 +107,11 @@ export function WidgetPicker({ onAdd, ref }) {
               pr-1
               pb-2
               pl-2
+              bg-gray-900
+              rounded-tr-0
+              rounded-tl-0
+              rounded-br-lg
+              rounded-bl-lg
               overflow-y-auto
               `}
           >

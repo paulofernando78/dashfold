@@ -251,7 +251,15 @@ export function Timer({
         )
       }
       subMiddle={
-        <div className={`grid gap-2 w-full ${widgetGlassMorphism}`}>
+        <div
+          className={`
+            grid
+            gap-2
+            w-full
+            ${widgetGlassMorphism}
+            h-max
+          `}
+        >
           <label>
             <input
               type="text"
@@ -270,8 +278,13 @@ export function Timer({
             />
           </label>
           <span
-            className={`uppercase justify-self-center
-              ${mode === "done" ? activeTimerDoneModeClass : inactiveModeClass}`}
+            className={`
+              justify-self-center
+              text-3xl
+              font-bold
+              uppercase
+              ${mode === "done" ? activeTimerDoneModeClass : inactiveModeClass}
+            `}
           >
             done
           </span>

@@ -71,6 +71,7 @@ export function Clock({
 }) {
   const { locale, t } = useLanguage();
   const locationInputRef = useRef(null);
+  const weatherDragStartXRef = useRef(null);
 
   // Clock
   const [time, setTime] = useState(new Date());
@@ -89,6 +90,8 @@ export function Clock({
   const [editLocation, setEditLocation] = useState("");
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [weatherSlide, setWeatherSlide] = useState(0);
+  const [weatherDragOffset, setWeatherDragOffset] = useState(0);
+  const [isDraggingWeather, setIsDraggingWeather] = useState(false);
 
   useEffect(() => {
     const intervalID = setInterval(() => {
@@ -260,18 +263,45 @@ export function Clock({
     setIsEditingWeather(false);
   }
 
-  // Slider
+  function handleWeatherPointerDown(event) {
+    if (event.button !== 0) return;
 
-  function showPreviousWeatherSlide() {
-    setWeatherSlide((currentSlide) =>
-      currentSlide === 0 ? 1 : currentSlide - 1,
-    );
+    event.stopPropagation();
+    weatherDragStartXRef.current = event.clientX;
+    setIsDraggingWeather(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
   }
 
-  function showNextWeatherSlide() {
-    setWeatherSlide((currentSlide) =>
-      currentSlide === 0 ? 1 : currentSlide + 1,
-    );
+  function handleWeatherPointerMove(event) {
+    if (weatherDragStartXRef.current == null) return;
+
+    event.stopPropagation();
+    const distance = event.clientX - weatherDragStartXRef.current;
+    const isDraggingPastStart = weatherSlide === 0 && distance > 0;
+    const isDraggingPastEnd = weatherSlide === 1 && distance < 0;
+    const resistedDistance =
+      isDraggingPastStart || isDraggingPastEnd ? distance * 0.2 : distance;
+
+    setWeatherDragOffset(resistedDistance);
+  }
+
+  function finishWeatherDrag(event, shouldChangeSlide = true) {
+    if (weatherDragStartXRef.current == null) return;
+
+    event.stopPropagation();
+    const distance = event.clientX - weatherDragStartXRef.current;
+
+    if (shouldChangeSlide && Math.abs(distance) >= 40) {
+      setWeatherSlide(distance < 0 ? 1 : 0);
+    }
+
+    weatherDragStartXRef.current = null;
+    setWeatherDragOffset(0);
+    setIsDraggingWeather(false);
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
   }
 
   return (
@@ -307,21 +337,34 @@ export function Clock({
             {weather && (
               <>
                 <div
+                  data-no-drag
                   className="
                   grid
                   overflow-hidden
+                  cursor-grab
+                  select-none
+                  touch-pan-y
+                  active:cursor-grabbing
                   "
+                  onPointerDown={handleWeatherPointerDown}
+                  onPointerMove={handleWeatherPointerMove}
+                  onPointerUp={finishWeatherDrag}
+                  onPointerCancel={(event) =>
+                    finishWeatherDrag(event, false)
+                  }
                 >
                   <div
-                    className="
+                    className={`
                       flex
                       items-center
-                      transition-transform
-                      duration-300
-                      ease-out
-                    "
+                      ${
+                        isDraggingWeather
+                          ? ""
+                          : "transition-transform duration-300 ease-out"
+                      }
+                    `}
                     style={{
-                      transform: `translateX(-${weatherSlide * 100}%)`,
+                      transform: `translateX(calc(-${weatherSlide * 100}% + ${weatherDragOffset}px))`,
                     }}
                   >
                     {/* Hour Weather */}
@@ -385,7 +428,7 @@ export function Clock({
                     <div
                       className="
                         shrink-0
-                        w-ful
+                        w-full
                         px-1
                       "
                     >
@@ -433,41 +476,37 @@ export function Clock({
                     </div>
                   </div>
                 </div>
-                {/* Buttons */}
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={showPreviousWeatherSlide}
-                    aria-label="Previsão anterior"
-                    className="
-                        absolute
-                        left-1
-                        top-1/2
-                        -translate-y-1/2
+                <div
+                  className="flex items-center justify-center gap-2"
+                  role="group"
+                  aria-label="Páginas da previsão"
+                >
+                  {[0, 1].map((slideIndex) => (
+                    <button
+                      key={slideIndex}
+                      type="button"
+                      onClick={() => setWeatherSlide(slideIndex)}
+                      aria-label={
+                        slideIndex === 0
+                          ? "Previsão por hora"
+                          : "Previsão por dia"
+                      }
+                      aria-current={
+                        weatherSlide === slideIndex ? "true" : undefined
+                      }
+                      className={`
+                        h-2
+                        w-2
                         rounded-full
-                        bg-black/50
-                        p-1
-                      "
-                  >
-                    <Icon name="dot" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={showNextWeatherSlide}
-                    aria-label="Próxima previsão"
-                    className="
-                        absolute
-                        right-1
-                        top-1/2
-                        -translate-y-1/2
-                        rounded-full
-                        bg-black/50
-                        p-1
-                      "
-                  >
-                    <Icon name="dot" />
-                  </button>
+                        transition-colors
+                        ${
+                          weatherSlide === slideIndex
+                            ? "bg-white"
+                            : "bg-white/30 hover:bg-white/60"
+                        }
+                      `}
+                    />
+                  ))}
                 </div>
               </>
             )}

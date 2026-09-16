@@ -10,7 +10,7 @@ export function useDragScroll() {
   // Assim o scroll não começa no header do card.
   function shouldIgnoreDrag(target) {
     return target.closest(
-      "button, input, textarea, select, a, [data-widget-drag-handle]",
+      "button, input, textarea, select, a, [data-widget-drag-handle], [data-no-drag]",
     );
   }
 

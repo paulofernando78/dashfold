@@ -1,5 +1,10 @@
+import { Icon } from "@/components/ui/Icon";
 
 export function Dialog({ dialogRef, children, className = "" }) {
+  function handleClose() {
+    dialogRef.current?.close();
+  }
+
   return (
     <dialog
       ref={dialogRef}
@@ -23,6 +28,26 @@ export function Dialog({ dialogRef, children, className = "" }) {
         ${className}
       `}
     >
+      <button
+        type="button"
+        aria-label="Close dialog"
+        onClick={handleClose}
+        className="
+          absolute
+          top-2
+          right-2
+          z-10
+          grid
+          h-8
+          w-8
+          cursor-pointer
+          place-items-center
+          rounded-md
+          hover:bg-white/10
+        "
+      >
+        <Icon name="x" />
+      </button>
       {children}
     </dialog>
   );

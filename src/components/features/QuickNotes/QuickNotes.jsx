@@ -21,62 +21,30 @@ export function QuickNotes({
   const [past, setPast] = useState([]);
   const [future, setFuture] = useState([]);
 
-  // function handleOpenMenu() {
-  //   setMenuTargetBlockId(null);
-  //   setIsMenuOpen((current) => !current);
-  // }
-
-  // function handleCloseMenu() {
-  //   setIsMenuOpen(false);
-  //   setMenuTargetBlockId(null);
-  // }
-
   function handleAddBlock(type) {
-    let nextBlocks;
-    let blockToFocusId;
+    // Se nenhuma linha estiver selecionada, não faz nada.
+    if (!menuTargetBlockId) return;
 
-    if (menuTargetBlockId) {
-      nextBlocks = blocks.map((block) => {
-        if (block.id !== menuTargetBlockId) return block;
+    const nextBlocks = blocks.map((block) => {
+      // Mantém as outras linhas sem alteração.
+      if (block.id !== menuTargetBlockId) {
+        return block;
+      }
 
-        const slashIndex = block.content.lastIndexOf("/");
-        const content =
-          slashIndex === -1
-            ? block.content
-            : block.content.slice(0, slashIndex) +
-              block.content.slice(slashIndex + 1);
-
-        return { ...block, type, content };
-      });
-
-      blockToFocusId = menuTargetBlockId;
-    } else {
-      const newBlock = createBlock(type);
-      const hasOnlyOneEmptyBlock =
-        blocks.length === 1 && blocks[0].content.trim() === "";
-
-      nextBlocks = hasOnlyOneEmptyBlock ? [newBlock] : [...blocks, newBlock];
-      blockToFocusId = newBlock.id;
-    }
+      // Altera somente o tipo da linha selecionada.
+      return {
+        ...block,
+        type,
+        checked: type === "checkbox" ? block.checked : false,
+      };
+    });
 
     saveBlocks(nextBlocks);
-    // setIsMenuOpen(false);
-    setMenuTargetBlockId(null);
 
+    // Retorna o foco para a mesma linha.
     requestAnimationFrame(() => {
-      inputRefs.current.get(blockToFocusId)?.focus();
+      inputRefs.current.get(menuTargetBlockId)?.focus();
     });
-  }
-
-  function handleKeyDown(event, blockId = null) {
-    if (event.key === "/") {
-      setMenuTargetBlockId(blockId);
-      // setIsMenuOpen(true);
-    }
-
-    // if (event.key === "Escape") {
-    //   handleCloseMenu();
-    // }
   }
 
   function handleBlockKeyDown(event, blockIndex) {
@@ -215,6 +183,7 @@ export function QuickNotes({
                     inputRefs.current.delete(block.id);
                   }
                 }}
+                onFocus={() => setMenuTargetBlockId(block.id)}
                 value={block.content}
                 onChange={(event) =>
                   updateBlock(block.id, {
@@ -222,12 +191,9 @@ export function QuickNotes({
                   })
                 }
                 onKeyDown={(event) => {
-                  handleKeyDown(event, block.id);
                   handleBlockKeyDown(event, blockIndex);
                 }}
-                placeholder={
-                  block.type === "checkbox" ? "..." : "type '/' to select"
-                }
+                placeholder="..."
                 className={`
                   flex-1
                   min-w-0
@@ -286,14 +252,14 @@ function QuickNotesMenu({ handleAddBlock }) {
           onClick={() => handleAddBlock("text")}
           className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
         >
-          <Icon name="type" className="text-gray-400"/>
+          <Icon name="type" className="text-gray-400" />
         </button>
         <button
           type="button"
           onClick={() => handleAddBlock("checkbox")}
           className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
         >
-          <Icon name="squareCheck"  className="text-gray-400"/>
+          <Icon name="squareCheck" className="text-gray-400" />
         </button>
       </div>
     </>

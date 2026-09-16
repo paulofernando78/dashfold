@@ -591,6 +591,9 @@ export function Clock({
             onEdit={handleEditWeather}
             onConfirm={handleConfirmWeather}
           />
+          {/* <WidgetControls.Close
+          
+          /> */}
         </WidgetControls>
       }
     />

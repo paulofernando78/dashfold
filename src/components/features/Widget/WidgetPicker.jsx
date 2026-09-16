@@ -34,7 +34,7 @@ export function WidgetPicker({ onAdd }) {
     onAdd(type);
 
     // Fecha o elemento <dialog> depois da escolha.
-    dialogRef.current?.clode();
+    dialogRef.current?.close();
   }
 
   const widgetPickerBorder = `
@@ -65,23 +65,6 @@ export function WidgetPicker({ onAdd }) {
         <Icon name="plus" />
       </button>
       <Dialog dialogRef={dialogRef} className="relative max-w-md">
-        <button
-          type="button"
-          aria-label="Close widget picker"
-          onClick={() => dialogRef.current?.close()}
-          className="
-            absolute
-            top-2
-            right-2
-            cursor-pointer
-            rounded
-            p-1
-            hover:bg-white/10
-          "
-        >
-          <Icon name="x" />
-        </button>
-
         <div
           className={`
               flex

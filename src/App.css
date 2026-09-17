@@ -2,7 +2,8 @@
 
 html {
   min-height: 100%;
-  scrollbar-gutter: stable both-edges;
+  background: linear-gradient(#111417, #34384a);
+  scrollbar-gutter: stable;
 }
 
 html,
@@ -20,7 +21,7 @@ p {
 
 body {
   min-height: 100vh;
-  background: linear-gradient(#111417, #34384a);
+  background: transparent;
   background-attachment: fixed;
   color: white;
   font-family: "Montserrat Variable", sans-serif;

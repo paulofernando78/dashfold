@@ -4,6 +4,8 @@ const LANGUAGE_STORAGE_KEY = "language";
 
 const messages = {
   en: {
+    homeDescription: "Everything you need in one place.",
+    login: "Login",
     widgets: "Widgets",
     taskBoard: "Task Board",
     select: "Select",
@@ -59,6 +61,8 @@ const messages = {
     minute: "minute",
   },
   pt: {
+    homeDescription: "Tudo o que você precisa em um só lugar.",
+    login: "Entrar",
     widgets: "Widgets",
     taskBoard: "Quadro de tarefas",
     select: "Selecionar",
@@ -153,6 +157,7 @@ export function LanguageProvider({ children }) {
 // eslint-disable-next-line react-refresh/only-export-components
 export function useLanguage() {
   const context = useContext(LanguageContext);
-  if (!context) throw new Error("useLanguage must be used inside LanguageProvider");
+  if (!context)
+    throw new Error("useLanguage must be used inside LanguageProvider");
   return context;
 }

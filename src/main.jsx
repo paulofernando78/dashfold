@@ -9,10 +9,13 @@ import "@fontsource-variable/montserrat/wght.css";
 // Supports weights 200-700
 import "@fontsource-variable/oswald/wght.css";
 import "@fontsource/indie-flower";
+import { StrictMode } from "react";
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <LanguageProvider>
-      <App />
-    </LanguageProvider>
-  </BrowserRouter>,
+  <StrictMode>
+    <BrowserRouter>
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
+    </BrowserRouter>
+  </StrictMode>,
 );

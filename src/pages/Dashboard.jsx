@@ -1,0 +1,211 @@
+import { useState, useEffect, useRef } from "react";
+
+import "@/App.css";
+import { Header } from "@/components/layout/Header";
+import { SectionPanel } from "@/components/ui/SectionPanel";
+
+//Calendar
+// import { Calendar } from "@/components/features/Calendar";
+
+// Widget / ui
+import { WidgetContainer, WidgetCard } from "@/components/ui/Widget";
+// Widget / features
+import { widgetCatalog, WidgetPicker } from "@/components/features/Widget";
+
+// Taskboard
+import { TaskBoard } from "@/components/features/TaskBoard";
+
+// Notes
+import { Notes } from "@/components/features/Notes";
+
+import { DragDropProvider } from "@dnd-kit/react";
+import { useSortable } from "@dnd-kit/react/sortable";
+import { move } from "@dnd-kit/helpers";
+import { useLanguage } from "@/i18n";
+
+const WIDGETS_STORAGE_KEY = "widgets";
+
+function createDefaultWidgets() {
+  return [
+    {
+      id: crypto.randomUUID(),
+      type: "clock",
+      config: { ...widgetCatalog.clock.defaultConfig },
+    },
+  ];
+}
+
+function getSavedWidgets() {
+  const savedWidgets = localStorage.getItem(WIDGETS_STORAGE_KEY);
+
+  if (!savedWidgets) return createDefaultWidgets();
+
+  try {
+    return JSON.parse(savedWidgets).map((widget) => ({
+      ...widget,
+      type: widget.type === "tabata" ? "hiit" : widget.type,
+    }));
+  } catch {
+    return createDefaultWidgets();
+  }
+}
+
+function SortableWidget({
+  widgetInstance,
+  definition,
+  index,
+  onDelete,
+  onConfigChange,
+}) {
+  const { ref, handleRef, isDragging } = useSortable({
+    id: widgetInstance.id,
+    index,
+  });
+
+  const Component = definition.Component;
+
+  return (
+    <WidgetCard
+      ref={ref}
+      dragHandleRef={handleRef}
+      widgetClassName={definition.widgetClassName}
+      iconName={definition.iconName}
+      isDragging={isDragging}
+    >
+      <Component
+        {...widgetInstance.config}
+        onConfigChange={onConfigChange}
+        onDelete={onDelete}
+      />
+    </WidgetCard>
+  );
+}
+
+export function Dashboard() {
+  const { t } = useLanguage();
+  const [widgets, setWidgets] = useState(getSavedWidgets);
+  const widgetsEndRef = useRef(null);
+  const shouldScrollToEndRef = useRef(false);
+
+  useEffect(() => {
+    localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(widgets));
+  }, [widgets]);
+
+  useEffect(() => {
+    if (!shouldScrollToEndRef.current) return;
+
+    widgetsEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "end",
+    });
+
+    shouldScrollToEndRef.current = false;
+  }, [widgets.length]);
+
+  function addWidget(type) {
+    const definition = widgetCatalog[type];
+
+    if (!definition) return;
+
+    const newWidget = {
+      id: crypto.randomUUID(),
+      type,
+      config: { ...definition.defaultConfig },
+    };
+
+    shouldScrollToEndRef.current = true;
+    setWidgets((currentWidgets) => [...currentWidgets, newWidget]);
+  }
+
+  function removeWidget(id) {
+    setWidgets((currentWidgets) =>
+      currentWidgets.filter((widget) => widget.id !== id),
+    );
+  }
+
+  function updateWidgetConfig(id, nextConfig) {
+    setWidgets((currentWidgets) =>
+      currentWidgets.map((widget) =>
+        widget.id === id
+          ? { ...widget, config: { ...widget.config, ...nextConfig } }
+          : widget,
+      ),
+    );
+  }
+
+  function handleDragEnd(event) {
+    if (event.canceled || !event.operation.target) return;
+
+    setWidgets((currentWidgets) => move(currentWidgets, event));
+  }
+
+  return (
+    <>
+      <Header />
+      <div
+        className="
+          flex flex-col
+          gap-6
+          w-full
+          max-w-301
+          min-h-screen
+          mx-auto p-3
+        "
+      >
+        <h2 className="text-3xl font-bold">Boa tarde, Paulo.</h2>
+        {/* Calendar */}
+        {/* <SectionPanel title="Calendar" storageKey="section-calendar">
+          <Calendar />
+        </SectionPanel> */}
+
+        {/* Widgets */}
+        <SectionPanel
+          title={t("widgets")}
+          storageKey="section-widget"
+          count={widgets.length}
+          headerAction={<WidgetPicker onAdd={addWidget} />}
+        >
+          <DragDropProvider onDragEnd={handleDragEnd}>
+            <WidgetContainer>
+              {widgets.map((widgetInstance, index) => {
+                const definition = widgetCatalog[widgetInstance.type];
+
+                return (
+                  <SortableWidget
+                    key={widgetInstance.id}
+                    widgetInstance={widgetInstance}
+                    definition={definition}
+                    index={index}
+                    onDelete={() => removeWidget(widgetInstance.id)}
+                    onConfigChange={(nextConfig) =>
+                      updateWidgetConfig(widgetInstance.id, nextConfig)
+                    }
+                  />
+                );
+              })}
+              <div
+                ref={widgetsEndRef}
+                className="w-px shrink-0 "
+                aria-hidden="true"
+              />
+            </WidgetContainer>
+          </DragDropProvider>
+        </SectionPanel>
+
+        {/* Task Board */}
+        <SectionPanel title={t("taskBoard")} storageKey="section-task-board">
+          <TaskBoard />
+        </SectionPanel>
+
+        {/* Notes */}
+        <SectionPanel title="Notes" storageKey="section-notes">
+          <Notes />
+          <Notes />
+        </SectionPanel>
+      </div>
+    </>
+  );
+}
+
+export default Dashboard;

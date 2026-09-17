@@ -39,7 +39,7 @@ export function SectionPanel({
     <section
       aria-labelledby={headingId}
       className={`
-        p-2
+        p-4
         w-full
         bg-gray-100/10
         rounded-2xl
@@ -64,9 +64,13 @@ export function SectionPanel({
             flex
             items-center
             gap-2
+            -translate-x-1
           "
         >
-          <Icon name={isOpen ? "chevronsDownUp" : "chevronsUpDown"} size={23} />
+          <Icon name={isOpen ? "chevronsDownUp"
+          :
+          "chevronsUpDown"}
+          size={23} />
 
           <h2 id={headingId}>{title}</h2>
 
@@ -81,9 +85,7 @@ export function SectionPanel({
           {...dragScroll}
           className="
             flex
-            p-2
-            py-2
-            bg-gray-100/10
+            py-[0.11rem]
             rounded-xl
             overflow-x-auto
             no-scrollbar

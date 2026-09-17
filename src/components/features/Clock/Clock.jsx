@@ -338,11 +338,15 @@ export function Clock({
                   data-no-drag
                   className="
                   grid
-                  overflow-hidden
+                  gradient
+                  py-3
+                  px-1
+                  rounded-lg
                   cursor-grab
                   select-none
                   touch-pan-y
                   active:cursor-grabbing
+                  overflow-hidden
                   "
                   onPointerDown={handleWeatherPointerDown}
                   onPointerMove={handleWeatherPointerMove}

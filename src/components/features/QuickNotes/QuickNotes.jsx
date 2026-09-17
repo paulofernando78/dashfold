@@ -10,7 +10,7 @@ export function QuickNotes({
   note = "",
   blocks: savedBlocks = [],
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const inputRefs = useRef(new Map());
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -192,7 +192,6 @@ export function QuickNotes({
 
   return (
     <WidgetBody
-      onClose={onClose}
       middlePosition="top"
       middle={
         <div
@@ -296,6 +295,7 @@ export function QuickNotes({
             <WidgetControls.Undo onClick={handleUndo} />
             <WidgetControls.Redo onClick={handleRedo} />
             <WidgetControls.Reset onClick={handleReset} />
+            <WidgetControls.Delete onClick={onDelete} />
           </WidgetControls>
         </>
       }

@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import { WidgetBody } from "@/components/ui/Widget";
+import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 import { Icon } from "@/components/ui/Icon";
 import { useLanguage } from "@/i18n";
 
 export function Calculator({
   display: savedDisplay = "0",
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const { language, t } = useLanguage();
   const [display, setDisplay] = useState(savedDisplay);
@@ -399,7 +399,6 @@ export function Calculator({
   return (
     <WidgetBody
       hFull={false}
-      onClose={onClose}
       top={
         <div
           className={`
@@ -604,6 +603,11 @@ export function Calculator({
             ))}
           </div>
         </div>
+      }
+      bottom={
+        <WidgetControls>
+          <WidgetControls.Delete onClick={onDelete} />
+        </WidgetControls>
       }
     />
   );

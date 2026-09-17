@@ -7,7 +7,7 @@ import {
 import { Icon } from "@/components/ui/Icon";
 import { NumberInput } from "@/components/ui/NumberInput";
 
-export function WaterIntake({ onConfigChange, onClose }) {
+export function WaterIntake({ onConfigChange, onDelete }) {
   const [glassMl, setGlassMl] = useState(500);
   const [goalGlasses, setGoalGlasses] = useState(6);
   const [completedGlasses, setCompletedGlasses] = useState(0);
@@ -80,7 +80,6 @@ export function WaterIntake({ onConfigChange, onClose }) {
 
   return (
     <WidgetBody
-      onClose={onClose}
       top={
         <span className="text-2xl">
           {completedMl} of {totalMl}ml
@@ -157,6 +156,7 @@ export function WaterIntake({ onConfigChange, onClose }) {
             onConfirm={handleConfirm}
           />
           <WidgetControls.Reset onClick={handleReset} />
+          <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }
     />

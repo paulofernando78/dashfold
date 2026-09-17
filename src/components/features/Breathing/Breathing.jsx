@@ -59,7 +59,7 @@ const presets = {
   },
 };
 
-export function Breathing({ onConfigChange }) {
+export function Breathing({ onConfigChange, onDelete }) {
   const { language, t } = useLanguage();
   const [countdownSeconds, setCountdownSeconds] = useState(
     START_COUNTDOWN_SECONDS,
@@ -641,6 +641,7 @@ export function Breathing({ onConfigChange }) {
             onConfirm={handleConfirm}
           />
           <WidgetControls.Reset onClick={handleReset} />
+          <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }
     />

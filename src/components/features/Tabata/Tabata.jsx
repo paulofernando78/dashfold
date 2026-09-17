@@ -27,7 +27,7 @@ export function Tabata({
   restSeconds: initialRestSeconds = DEFAULT_REST_SECONDS,
   tabataGoal: initialTabataGoal = DEFAULT_TABATA_GOAL,
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const { language, t } = useLanguage();
   const [countdownSeconds, setCountdownSeconds] = useState(
@@ -231,7 +231,6 @@ export function Tabata({
 
   return (
     <WidgetBody
-      onClose={onClose}
       top={
         <div className="flex flex-col items-center justify-center gap-4">
           <span>{totalTime}</span>
@@ -322,6 +321,7 @@ export function Tabata({
             onConfirm={() => applyEditSettings(false)}
           />
           <WidgetControls.Reset onClick={handleReset} />
+          <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }
     />

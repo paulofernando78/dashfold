@@ -46,7 +46,7 @@ export function Pomodoro({
   longBreakMinutes: initialLongBreakMinutes = DEFAULT_LONG_BREAK_MINUTES,
   pomodoroGoal: initialPomodoroGoal = 4,
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const { t } = useLanguage();
   const [focusMinutes, setFocusMinutes] = useState(initialFocusMinutes);
@@ -284,7 +284,6 @@ export function Pomodoro({
   return (
     <>
       <WidgetBody
-        onClose={onClose}
         top={
           <div
             className="
@@ -393,7 +392,7 @@ export function Pomodoro({
             />
             <WidgetControls.Reset onClick={handleReset} />
             <PomodoroGuideDialog />
-            <WidgetControls.Delete onClick={onClose} />
+            <WidgetControls.Delete onClick={onDelete} />
           </WidgetControls>
         }
       />

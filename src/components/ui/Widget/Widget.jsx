@@ -21,7 +21,6 @@ export const widgetInnerBorder = `
 export function WidgetCard({
   widgetClassName,
   iconName,
-  onClose,
   children,
   ref,
   dragHandleRef,
@@ -42,7 +41,6 @@ export function WidgetCard({
     >
       <WidgetHeader
         iconName={iconName}
-        onClose={onClose}
         dragHandleRef={dragHandleRef}
       />
       <div
@@ -64,15 +62,7 @@ export function WidgetCard({
   );
 }
 
-const windowControl = `
-  grid
-  place-items-center
-  size-4
-  rounded-full
-  
-`;
-
-function WidgetHeader({ iconName, onClose, dragHandleRef }) {
+function WidgetHeader({ iconName, dragHandleRef }) {
   return (
     <div
       className="
@@ -80,8 +70,6 @@ function WidgetHeader({ iconName, onClose, dragHandleRef }) {
         grid-cols-[1fr_auto_1fr]
         header"
     >
-      <WindowControls onClose={onClose} />
-
       <button
         ref={dragHandleRef}
         type="button"
@@ -93,43 +81,6 @@ function WidgetHeader({ iconName, onClose, dragHandleRef }) {
       </button>
 
       <WidgetIcons iconName={iconName} className="justify-self-end" />
-    </div>
-  );
-}
-
-function WindowControls({ onClose }) {
-  return (
-    <div
-      className="
-        flex
-        gap-1.5
-      "
-    >
-      <button
-        type="button"
-        title="close"
-        aria-label="close widget"
-        onClick={onClose}
-        className={`${windowControl} bg-red-400`}
-      >
-        <Icon name="x" size={10} className="text-gray-600" />
-      </button>
-      {/* <button
-        type="button"
-        title="maximize"
-        aria-label="maximize widget"
-        className={`${windowControl} bg-green-600`}
-      >
-        <Icon name="maximize2" size={10} />
-      </button> */}
-      {/* <button
-        type="button"
-        title="minimize"
-        aria-label="minimize widget"
-        className="window-control bg-yellow-500"
-      >
-        <Icon name="minus" size={10} />
-      </button> */}
     </div>
   );
 }

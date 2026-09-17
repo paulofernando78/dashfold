@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { WidgetBody } from "@/components/ui/Widget";
+import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 import { MarketCard } from "./MarketCard";
 import { Icon } from "@/components/ui/Icon";
 
@@ -132,7 +132,7 @@ async function fetchBitcoin(signal) {
 export function Markets({
   selectedMarketId = "ibovespa",
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const [markets, setMarkets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +249,6 @@ export function Markets({
 
   return (
     <WidgetBody
-      onClose={onClose}
       middlePosition="top"
       middle={
         isLoading ? (
@@ -323,6 +322,11 @@ export function Markets({
             {error && <span className="text-xs text-red-400">{error}</span>}
           </div>
         )
+      }
+      bottom={
+        <WidgetControls>
+          <WidgetControls.Delete onClick={onDelete} />
+        </WidgetControls>
       }
     />
   );

@@ -13,7 +13,7 @@ export function Timer({
   minutes = 0,
   seconds = 0,
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const initialTime = hours * 3600 + minutes * 60 + seconds;
 
@@ -166,7 +166,6 @@ export function Timer({
 
   return (
     <WidgetBody
-      onClose={onClose}
       top={<span>{getFormattedTime}</span>}
       middle={
         !isEditing ? (
@@ -271,6 +270,7 @@ export function Timer({
             onConfirm={handleConfirmEdit}
           />
           <WidgetControls.Reset onClick={handleReset} />
+          <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }
     />

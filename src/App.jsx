@@ -52,7 +52,7 @@ function SortableWidget({
   widgetInstance,
   definition,
   index,
-  onRemove,
+  onDelete,
   onConfigChange,
 }) {
   const { ref, handleRef, isDragging } = useSortable({
@@ -68,13 +68,12 @@ function SortableWidget({
       dragHandleRef={handleRef}
       widgetClassName={definition.widgetClassName}
       iconName={definition.iconName}
-      onClose={onRemove}
       isDragging={isDragging}
     >
       <Component
         {...widgetInstance.config}
         onConfigChange={onConfigChange}
-        onClose={onRemove}
+        onDelete={onDelete}
       />
     </WidgetCard>
   );
@@ -175,7 +174,7 @@ function App() {
                   widgetInstance={widgetInstance}
                   definition={definition}
                   index={index}
-                  onRemove={() => removeWidget(widgetInstance.id)}
+                  onDelete={() => removeWidget(widgetInstance.id)}
                   onConfigChange={(nextConfig) =>
                     updateWidgetConfig(widgetInstance.id, nextConfig)
                   }

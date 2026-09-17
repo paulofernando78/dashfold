@@ -66,7 +66,7 @@ export function Clock({
   longitude = -46.63331,
   timezone = "America/Sao_Paulo",
   onConfigChange,
-  onClose,
+  onDelete,
 }) {
   const { locale, t } = useLanguage();
   const locationInputRef = useRef(null);
@@ -306,7 +306,6 @@ export function Clock({
   return (
     <WidgetBody
       width="clock"
-      onClose={onClose}
       top={
         <div>
           <span className="block">{currentTime}</span>
@@ -590,7 +589,7 @@ export function Clock({
             onEdit={handleEditWeather}
             onConfirm={handleConfirmWeather}
           />
-          <WidgetControls.Delete onClick={onClose} />
+          <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }
     />

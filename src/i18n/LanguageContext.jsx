@@ -27,7 +27,6 @@ const messages = {
     typeLocation: "Type location",
     toDo: "To Do",
     inProgress: "In progress",
-    delegate: "Delegate",
     done: "Done",
     addTask: "Add task...",
     taskBoardNotice:
@@ -78,7 +77,6 @@ const messages = {
     typeLocation: "Digite uma localização",
     toDo: "Fazer",
     inProgress: "Em andamento",
-    delegate: "Delegar",
     done: "Concluído",
     addTask: "Adicionar tarefa...",
     taskBoardNotice:

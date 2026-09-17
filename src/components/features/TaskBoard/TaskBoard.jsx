@@ -8,24 +8,24 @@ import { move } from "@dnd-kit/helpers";
 
 const statusOptions = [
   {
+    id: "inbox",
+    label: "inbox",
+    color: "border border-yellow-500/50 bg-yellow-300/20",
+  },
+  {
     id: "todo",
     label: "toDo",
-    color: "border-gray-500/50 bg-gray-500/20",
+    color: "border border-green-500/50 bg-green-300/20",
   },
   {
     id: "in-progress",
     label: "inProgress",
-    color: "border-gray-500/50 bg-gray-500/20",
-  },
-  {
-    id: "delegate",
-    label: "delegate",
-    color: "border-gray-500/50 bg-gray-500/20",
+    color: "border border-emerald-600/50 bg-emerald-400/20",
   },
   {
     id: "done",
     label: "done",
-    color: "border-gray-500/50 bg-gray-500/20",
+    color: "border border-red-500/50 bg-red-300/20",
   },
 ];
 
@@ -33,6 +33,7 @@ const TASKS_STORAGE_KEY = "dashfold-task-board";
 
 function createDefaultTasks() {
   return {
+    inbox: [],
     todo: [
       {
         id: crypto.randomUUID(),
@@ -44,7 +45,6 @@ function createDefaultTasks() {
       },
     ],
     "in-progress": [],
-    delegate: [],
     done: [],
   };
 }
@@ -112,15 +112,17 @@ export function TaskBoard() {
   const { t } = useLanguage();
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
-      <div className="grid">
+      <div className="grid w-full min-w-0">
         <TaskBoardNotice text={t("taskBoardNotice")} />
         <div
           className="
+          w-full
+          min-w-0
           overflow-x-auto
-        text-slate-100
+          text-slate-100
         "
         >
-          <div className="grid gap-2 pt-2 grid-cols-[repeat(4,minmax(260px,1fr))]">
+          <div className="grid grid-cols-4 gap-2 min-w-266 w-full pt-2">
             {statusOptions.map((status) => (
               <TaskBoardColumn
                 key={status.id}
@@ -186,10 +188,9 @@ function TaskBoardColumn({
     >
       <div
         className={`
-          min-h-40
+          min-h-[23px]
           p-2
           rounded-lg
-          gradient
           ${status.color}
         `}
       >

@@ -259,9 +259,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
         p-2
         transition-opacity
         active:cursor-grabbing
-
         ${isDropTarget ? "border-blue-400" : "border-white/10"}
-
         ${isDragging ? "opacity-40" : ""}
       `}
     >
@@ -314,7 +312,6 @@ function TaskCard({ task, index, columnId, onEditTask }) {
               shrink-0
               cursor-pointer
               rounded
-              px-1
               text-slate-300
               hover:bg-white/10 hover:text-white"
               aria-label={`Editar ${task.text}`}

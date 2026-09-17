@@ -4,6 +4,10 @@
   --bg: #191919;
 }
 
+html {
+  scrollbar-gutter: stable both-edges;
+}
+
 html,
 h1,
 h2,
@@ -12,7 +16,6 @@ h4,
 p,
 span {
   line-height: 1;
-  scrollbar-gutter: stable both-edges;
 }
 
 body {

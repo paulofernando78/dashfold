@@ -18,6 +18,7 @@ export function QuickNotes({
   const [blocks, setBlocks] = useState(() =>
     savedBlocks.length > 0 ? savedBlocks : [createBlock("text", note)],
   );
+  const blocksRef = useRef(blocks);
   const [past, setPast] = useState([]);
   const [future, setFuture] = useState([]);
 
@@ -93,14 +94,15 @@ export function QuickNotes({
   }
 
   function saveBlocks(nextBlocks) {
-    setPast((currentPast) => [...currentPast, blocks]);
+    setPast((currentPast) => [...currentPast, blocksRef.current]);
     setFuture([]);
+    blocksRef.current = nextBlocks;
     setBlocks(nextBlocks);
     onConfigChange?.({ blocks: nextBlocks });
   }
 
   function updateBlock(id, changes) {
-    const nextBlocks = blocks.map((block) =>
+    const nextBlocks = blocksRef.current.map((block) =>
       block.id === id ? { ...block, ...changes } : block,
     );
 
@@ -115,6 +117,47 @@ export function QuickNotes({
     saveBlocks(nextBlocks);
   }
 
+  async function loadLinkTitle(blockId, value) {
+    const url = normalizeUrl(value);
+
+    if (!url) return;
+
+    let title = getUrlHostname(url);
+    let resolvedUrl = url;
+
+    try {
+      const response = await fetch(
+        `/api/link-preview?url=${encodeURIComponent(url)}`,
+      );
+
+      if (response.ok) {
+        const preview = await response.json();
+        title = preview.title || title;
+        resolvedUrl = preview.url || url;
+      }
+    } catch {
+      // Some sites block metadata requests. The hostname remains a useful label.
+    }
+
+    updateBlock(blockId, {
+      content: resolvedUrl,
+      url: resolvedUrl,
+      title,
+    });
+  }
+
+  function handleEditLink(block) {
+    updateBlock(block.id, {
+      content: block.url || block.content,
+      url: "",
+      title: "",
+    });
+
+    requestAnimationFrame(() => {
+      inputRefs.current.get(block.id)?.focus();
+    });
+  }
+
   function handleUndo() {
     if (past.length === 0) return;
 
@@ -122,6 +165,7 @@ export function QuickNotes({
 
     setPast((currentPast) => currentPast.slice(0, -1));
     setFuture((currentFuture) => [...currentFuture, blocks]);
+    blocksRef.current = previousBlocks;
     setBlocks(previousBlocks);
     onConfigChange?.({ blocks: previousBlocks });
   }
@@ -133,6 +177,7 @@ export function QuickNotes({
 
     setFuture((currentFuture) => currentFuture.slice(0, -1));
     setPast((currentPast) => [...currentPast, blocks]);
+    blocksRef.current = nextBlocks;
     setBlocks(nextBlocks);
     onConfigChange?.({ blocks: nextBlocks });
   }
@@ -175,35 +220,64 @@ export function QuickNotes({
                   className="self-start mt-[0.1rem] shrink-0"
                 />
               )}
-              <TextInput
-                inputRef={(element) => {
-                  if (element) {
-                    inputRefs.current.set(block.id, element);
-                  } else {
-                    inputRefs.current.delete(block.id);
+              {block.type === "link" && block.url ? (
+                <div className="flex min-w-0 flex-1 items-center gap-1">
+                  <a
+                    href={block.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onFocus={() => setMenuTargetBlockId(block.id)}
+                    className="min-w-0 flex-1 truncate text-blue-700 underline"
+                    title={block.url}
+                  >
+                    {block.title || getUrlHostname(block.url)}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleEditLink(block)}
+                    className="shrink-0 rounded p-1 text-gray-500 hover:bg-black/10"
+                    aria-label={`Edit ${block.title || block.url}`}
+                    title="Edit link"
+                  >
+                    <Icon name="squarePen" size={16} />
+                  </button>
+                </div>
+              ) : (
+                <TextInput
+                  inputRef={(element) => {
+                    if (element) {
+                      inputRefs.current.set(block.id, element);
+                    } else {
+                      inputRefs.current.delete(block.id);
+                    }
+                  }}
+                  onFocus={() => setMenuTargetBlockId(block.id)}
+                  value={block.content}
+                  onChange={(event) =>
+                    updateBlock(block.id, {
+                      content: event.target.value,
+                    })
                   }
-                }}
-                onFocus={() => setMenuTargetBlockId(block.id)}
-                value={block.content}
-                onChange={(event) =>
-                  updateBlock(block.id, {
-                    content: event.target.value,
-                  })
-                }
-                onKeyDown={(event) => {
-                  handleBlockKeyDown(event, blockIndex);
-                }}
-                placeholder="..."
-                className={`
-                  flex-1
-                  min-w-0
-                  ${
-                    block.type === "checkbox" && block.checked
-                      ? "line-through text-gray-400"
-                      : "text-gray-800"
-                  }
-                `}
-              />
+                  onBlur={() => {
+                    if (block.type === "link") {
+                      loadLinkTitle(block.id, block.content);
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    handleBlockKeyDown(event, blockIndex);
+                  }}
+                  placeholder={block.type === "link" ? "Paste a URL..." : "..."}
+                  className={`
+                    flex-1
+                    min-w-0
+                    ${
+                      block.type === "checkbox" && block.checked
+                        ? "line-through text-gray-400"
+                        : "text-gray-800"
+                    }
+                  `}
+                />
+              )}
             </div>
           ))}
         </div>
@@ -231,7 +305,29 @@ function createBlock(type = "text", content = "") {
     type,
     content,
     checked: false,
+    url: "",
+    title: "",
   };
+}
+
+function normalizeUrl(value) {
+  const url = value.trim();
+
+  if (!url) return "";
+
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  return `https://${url}`;
+}
+
+function getUrlHostname(value) {
+  try {
+    return new URL(value).hostname.replace(/^www\./, "");
+  } catch {
+    return value;
+  }
 }
 
 function QuickNotesMenu({ handleAddBlock }) {
@@ -260,6 +356,13 @@ function QuickNotesMenu({ handleAddBlock }) {
           className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
         >
           <Icon name="squareCheck" className="text-gray-400" />
+        </button>
+        <button
+          type="button"
+          onClick={() => handleAddBlock("link")}
+          className="flex items-center gap-2 p-1 rounded hover:bg-gray-600"
+        >
+          <Icon name="link2" className="text-gray-400" />
         </button>
       </div>
     </>

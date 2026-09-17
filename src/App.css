@@ -1,5 +1,9 @@
 @reference "tailwindcss";
 
+:root {
+  --bg: #191919;
+}
+
 html,
 h1,
 h2,
@@ -12,7 +16,7 @@ span {
 }
 
 body {
-  background-color: #191919;
+  background: var(--bg);
   color: white;
   font-family: "Montserrat Variable", sans-serif;
 }

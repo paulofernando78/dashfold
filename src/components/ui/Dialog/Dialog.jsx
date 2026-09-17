@@ -20,9 +20,9 @@ export function Dialog({ dialogRef, children, className = "" }) {
         text-left
         font-['Montserrat_Variable',sans-serif]
         normal-case
-        bg-[#55575D]
-        border-2
-        border-gray-500
+        bg-(--bg)
+        border
+        border-gray-500/90
         rounded-lg
         backdrop:bg-black/70
         ${className}

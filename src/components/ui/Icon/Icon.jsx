@@ -45,6 +45,7 @@ import {
   // I
   Info,
   // L
+  Link2,
   ListClock,
   // M
   MapPin,
@@ -275,6 +276,7 @@ const icons = {
   // I
   info: Info,
   // L
+  link2: Link2,
   listClock: ListClock,
   // M
   mapPin: MapPin,

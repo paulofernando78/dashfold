@@ -43,13 +43,12 @@ export function WidgetPicker({ onAdd }) {
 
   return (
     <div
-      className={`
+      className="
         flex
         shrink-0
         gap-2
-        uppercase
         overflow-hidden
-      `}
+      "
     >
       <button
         type="button"
@@ -72,6 +71,7 @@ export function WidgetPicker({ onAdd }) {
               pt-4
               pb-1
               font-['Oswald_Variable']
+              uppercase
               overflow-y-auto
               `}
         >
@@ -80,8 +80,8 @@ export function WidgetPicker({ onAdd }) {
               <h3
                 className="
                     mb-2
-                    text-sm
                     font-bold
+                    text-lg
                   "
               >
                 {t(category)}

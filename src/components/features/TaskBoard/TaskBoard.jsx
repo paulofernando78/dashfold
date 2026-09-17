@@ -8,26 +8,30 @@ import { useDragScroll } from "@/hooks/useDragScroll";
 import { DragDropProvider, useDraggable, useDroppable } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 
-const statusOptions = [
+const statusOptionsStyle = `
+  w-full h-9.5 rounded
+`
+
+const statusOptionsColor = [
   {
     id: "inbox",
     label: "inbox",
-    color: "border border-yellow-500/50 bg-yellow-300/20",
+    color: `border border-yellow-500/50 bg-yellow-300/20 ${statusOptionsStyle}`,
   },
   {
     id: "todo",
     label: "toDo",
-    color: "border border-green-500/50 bg-green-300/20",
+    color: `border border-green-500/50 bg-green-300/20 ${statusOptionsStyle}`,
   },
   {
     id: "in-progress",
     label: "inProgress",
-    color: "border border-sky-600/50 bg-sky-400/20",
+    color: `border border-sky-600/50 bg-sky-400/20 ${statusOptionsStyle}`,
   },
   {
     id: "done",
     label: "done",
-    color: "border border-red-500/50 bg-red-300/20",
+    color: `border border-red-500/50 bg-red-300/20 ${statusOptionsStyle}`,
   },
 ];
 
@@ -60,7 +64,7 @@ function getSavedTasks() {
     const parsedTasks = JSON.parse(savedTasks);
 
     return Object.fromEntries(
-      statusOptions.map(({ id }) => [
+      statusOptionsColor.map(({ id }) => [
         id,
         Array.isArray(parsedTasks[id]) ? parsedTasks[id] : [],
       ]),
@@ -144,7 +148,7 @@ export function TaskBoard() {
         "
         >
           <div className="grid grid-cols-4 gap-2 min-w-266 w-full pt-2">
-            {statusOptions.map((status) => (
+            {statusOptionsColor.map((status) => (
               <TaskBoardColumn
                 key={status.id}
                 status={status}
@@ -451,10 +455,7 @@ function TaskComposer({ color, placeholder, onAddTask, className }) {
         flex
         items-center
         gap-1
-        w-full
-        h-9.5
-        border
-        rounded
+        
         group
         ${color}
         ${className}
@@ -470,6 +471,7 @@ function TaskComposer({ color, placeholder, onAddTask, className }) {
         className="
           w-full
           pl-2
+          outline-none
           rounded-sm
           placeholder:text-gray-100
         "

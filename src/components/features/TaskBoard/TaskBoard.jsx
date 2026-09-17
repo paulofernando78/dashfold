@@ -20,7 +20,7 @@ const statusOptions = [
   {
     id: "in-progress",
     label: "inProgress",
-    color: "border border-emerald-600/50 bg-emerald-400/20",
+    color: "border border-sky-600/50 bg-sky-400/20",
   },
   {
     id: "done",

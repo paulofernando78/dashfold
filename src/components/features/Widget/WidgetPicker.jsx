@@ -69,7 +69,7 @@ export function WidgetPicker({ onAdd }) {
               flex-col
               gap-4
               pt-4
-              pb-1
+              pb-2
               font-['Oswald_Variable']
               uppercase
               overflow-y-auto

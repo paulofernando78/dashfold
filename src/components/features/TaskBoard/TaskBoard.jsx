@@ -189,6 +189,7 @@ function TaskBoardColumn({
           min-h-40
           p-2
           rounded-lg
+          gradient
           ${status.color}
         `}
       >

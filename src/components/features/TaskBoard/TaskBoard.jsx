@@ -16,22 +16,22 @@ const statusOptionsColor = [
   {
     id: "inbox",
     label: "inbox",
-    color: `border border-yellow-500/50 bg-yellow-300/20 ${statusOptionsStyle}`,
+    color: `bg-yellow-300/20 ${statusOptionsStyle}`,
   },
   {
     id: "todo",
     label: "toDo",
-    color: `border border-green-500/50 bg-green-300/20 ${statusOptionsStyle}`,
+    color: `bg-green-300/20 ${statusOptionsStyle}`,
   },
   {
     id: "in-progress",
     label: "inProgress",
-    color: `border border-sky-600/50 bg-sky-400/20 ${statusOptionsStyle}`,
+    color: `bg-sky-400/20 ${statusOptionsStyle}`,
   },
   {
     id: "done",
     label: "done",
-    color: `border border-red-500/50 bg-red-300/20 ${statusOptionsStyle}`,
+    color: `bg-red-300/20 ${statusOptionsStyle}`,
   },
 ];
 
@@ -250,7 +250,7 @@ function TaskBoardColumn({
           color={status.color}
           placeholder={t("addTask")}
           onAddTask={(text) => onAddTask(status.id, text)}
-          className="mb-2 shrink-0"
+          className="shrink-0 mb-2 "
         />
         {/* Box for TaskCard */}
         <>
@@ -343,8 +343,7 @@ function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
       className={`
         cursor-grab
         rounded
-        border
-        bg-gray-800
+        border-2
         p-2
         transition-opacity
         active:cursor-grabbing

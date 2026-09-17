@@ -42,7 +42,10 @@ function getSavedWidgets() {
   if (!savedWidgets) return createDefaultWidgets();
 
   try {
-    return JSON.parse(savedWidgets);
+    return JSON.parse(savedWidgets).map((widget) => ({
+      ...widget,
+      type: widget.type === "tabata" ? "hiit" : widget.type,
+    }));
   } catch {
     return createDefaultWidgets();
   }

@@ -11,7 +11,7 @@ import { Calculator } from "@/components/features/Calculator";
 import { Markets } from "@/components/features/Markets";
 
 // Health
-import { Tabata } from "@/components/features/Tabata";
+import { HIIT } from "@/components/features/HIIT";
 import { WaterIntake } from "@/components/features/WaterIntake";
 import { Breathing } from "@/components/features/Breathing";
 
@@ -100,10 +100,10 @@ export const widgetCatalog = {
   // },
 
   // Health
-  tabata: {
+  hiit: {
     category: "health",
-    Component: Tabata,
-    title: "tabata",
+    Component: HIIT,
+    title: "hiit",
     iconName: "dumbbell",
     widgetClassName: widgetWidth,
     defaultConfig: {

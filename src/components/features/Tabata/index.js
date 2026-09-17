@@ -1,1 +1,0 @@
-export { Tabata } from "./Tabata"

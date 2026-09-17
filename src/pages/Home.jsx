@@ -13,7 +13,7 @@ export function Home() {
       "
     >
       <Header />
-      <div className="text-center">
+      <div className="mt-15 text-center">
         <h1 className="mb-4 text-5xl font-bold">DASHFOLD</h1>
         <p className="mb-8 text-gray-300">{t("homeDescription")}</p>
         <Link

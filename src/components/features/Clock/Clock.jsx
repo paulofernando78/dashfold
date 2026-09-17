@@ -4,7 +4,6 @@ import { useLanguage } from "@/i18n";
 import {
   WidgetBody,
   WidgetControls,
-  widgetGlassMorphism,
 } from "@/components/ui/Widget";
 import { Icon } from "@/components/ui/Icon";
 
@@ -604,7 +603,6 @@ function WeatherWrapper({ children, className }) {
   return (
     <div
       className={`
-        ${widgetGlassMorphism}
         ${className}
       `}
     >

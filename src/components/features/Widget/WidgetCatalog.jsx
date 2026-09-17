@@ -15,7 +15,7 @@ import { Tabata } from "@/components/features/Tabata";
 import { WaterIntake } from "@/components/features/WaterIntake";
 import { Breathing } from "@/components/features/Breathing";
 
-const widgetStyle = `
+const widgetWidth = `
   w-[254px]
 `;
 
@@ -38,7 +38,7 @@ export const widgetCatalog = {
     Component: QuickNotes,
     title: "quickNotes",
     iconName: "quickNotes",
-    widgetClassName: `paper-texture ${widgetStyle}`,
+    widgetClassName: `paper-texture ${widgetWidth}`,
     defaultConfig: {
       blocks: [],
     },
@@ -50,7 +50,7 @@ export const widgetCatalog = {
     Component: Pomodoro,
     title: "pomodoro",
     iconName: "pomodoro",
-    widgetClassName: widgetStyle,
+    widgetClassName: widgetWidth,
     defaultConfig: {
       focusMinutes: 25,
       breakMinutes: 5,
@@ -63,7 +63,7 @@ export const widgetCatalog = {
     Component: Timer,
     title: "timer",
     iconName: "timer",
-    widgetClassName: widgetStyle,
+    widgetClassName: widgetWidth,
     defaultConfig: {
       hours: 0,
       minutes: 0,
@@ -105,7 +105,7 @@ export const widgetCatalog = {
     Component: Tabata,
     title: "tabata",
     iconName: "dumbbell",
-    widgetClassName: widgetStyle,
+    widgetClassName: widgetWidth,
     defaultConfig: {
       countdownSeconds: 5,
       goSeconds: 20,
@@ -118,7 +118,7 @@ export const widgetCatalog = {
     title: "waterIntake",
     Component: WaterIntake,
     iconName: "waterIntake",
-    widgetClassName: widgetStyle,
+    widgetClassName: widgetWidth,
     defaultConfig: {},
   },
   breathing: {
@@ -126,7 +126,7 @@ export const widgetCatalog = {
     title: "breathing",
     Component: Breathing,
     iconName: "breathing",
-    widgetClassName: widgetStyle,
+    widgetClassName: widgetWidth,
     defaultConfig: {
       inhaleSeconds: 4,
       holdInSeconds: 4,

@@ -22,17 +22,6 @@ export const widgetInnerBorder = `
   rounded-md
 `;
 
-export const widgetGlassMorphism = `
-  p-3
-  rounded-xl
-  border
-  border-white/15
-  bg-white/8
-  backdrop-blur-md
-  shadow-lg
-  shadow-black/20
-`;
-
 export function WidgetCard({
   widgetClassName,
   iconName,

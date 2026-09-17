@@ -1,4 +1,3 @@
-import { widgetGlassMorphism } from "@/components/ui/Widget";
 import { MarketLineChart } from "./MarketLineChart";
 
 export function MarketCard({
@@ -15,7 +14,6 @@ export function MarketCard({
         flex-col
         gap-2
         min-h-0
-        ${widgetGlassMorphism}
       `}
     >
       {/* <span>{market.name}</span> */}

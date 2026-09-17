@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   WidgetBody,
   WidgetControls,
-  widgetGlassMorphism,
 } from "@/components/ui/Widget";
 import { Icon } from "@/components/ui/Icon";
 import { NumberInput } from "@/components/ui/NumberInput";
@@ -89,7 +88,12 @@ export function WaterIntake({ onConfigChange, onClose }) {
       }
       middle={
         <div
-          className={`${widgetGlassMorphism} flex h-full items-center justify-center`}
+          className="
+            flex
+            h-full
+            items-center
+            justify-center
+          "
         >
           {!isEditing ? (
             <div className="grid grid-cols-2 gap-2">

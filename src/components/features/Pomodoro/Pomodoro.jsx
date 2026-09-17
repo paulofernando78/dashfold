@@ -393,6 +393,7 @@ export function Pomodoro({
             />
             <WidgetControls.Reset onClick={handleReset} />
             <PomodoroGuideDialog />
+            <PomodoroGuideDialog />
           </WidgetControls>
         }
       />

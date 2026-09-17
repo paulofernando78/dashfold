@@ -3,7 +3,6 @@ import { Icon } from "@/components/ui/Icon";
 export function WidgetContainer({ children }) {
   return <div className="flex gap-2">{children}</div>;
 }
-export const widgetHeight = `h-[416px]`;
 
 // + WidgetPicker
 export const widgetBorder = `
@@ -49,7 +48,6 @@ export function WidgetCard({
       className={`
         flex-none
         flex
-        ${widgetHeight}
         flex-col
         font-['Oswald_Variable']
         scroll-mr-2

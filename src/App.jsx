@@ -153,7 +153,7 @@ function App() {
       "
     >
       <Header />
-
+      <h2 className="text-3xl font-bold">Boa tarde, Paulo.</h2>
       {/* Calendar */}
       {/* <SectionPanel title="Calendar" storageKey="section-calendar">
         <Calendar />

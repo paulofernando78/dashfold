@@ -7,20 +7,6 @@ export function WidgetContainer({ children }) {
   return <div className="flex gap-2">{children}</div>;
 }
 
-// + WidgetPicker
-export const widgetBorder = `
-  border
-  border-gray-500/40
-  gradient
-  rounded-2xl
-`;
-
-export const widgetInnerBorder = `
-  p-2
-  gradient
-  rounded-md
-`;
-
 export function WidgetCard({
   widgetClassName,
   iconName,
@@ -38,7 +24,7 @@ export function WidgetCard({
         flex-col
         h-104
         font-['Oswald_Variable']
-        ${widgetBorder}
+        card-style
         ${isDragging ? "z-10 opacity-60" : ""}
       `}
     >

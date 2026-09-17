@@ -1,10 +1,7 @@
 @reference "tailwindcss";
 
-:root {
-  --bg: #191919;
-}
-
 html {
+  min-height: 100%;
   scrollbar-gutter: stable both-edges;
 }
 
@@ -18,11 +15,13 @@ span {
 }
 
 p {
-  line-height: 1.2
+  line-height: 1.2;
 }
 
 body {
-  background: var(--bg);
+  min-height: 100vh;
+  background: linear-gradient(#111417, #34384a);
+  background-attachment: fixed;
   color: white;
   font-family: "Montserrat Variable", sans-serif;
 }
@@ -130,8 +129,13 @@ hr {
   @apply bg-linear-to-tl from-white to-stone-100;
 }
 
-.gradient {
-  @apply bg-linear-to-tl from-[#111417] to-[#34384a];
+.card-style {
+  @apply
+    border
+    border-gray-500/30
+    bg-linear-to-tl from-[#111417] to-[#34384a]
+    rounded-2xl
+    ;
 }
 
 /* Scroll */
@@ -154,5 +158,5 @@ hr {
 }
 
 .red {
-  @apply border border-red-500
+  @apply border border-red-500;
 }

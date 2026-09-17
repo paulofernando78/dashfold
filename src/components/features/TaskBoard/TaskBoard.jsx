@@ -1,7 +1,9 @@
-import { Icon } from "@/components/ui/Icon";
-import { useLanguage } from "@/i18n";
-
 import { useEffect, useRef, useState } from "react";
+
+import { Icon } from "@/components/ui/Icon";
+
+import { useLanguage } from "@/i18n";
+import { useDragScroll } from "@/hooks/useDragScroll";
 
 import { DragDropProvider, useDraggable, useDroppable } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
@@ -69,7 +71,9 @@ function getSavedTasks() {
 }
 
 export function TaskBoard() {
+  const dragScroll = useDragScroll();
   const [tasks, setTasks] = useState(getSavedTasks);
+  const { t } = useLanguage();
 
   useEffect(() => {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
@@ -109,17 +113,34 @@ export function TaskBoard() {
     }));
   }
 
-  const { t } = useLanguage();
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
-      <div className="grid w-full min-w-0">
+      <div
+        className="
+          grid
+          w-full
+          min-w-0
+        "
+      >
         <TaskBoardNotice text={t("taskBoardNotice")} />
+
         <div
+          {...dragScroll}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            dragScroll.onPointerDown(event);
+          }}
           className="
           w-full
           min-w-0
-          overflow-x-auto
           text-slate-100
+          overflow-x-auto
+
+          no-scrollbar
+          cursor-grab
+          active:cursor-grabbing
+          select-none
+          touch-pan-x
         "
         >
           <div className="grid grid-cols-4 gap-2 min-w-266 w-full pt-2">
@@ -314,6 +335,7 @@ function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
   return (
     <article
       ref={setTaskRef}
+      data-no-drag
       className={`
         cursor-grab
         rounded
@@ -431,8 +453,6 @@ function TaskComposer({ color, placeholder, onAddTask, className }) {
         gap-1
         w-full
         h-9.5
-        text-gray-900
-        paper-texture
         border
         rounded
         group
@@ -450,9 +470,8 @@ function TaskComposer({ color, placeholder, onAddTask, className }) {
         className="
           w-full
           pl-2
-          outline-none
           rounded-sm
-          placeholder:text-gray-900
+          placeholder:text-gray-100
         "
       />
       <button

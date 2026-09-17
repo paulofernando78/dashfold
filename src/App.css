@@ -134,6 +134,10 @@ hr {
   @apply bg-linear-to-tl from-white to-stone-50;
 }
 
+.gradient {
+  @apply bg-linear-to-tl from-[#111417] to-[#34384a];
+}
+
 /* Scroll */
 * {
   scrollbar-width: thin;

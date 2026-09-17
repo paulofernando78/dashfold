@@ -82,7 +82,8 @@ export function SectionPanel({
           className="
             flex
             gap-2
-            p-2
+            pl-2
+            py-2
             bg-gray-100/10
             rounded-xl
             overflow-x-auto

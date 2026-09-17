@@ -8,17 +8,13 @@ export function WidgetContainer({ children }) {
 export const widgetBorder = `
   border
   border-gray-500/80
-  bg-linear-to-tl
-  from-[#111417]
-  to-[#222531]
+  gradient
   rounded-lg
 `;
 
 export const widgetInnerBorder = `
   p-2
-  bg-linear-to-tl
-  from-[#111417]
-  to-[#222531]
+  gradient
   rounded-md
 `;
 
@@ -38,8 +34,8 @@ export function WidgetCard({
         flex-none
         flex
         flex-col
+        h-104
         font-['Oswald_Variable']
-        scroll-mr-2
         ${widgetBorder}
         ${isDragging ? "z-10 opacity-60" : ""}
       `}
@@ -311,6 +307,20 @@ WidgetControls.Info = ({ onClick, ...props }) => {
   return (
     <button type="button" onClick={onClick} {...props} className="clickable">
       <Icon name="info" />
+    </button>
+  );
+};
+
+WidgetControls.Delete = ({ onClick }) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="clickable"
+      aria-label="Delete"
+      title="Delete"
+    >
+      <Icon name="trash" />
     </button>
   );
 };

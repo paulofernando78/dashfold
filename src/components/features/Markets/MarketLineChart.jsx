@@ -85,11 +85,9 @@ export function MarketLineChart({ data, className }) {
       ref={containerRef}
       className={`
         p-2
-        h-full
         bg-linear-to-tl
-        from-[#111417]
-        to-[#34384a]
         rounded-md
+        gradient
         ${className}
         `}
     />

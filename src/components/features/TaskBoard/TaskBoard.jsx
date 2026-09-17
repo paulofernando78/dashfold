@@ -146,7 +146,9 @@ function TaskBoardNotice({ text }) {
     <div
       className="
         flex
+        items-center
         gap-2
+        mr-2
         p-2
         bg-gray-500/20
         rounded-lg
@@ -188,7 +190,7 @@ function TaskBoardColumn({
     >
       <div
         className={`
-          min-h-[23px]
+          min-h-5.75
           p-2
           rounded-lg
           ${status.color}

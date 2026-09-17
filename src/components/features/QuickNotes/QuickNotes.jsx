@@ -52,10 +52,14 @@ export function QuickNotes({
     if (event.key === "Enter") {
       event.preventDefault();
 
-      const currentBlock = blocks[blockIndex];
-      const newBlock = createBlock(currentBlock.type);
+      const currentBlock = blocksRef.current[blockIndex];
 
-      const nextBlocks = [...blocks];
+      // Depois de concluir um link, volta ao modo de escrita normal.
+      // Texto e checkbox continuam repetindo o tipo atual.
+      const nextBlockType = currentBlock.type === "link" ? "text" : currentBlock.type;
+      const newBlock = createBlock(nextBlockType);
+
+      const nextBlocks = [...blocksRef.current];
 
       nextBlocks.splice(blockIndex + 1, 0, newBlock);
 

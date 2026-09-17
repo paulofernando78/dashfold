@@ -7,7 +7,7 @@ export function WidgetContainer({ children }) {
 // + WidgetPicker
 export const widgetBorder = `
   border
-  border-gray-500/60
+  border-gray-500/40
   gradient
   rounded-lg
 `;

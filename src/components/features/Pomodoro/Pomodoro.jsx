@@ -7,7 +7,7 @@ import { NumberInput } from "@/components/ui/NumberInput";
 
 import { playTick } from "@/utils/audio";
 
-import { PomodoroGuideDialog } from "@/components/features/PomodoroGuideDialog";
+import { PomodoroInfo } from "@/components/features/PomodoroGuideDialog";
 
 const DEFAULT_FOCUS_MINUTES = 25;
 const DEFAULT_BREAK_MINUTES = 5;
@@ -368,9 +368,9 @@ export function Pomodoro({
                 <span className="p- text-2xl font-bold">
                   {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
                 </span>
-                <p className={`text-3xl font-bold uppercase ${modeClass}`}>
+                <span className={`text-3xl font-bold uppercase ${modeClass}`}>
                   {t(mode)}
-                </p>
+                </span>
                 <span className={`text-5xl ${durationDisplay}`}>
                   {formatTime(time)}
                 </span>
@@ -391,7 +391,12 @@ export function Pomodoro({
               onConfirm={handleConfirmEdit}
             />
             <WidgetControls.Reset onClick={handleReset} />
-            <PomodoroGuideDialog />
+            <WidgetControls.Info
+              aria-label="How Pomodoro works"
+              title="How Pomodoro Works"
+            >
+              <PomodoroInfo />
+            </WidgetControls.Info>
             <WidgetControls.Delete onClick={onDelete} />
           </WidgetControls>
         }

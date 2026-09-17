@@ -1,5 +1,6 @@
 import { Clock } from "@/components/features/Clock";
 import { QuickNotes } from "@/components/features/QuickNotes";
+import { News } from "@/components/features/News";
 
 // Productivity
 import { Pomodoro } from "@/components/features/Pomodoro";
@@ -42,6 +43,14 @@ export const widgetCatalog = {
     defaultConfig: {
       blocks: [],
     },
+  },
+  news: {
+    category: "utilities",
+    Component: News,
+    title: "news",
+    iconName: "news",
+    widgetClassName: "w-[318px]",
+    defaultConfig: {},
   },
 
   // Productivity

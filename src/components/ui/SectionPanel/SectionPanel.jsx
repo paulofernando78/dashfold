@@ -39,9 +39,7 @@ export function SectionPanel({
     <section
       aria-labelledby={headingId}
       className={`
-        p-4
         w-full
-        bg-gray-100/10
         rounded-2xl
       `}
     >
@@ -67,9 +65,10 @@ export function SectionPanel({
             -translate-x-1
           "
         >
-          <Icon name={isOpen ? "chevronsDownUp"
+          <Icon name={isOpen ?
+          "chevronDown"
           :
-          "chevronsUpDown"}
+          "chevronRight"}
           size={23} />
 
           <h2 id={headingId}>{title}</h2>

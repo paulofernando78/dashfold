@@ -179,7 +179,7 @@ function TaskBoardNotice({ text }) {
       "
     >
       <Icon name="messageCircleWarning" cursorNone />
-      <p>{text}</p>
+      <p className="leading-2">{text}</p>
     </div>
   );
 }

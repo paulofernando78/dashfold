@@ -12,10 +12,8 @@ import {
   CirclePlus,
   ChartCandlestick,
   Check,
-  ChevronUp,
-  ChevronsUpDown,
+  ChevronRight,
   ChevronDown,
-  ChevronsDownUp,
   Clock,
   Cloud,
   CloudFog,
@@ -56,6 +54,7 @@ import {
   // N
   NotebookPen,
   NotepadText,
+  Newspaper,
   // P
   Parentheses,
   PaintBucket,
@@ -243,10 +242,8 @@ const icons = {
   circlePlus: CirclePlus,
   markets: ChartCandlestick,
   check: Check,
-  chevronup: ChevronUp,
-  chevronsUpDown: ChevronsUpDown,
+  chevronRight: ChevronRight,
   chevronDown: ChevronDown,
-  chevronsDownUp: ChevronsDownUp,
   clock: Clock,
   cloud: WeatherCloud,
   cloudFog: WeatherCloudFog,
@@ -286,6 +283,7 @@ const icons = {
   moon: WeatherMoon,
   // N
   quickNotes: NotebookPen,
+  news: Newspaper,
   notepadText: NotepadText,
   // P
   parentheses: Parentheses,

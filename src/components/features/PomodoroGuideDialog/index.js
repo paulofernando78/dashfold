@@ -1,1 +1,1 @@
-export { PomodoroGuideDialog } from "./PomodoroGuideDialog"
+export { PomodoroInfo } from "./PomodoroGuideDialog";

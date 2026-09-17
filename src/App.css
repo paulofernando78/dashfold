@@ -13,9 +13,12 @@ h1,
 h2,
 h3,
 h4,
-p,
 span {
-  line-height: 1.2;
+  line-height: 1;
+}
+
+p {
+  line-height: 1.2
 }
 
 body {
@@ -96,16 +99,6 @@ input[type="number"].show-spinner::-webkit-outer-spin-button {
   -webkit-appearance: auto;
   opacity: 1;
   cursor: pointer;
-}
-
-.header {
-  @apply items-center
-    gap-2
-    h-[36px]
-    p-2
-    bg-black
-    rounded-tl-lg
-    rounded-tr-lg;
 }
 
 .clickable {

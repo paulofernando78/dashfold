@@ -1,4 +1,7 @@
+import { useRef } from "react";
+
 import { Icon } from "@/components/ui/Icon";
+import { Dialog } from "@/components/ui/Dialog";
 
 export function WidgetContainer({ children }) {
   return <div className="flex gap-2">{children}</div>;
@@ -9,7 +12,7 @@ export const widgetBorder = `
   border
   border-gray-500/40
   gradient
-  rounded-lg
+  rounded-2xl
 `;
 
 export const widgetInnerBorder = `
@@ -39,22 +42,23 @@ export function WidgetCard({
         ${isDragging ? "z-10 opacity-60" : ""}
       `}
     >
-      <WidgetHeader
-        iconName={iconName}
-        dragHandleRef={dragHandleRef}
-      />
+      <WidgetHeader iconName={iconName} dragHandleRef={dragHandleRef} />
       <div
         className={`
             min-h-0
             flex-1
-            rounded-t-0
-            rounded-bl-[7px]
-            rounded-br-[7px]
             [text-shadow:0_0_6px_rgba(255,255,255,0.2)]
             ${widgetClassName}
             `}
       >
-        <div className="flex h-full min-h-0 flex-col">
+        <div
+          className="
+            flex
+            h-full
+            min-h-0
+            flex-col
+          "
+        >
           <div className="min-h-0 flex-1">{children}</div>
         </div>
       </div>
@@ -62,36 +66,39 @@ export function WidgetCard({
   );
 }
 
-function WidgetHeader({ iconName, dragHandleRef }) {
+function WidgetHeader({ dragHandleRef }) {
   return (
     <div
       className="
-        grid
-        grid-cols-[1fr_auto_1fr]
-        header"
+        text-center
+        h-9
+        p-2
+      "
     >
+      {/* <WidgetIcons iconName={iconName} className="justify-self-start" /> */}
       <button
         ref={dragHandleRef}
         type="button"
         aria-label="Reorder widget"
         title="Reorder widget"
-        className="cursor-grab touch-none active:cursor-grabbing"
+        className="
+          cursor-grab
+          touch-none
+          active:cursor-grabbing"
       >
         <Icon name="gripHorizontal" />
       </button>
-
-      <WidgetIcons iconName={iconName} className="justify-self-end" />
     </div>
   );
 }
 
-function WidgetIcons({ iconName, className }) {
-  return (
-    <div className={className}>
-      <Icon name={iconName} cursorNone />
-    </div>
-  );
-}
+// function WidgetIcons({ iconName, className }) {
+//   return (
+//     <div className={className}>
+//       <Icon name={iconName} cursorNone />
+//     </div>
+//   );
+// }
 
 export function WidgetBody({
   top,
@@ -254,13 +261,31 @@ WidgetControls.Edit = ({ isEditing, onEdit, onConfirm }) => {
   );
 };
 
-WidgetControls.Info = ({ onClick, ...props }) => {
+function WidgetInfo({ children, dialogClassName, ...props }) {
+  const dialogRef = useRef(null);
+
   return (
-    <button type="button" onClick={onClick} {...props} className="clickable">
-      <Icon name="info" />
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => dialogRef.current?.showModal()}
+        {...props}
+        className="clickable"
+      >
+        <Icon name="info" />
+      </button>
+
+      <Dialog
+        dialogRef={dialogRef}
+        className={`relative space-y-4 ${dialogClassName ?? ""}`}
+      >
+        {children}
+      </Dialog>
+    </>
   );
-};
+}
+
+WidgetControls.Info = WidgetInfo;
 
 WidgetControls.Delete = ({ onClick }) => {
   return (

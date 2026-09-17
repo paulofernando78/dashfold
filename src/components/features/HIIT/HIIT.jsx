@@ -295,15 +295,15 @@ export function HIIT({
               <span className="text-2xl font-bold">
                 {t("round")} {displayedRound} {t("of")} {tabataGoal}
               </span>
-              <p className={`text-3xl font-bold ${modeClass}`}>{t(mode)}</p>
-              <p
+              <span className={`text-3xl font-bold ${modeClass}`}>{t(mode)}</span>
+              <span
                 className="
                   font-['Segoe_UI',sans-serif]
                   text-5xl
                   font-bold"
               >
                 {formatTime(time)}
-              </p>
+              </span>
             </div>
           )}
         </div>
@@ -321,6 +321,11 @@ export function HIIT({
             onConfirm={() => applyEditSettings(false)}
           />
           <WidgetControls.Reset onClick={handleReset} />
+          <WidgetControls.Info
+              aria-label="How Pomodoro works"
+              title="How Pomodoro Works"
+            >
+            </WidgetControls.Info>
           <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }

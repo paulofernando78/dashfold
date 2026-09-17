@@ -1,8 +1,4 @@
-import { useRef } from "react";
-
 import { Icon } from "@/components/ui/Icon";
-import { Dialog } from "@/components/ui/Dialog";
-import { WidgetControls } from "@/components/ui/Widget";
 
 const phaseBase = "font-['Oswald_Variable'] self-center justify-self-center";
 
@@ -36,17 +32,9 @@ function Tomate({ className }) {
   );
 }
 
-export function PomodoroGuideDialog() {
-  const dialogRef = useRef(null);
-
+export function PomodoroInfo() {
   return (
     <>
-      <WidgetControls.Info
-        onClick={() => dialogRef.current?.showModal()}
-        aria-label="How Pomodoro works"
-        title="How Pomodoro Works"
-      />
-      <Dialog dialogRef={dialogRef} className="relative space-y-4">
         <h3 className="font-bold uppercase">What is it?</h3>
         <p>A simple method to balance focus with deliberate breaks.</p>
         {/* 1 Focus */}
@@ -134,8 +122,7 @@ export function PomodoroGuideDialog() {
             </div>
           ))}
         </div>
-        <p>One complete cycle takes 1 hour and 55 minutes.</p>
-      </Dialog>
+      <p>One complete cycle takes 1 hour and 55 minutes.</p>
     </>
   );
 }

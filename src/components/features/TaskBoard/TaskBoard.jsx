@@ -290,11 +290,16 @@ function TaskCard({ task, index, columnId, onEditTask }) {
             flex
             min-w-0
             justify-between
-            mr-2
           "
         >
           <p
-            className="flex items-center min-w-0 h-4.75 truncate"
+            className="
+              flex
+              items-center
+              min-w-0
+              h-4.75
+              truncate
+            "
             onDoubleClick={startEditing}
             onPointerDown={(event) => event.stopPropagation()}
             title={task.text}
@@ -305,11 +310,18 @@ function TaskCard({ task, index, columnId, onEditTask }) {
             type="button"
             onClick={startEditing}
             onPointerDown={(event) => event.stopPropagation()}
-            className="shrink-0 cursor-pointer rounded px-1 text-slate-400 hover:bg-white/10 hover:text-white"
-            aria-label={`Editar ${task.text}`}
-            title="Editar tarefa"
+            className="
+              shrink-0
+              cursor-pointer
+              rounded
+              px-1
+              text-slate-300
+              hover:bg-white/10 hover:text-white"
+              aria-label={`Editar ${task.text}`}
+              title="Editar tarefa
+            "
           >
-            ✎
+            <Icon name="squarePen"/>
           </button>
         </div>
       )}

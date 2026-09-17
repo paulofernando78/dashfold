@@ -216,7 +216,7 @@ function TaskBoardColumn({
         className={`
           flex
           flex-col
-          h-54
+          h-55
           min-h-0
           p-2
           rounded-lg

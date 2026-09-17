@@ -34,11 +34,11 @@ export function TaskBoard() {
     todo: [
       {
         id: crypto.randomUUID(),
-        text: "Estudar React",
+        text: "Call a friend",
       },
       {
         id: crypto.randomUUID(),
-        text: "Criar Task Board",
+        text: "Apply for a job",
       },
     ],
 
@@ -256,7 +256,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
         rounded
         border
         bg-gray-800
-        py-2
+        p-2
         transition-opacity
         active:cursor-grabbing
 

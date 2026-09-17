@@ -148,9 +148,8 @@ function TaskBoardNotice({ text }) {
         flex
         items-center
         gap-2
-        mr-2
         p-2
-        bg-gray-500/20
+        bg-gray-500/50
         rounded-lg
       "
     >

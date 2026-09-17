@@ -189,19 +189,31 @@ function TaskBoardColumn({
     >
       <div
         className={`
-          min-h-5.75
+          flex
+          flex-col
+          h-54
+          min-h-0
           p-2
           rounded-lg
+          overflow-hidden
           ${status.color}
         `}
       >
         <div
           className="
+            shrink-0
             flex
             gap-2
           "
         >
-          <span className="mb-2 block font-bold uppercase">
+          <span
+            className="
+              mb-2
+              block
+              font-bold
+              uppercase
+            "
+          >
             {t(status.label)}
           </span>
           <span>{tasks.length}</span>
@@ -213,11 +225,17 @@ function TaskBoardColumn({
           color={status.color}
           placeholder={t("addTask")}
           onAddTask={(text) => onAddTask(status.id, text)}
-          className="mb-2"
+          className="mb-2 shrink-0"
         />
         {/* Box for TaskCard */}
         <>
-          <div className="flex flex-col gap-2">
+          <div
+            className="
+            flex
+            flex-col
+            gap-2
+            overflow-y-auto"
+          >
             {tasks.map((task, index) => (
               <TaskCard
                 key={task.id}

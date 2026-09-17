@@ -118,7 +118,7 @@ export function WidgetBody({
           className="
             w-full
             text-center
-            text-3xl
+            text-[2.9rem]
             font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]
             font-bold
             leading-none

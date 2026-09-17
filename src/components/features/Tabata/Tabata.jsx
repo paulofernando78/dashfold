@@ -292,14 +292,14 @@ export function Tabata({
                 gap-4
               `}
             >
-              <span className="text-xl font-bold">
+              <span className="text-2xl font-bold">
                 {t("round")} {displayedRound} {t("of")} {tabataGoal}
               </span>
-              <p className={`text-2xl font-bold ${modeClass}`}>{t(mode)}</p>
+              <p className={`text-3xl font-bold ${modeClass}`}>{t(mode)}</p>
               <p
                 className="
                   font-['Segoe_UI',sans-serif]
-                  text-3xl
+                  text-5xl
                   font-bold"
               >
                 {formatTime(time)}

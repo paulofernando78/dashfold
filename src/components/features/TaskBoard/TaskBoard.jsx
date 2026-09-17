@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/Icon";
 import { useLanguage } from "@/i18n";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DragDropProvider, useDraggable, useDroppable } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
@@ -29,8 +29,10 @@ const statusOptions = [
   },
 ];
 
-export function TaskBoard() {
-  const [tasks, setTasks] = useState({
+const TASKS_STORAGE_KEY = "dashfold-task-board";
+
+function createDefaultTasks() {
+  return {
     todo: [
       {
         id: crypto.randomUUID(),
@@ -41,13 +43,37 @@ export function TaskBoard() {
         text: "Apply for a job",
       },
     ],
-
     "in-progress": [],
-
     delegate: [],
-
     done: [],
-  });
+  };
+}
+
+function getSavedTasks() {
+  const savedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+
+  if (!savedTasks) return createDefaultTasks();
+
+  try {
+    const parsedTasks = JSON.parse(savedTasks);
+
+    return Object.fromEntries(
+      statusOptions.map(({ id }) => [
+        id,
+        Array.isArray(parsedTasks[id]) ? parsedTasks[id] : [],
+      ]),
+    );
+  } catch {
+    return createDefaultTasks();
+  }
+}
+
+export function TaskBoard() {
+  const [tasks, setTasks] = useState(getSavedTasks);
+
+  useEffect(() => {
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
   function handleDragEnd(event) {
     if (event.canceled || !event.operation.target) return;
@@ -63,7 +89,7 @@ export function TaskBoard() {
 
     setTasks((currentTasks) => ({
       ...currentTasks,
-      [columnId]: [...currentTasks[columnId], newTask],
+      [columnId]: [newTask, ...currentTasks[columnId]],
     }));
   }
 
@@ -73,6 +99,13 @@ export function TaskBoard() {
       [columnId]: currentTasks[columnId].map((task) =>
         task.id === taskId ? { ...task, text } : task,
       ),
+    }));
+  }
+
+  function deleteTask(columnId, taskId) {
+    setTasks((currentTasks) => ({
+      ...currentTasks,
+      [columnId]: currentTasks[columnId].filter((task) => task.id !== taskId),
     }));
   }
 
@@ -87,7 +120,7 @@ export function TaskBoard() {
         text-slate-100
         "
         >
-          <div className="grid gap-2 pt-2 grid-cols-[repeat(4,minmax(220px,1fr))]">
+          <div className="grid gap-2 pt-2 grid-cols-[repeat(4,minmax(260px,1fr))]">
             {statusOptions.map((status) => (
               <TaskBoardColumn
                 key={status.id}
@@ -96,6 +129,7 @@ export function TaskBoard() {
                 t={t}
                 onAddTask={addTask}
                 onEditTask={editTask}
+                onDeleteTask={deleteTask}
               />
             ))}
           </div>
@@ -122,7 +156,14 @@ function TaskBoardNotice({ text }) {
   );
 }
 
-function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
+function TaskBoardColumn({
+  status,
+  tasks,
+  t,
+  onAddTask,
+  onEditTask,
+  onDeleteTask,
+}) {
   const { ref, isDropTarget } = useDroppable({
     id: status.id,
     data: {
@@ -165,8 +206,14 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
           {/* <Icon name="ellipsis" className="translate-y-[-0.4rem]" /> */}
         </div>
 
+        <TaskComposer
+          color={status.color}
+          placeholder={t("addTask")}
+          onAddTask={(text) => onAddTask(status.id, text)}
+          className="mb-2"
+        />
         {/* Box for TaskCard */}
-        <div className="space-y-2">
+        <>
           <div className="flex flex-col gap-2">
             {tasks.map((task, index) => (
               <TaskCard
@@ -175,22 +222,17 @@ function TaskBoardColumn({ status, tasks, t, onAddTask, onEditTask }) {
                 index={index}
                 columnId={status.id}
                 onEditTask={onEditTask}
+                onDeleteTask={onDeleteTask}
               />
             ))}
           </div>
-
-          <TaskComposer
-            color={status.color}
-            placeholder={t("addTask")}
-            onAddTask={(text) => onAddTask(status.id, text)}
-          />
-        </div>
+        </>
       </div>
     </section>
   );
 }
 
-function TaskCard({ task, index, columnId, onEditTask }) {
+function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(task.text);
   const cancelOnBlurRef = useRef(false);
@@ -288,6 +330,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
             flex
             min-w-0
             justify-between
+            h-4.75
           "
         >
           <p
@@ -295,7 +338,6 @@ function TaskCard({ task, index, columnId, onEditTask }) {
               flex
               items-center
               min-w-0
-              h-4.75
               truncate
             "
             onDoubleClick={startEditing}
@@ -304,22 +346,41 @@ function TaskCard({ task, index, columnId, onEditTask }) {
           >
             {task.text}
           </p>
-          <button
-            type="button"
-            onClick={startEditing}
-            onPointerDown={(event) => event.stopPropagation()}
-            className="
-              shrink-0
-              cursor-pointer
-              rounded
-              text-slate-300
-              hover:bg-white/10 hover:text-white"
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={startEditing}
+              onPointerDown={(event) => event.stopPropagation()}
+              className="
+                shrink-0
+                cursor-pointer
+                rounded
+                text-slate-300
+                hover:bg-white/10 hover:text-white"
               aria-label={`Editar ${task.text}`}
               title="Editar tarefa
-            "
-          >
-            <Icon name="squarePen"/>
-          </button>
+              "
+            >
+              <Icon name="squarePen" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onDeleteTask(columnId, task.id)}
+              onPointerDown={(event) => event.stopPropagation()}
+              className="
+                shrink-0
+                cursor-pointer
+                rounded
+                text-slate-300
+                hover:bg-white/10 hover:text-red-400
+              "
+              aria-label={`Excluir ${task.text}`}
+              title="Excluir tarefa"
+            >
+              <Icon name="x" />
+            </button>
+          </div>
         </div>
       )}
     </article>
@@ -327,7 +388,7 @@ function TaskCard({ task, index, columnId, onEditTask }) {
 }
 
 // Add task...
-function TaskComposer({ color, placeholder, onAddTask }) {
+function TaskComposer({ color, placeholder, onAddTask, className }) {
   const [text, setText] = useState("");
 
   function handleSubmit(event) {
@@ -348,14 +409,14 @@ function TaskComposer({ color, placeholder, onAddTask }) {
         items-center
         gap-1
         w-full
-        h-9.25px
-        p-1
+        h-9.5
         text-gray-900
         paper-texture
         border
         rounded
         group
         ${color}
+        ${className}
       `}
     >
       {/* <Icon name="plus" className="text-gray-900" /> */}
@@ -373,9 +434,9 @@ function TaskComposer({ color, placeholder, onAddTask }) {
           placeholder:text-gray-900
         "
       />
-        <button
-          type="submit"
-          className="
+      <button
+        type="submit"
+        className="
           invisible
           px-2
           py-1
@@ -386,9 +447,9 @@ function TaskComposer({ color, placeholder, onAddTask }) {
         hover:bg-white/10
           group-focus-within:visible
         "
-        >
-          Enter
-        </button>
+      >
+        Enter
+      </button>
     </form>
   );
 }

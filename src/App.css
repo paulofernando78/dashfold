@@ -159,3 +159,7 @@ hr {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.red {
+  @apply border border-red-500
+}

@@ -78,14 +78,6 @@ function WidgetHeader({ dragHandleRef }) {
   );
 }
 
-// function WidgetIcons({ iconName, className }) {
-//   return (
-//     <div className={className}>
-//       <Icon name={iconName} cursorNone />
-//     </div>
-//   );
-// }
-
 export function WidgetBody({
   top,
   middlePosition,

@@ -115,7 +115,8 @@ input[type="number"].show-spinner::-webkit-outer-spin-button {
 }
 
 .clickable {
-  @apply p-2
+  @apply
+    p-2
     border
     border-gray-700
     bg-gray-600

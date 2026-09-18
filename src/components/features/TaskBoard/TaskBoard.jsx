@@ -8,32 +8,34 @@ import { useDragScroll } from "@/hooks/useDragScroll";
 import { DragDropProvider, useDraggable, useDroppable } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 
-const statusOptionsStyle = `
-  w-full h-9.5 rounded
-`
-
 const statusOptionsColor = [
   {
     id: "inbox",
     label: "inbox",
-    color: `bg-yellow-300/20 ${statusOptionsStyle}`,
+    labelColor: "text-yellow-300",
   },
   {
     id: "todo",
     label: "toDo",
-    color: `bg-green-300/20 ${statusOptionsStyle}`,
+    labelColor: "text-green-300",
   },
   {
     id: "in-progress",
     label: "inProgress",
-    color: `bg-sky-400/20 ${statusOptionsStyle}`,
+    labelColor: "text-sky-400",
   },
   {
     id: "done",
     label: "done",
-    color: `bg-red-300/20 ${statusOptionsStyle}`,
+    labelColor: "text-red-300",
   },
 ];
+
+const inputBorder = `
+  p-2
+  border-2 border-gray-500/50
+  rounded-lg
+`
 
 const TASKS_STORAGE_KEY = "dashfold-task-board";
 
@@ -207,7 +209,7 @@ function TaskBoardColumn({
         min-h-40
         flex-col
         gap-2
-        rounded-lg
+        card-style
         transition-colors
         ${isDropTarget ? "bg-white/10" : ""}
       `}
@@ -218,7 +220,7 @@ function TaskBoardColumn({
           flex-col
           h-55
           min-h-0
-          p-2
+          p-4
           rounded-lg
           overflow-hidden
           ${status.color}
@@ -232,12 +234,13 @@ function TaskBoardColumn({
           "
         >
           <span
-            className="
-              mb-2
-              block
-              font-bold
-              uppercase
-            "
+            className={`
+                mb-2
+                block
+                font-bold
+                uppercase
+                ${status.labelColor}
+              `}
           >
             {t(status.label)}
           </span>
@@ -278,6 +281,64 @@ function TaskBoardColumn({
   );
 }
 
+// Add task...
+function TaskComposer({ color, placeholder, onAddTask, className }) {
+  const [text, setText] = useState("");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const taskText = text.trim();
+
+    if (!taskText) return;
+
+    onAddTask(taskText);
+    setText("");
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className={`
+        flex
+        items-center
+        gap-1
+        ${inputBorder}
+        ${color}
+        ${className}
+        group
+      `}
+    >
+      <input
+        type="text"
+        value={text}
+        onChange={(event) => setText(event.target.value)}
+        placeholder={placeholder}
+        aria-label={placeholder}
+        className="
+          w-full
+          outline-none
+          placeholder:text-gray-100
+        "
+      />
+      <button
+        type="submit"
+        className="
+          invisible
+          px-2
+          text-xs
+          font-bold
+          rounded
+          cursor-pointer
+        hover:bg-white/10
+          group-focus-within:visible
+        "
+      >
+        Enter
+      </button>
+    </form>
+  );
+}
+
 function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(task.text);
@@ -290,7 +351,7 @@ function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
       index,
     },
   });
-  const { ref: droppableRef, isDropTarget } = useDroppable({
+  const { ref: droppableRef } = useDroppable({
     id: task.id,
     data: {
       taskId: task.id,
@@ -342,12 +403,9 @@ function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
       data-no-drag
       className={`
         cursor-grab
-        rounded
-        border-2
-        p-2
+        ${inputBorder}
         transition-opacity
         active:cursor-grabbing
-        ${isDropTarget ? "border-blue-400" : "border-white/10"}
         ${isDragging ? "opacity-40" : ""}
       `}
     >
@@ -393,7 +451,13 @@ function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
             {task.text}
           </p>
 
-          <div className="flex items-center gap-2">
+          <div
+            className="f
+              flex
+              items-center
+              gap-2
+            "
+          >
             <button
               type="button"
               onClick={startEditing}
@@ -430,67 +494,5 @@ function TaskCard({ task, index, columnId, onEditTask, onDeleteTask }) {
         </div>
       )}
     </article>
-  );
-}
-
-// Add task...
-function TaskComposer({ color, placeholder, onAddTask, className }) {
-  const [text, setText] = useState("");
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const taskText = text.trim();
-
-    if (!taskText) return;
-
-    onAddTask(taskText);
-    setText("");
-  }
-
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className={`
-        flex
-        items-center
-        gap-1
-        
-        group
-        ${color}
-        ${className}
-      `}
-    >
-      {/* <Icon name="plus" className="text-gray-900" /> */}
-      <input
-        type="text"
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        placeholder={placeholder}
-        aria-label={placeholder}
-        className="
-          w-full
-          pl-2
-          outline-none
-          rounded-sm
-          placeholder:text-gray-100
-        "
-      />
-      <button
-        type="submit"
-        className="
-          invisible
-          px-2
-          py-1
-          text-xs
-          font-bold
-          rounded
-          cursor-pointer
-        hover:bg-white/10
-          group-focus-within:visible
-        "
-      >
-        Enter
-      </button>
-    </form>
   );
 }

@@ -372,7 +372,13 @@ export function Clock({
                     }}
                   >
                     {/* Hour Weather */}
-                    <div className="shrink-0 w-full px-1">
+                    <div
+                      className="
+                        shrink-0
+                        w-full
+                        px-1 mr-[0.1rem]
+                      "
+                    >
                       <WeatherWrapper
                         className="
                         grid

@@ -21,12 +21,12 @@ export function WidgetCard({
       ref={ref}
       style={{
         "--widget-base-width": `${baseWidth}px`,
-        "--widget-base-height": "520px",
+        "--widget-base-height": "440px",
       }}
       className={`
         flex-none
         h-auto
-        sm:h-130
+        sm:h-110
         snap-start
         snap-always
         widget-card-scale

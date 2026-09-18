@@ -165,10 +165,16 @@ export function Timer({
 
   return (
     <WidgetBody
-      middlePosition="top"
       middle={
         !isEditing ? (
-          <div className="flex flex-col items-center gap-2">
+          <div
+            className="
+              flex
+              flex-col
+              items-center
+              gap-4
+              "
+            >
             <CircularProgress
               value={time}
               max={Math.max(initialTime, time, 1)}
@@ -190,11 +196,21 @@ export function Timer({
               )}
             </CircularProgress>
 
-            <div className="flex flex-col gap-1">
+            <div
+              className="
+                flex
+                flex-col
+                gap-1
+              "
+            >
               {shortcuts.map((shortcutMinutes) => (
                 <div
                   key={shortcutMinutes}
-                  className="flex items-center justify-between gap-2"
+                  className="
+                    flex
+                    items-center justify-between
+                    gap-2
+                  "
                 >
                   <button
                     type="button"

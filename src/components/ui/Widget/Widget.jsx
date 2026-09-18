@@ -127,7 +127,7 @@ export function WidgetBody({
             flex
             flex-col
             ${middlePosition === "top" ? "justify-start" : "justify-center"}
-            h-full
+            flex-1
             w-full
             min-h-0
           `}

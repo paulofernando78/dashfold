@@ -84,6 +84,8 @@ function SortableWidget({
 export function Dashboard() {
   const { t } = useLanguage();
   const [widgets, setWidgets] = useState(getSavedWidgets);
+  const [currentHour, setCurrentHour] = useState(() => new Date().getHours());
+
   const widgetsEndRef = useRef(null);
   const shouldScrollToEndRef = useRef(false);
 
@@ -102,6 +104,16 @@ export function Dashboard() {
 
     shouldScrollToEndRef.current = false;
   }, [widgets.length]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentHour(new Date().getHours());
+    }, 60_000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const greetingKey = getGreetingsKey(currentHour);
 
   function addWidget(type) {
     const definition = widgetCatalog[type];
@@ -140,6 +152,12 @@ export function Dashboard() {
     setWidgets((currentWidgets) => move(currentWidgets, event));
   }
 
+  function getGreetingsKey(hour) {
+    if (hour < 12) return "goodMorning";
+    if (hour < 18) return "goodAfternoon";
+    return "goodEvening";
+  }
+
   return (
     <>
       <Header />
@@ -153,7 +171,9 @@ export function Dashboard() {
           mx-auto p-3
         "
       >
-        <h2 className="text-3xl font-bold">Boa tarde, Paulo.</h2>
+        <h2 className="text-3xl font-bold">
+          {t(greetingKey)}, Paulo.
+        </h2>
         {/* Calendar */}
         {/* <SectionPanel title="Calendar" storageKey="section-calendar">
           <Calendar />

@@ -231,6 +231,7 @@ function TaskBoardColumn({
             shrink-0
             flex
             gap-2
+            mb-2
           "
         >
           <span

@@ -1,5 +1,4 @@
 import { Clock } from "@/components/features/Clock";
-import { QuickNotes } from "@/components/features/QuickNotes";
 import { News } from "@/components/features/News";
 
 // Productivity
@@ -38,16 +37,6 @@ export const widgetCatalog = {
       latitude: -23.55052,
       longitude: -46.63331,
       timezone: "America/Sao_Paulo",
-    },
-  },
-  quickNotes: {
-    category: "productivity",
-    Component: QuickNotes,
-    title: "quickNotes",
-    iconName: "quickNotes",
-    widgetClassName: `${widgetWidth}`,
-    defaultConfig: {
-      blocks: [],
     },
   },
   news: {

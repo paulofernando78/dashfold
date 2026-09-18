@@ -144,6 +144,10 @@ hr {
   @apply bg-linear-to-tl from-white to-stone-100;
 }
 
+.border-style {
+  @apply border border-gray-500/30
+}
+
 .card-style {
   @apply
     border

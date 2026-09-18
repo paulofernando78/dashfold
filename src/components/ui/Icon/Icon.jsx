@@ -1,5 +1,6 @@
 import {
   // A
+  Archive,
   ArrowRight,
   // B
   Bookmark,
@@ -46,6 +47,7 @@ import {
   ListClock,
   // M
   MapPin,
+  Menu,
   Maximize2,
   MessageCircleWarning,
   Minus,
@@ -58,6 +60,7 @@ import {
   PaintBucket,
   Parentheses,
   Pause,
+  Pin,
   Play,
   Plus,
   // R
@@ -230,6 +233,7 @@ function WeatherCloudSnow({ className = "", ...props }) {
 
 const icons = {
   // A
+  archive: Archive,
   arrowRight: ArrowRight,
   // B
   bookmark: Bookmark,
@@ -277,6 +281,7 @@ const icons = {
   listClock: ListClock,
   // M
   mapPin: MapPin,
+  menu: Menu,
   maximize2: Maximize2,
   messageCircleWarning: MessageCircleWarning,
   minus: Minus,
@@ -289,6 +294,7 @@ const icons = {
   paintBucket: PaintBucket,
   parentheses: Parentheses,
   pause: Pause,
+  pin: Pin,
   play: Play,
   plus: Plus,
   pomodoro: Pomodoro,

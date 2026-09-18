@@ -24,6 +24,7 @@ import { move } from "@dnd-kit/helpers";
 import { useLanguage } from "@/i18n";
 
 const WIDGETS_STORAGE_KEY = "widgets";
+const NOTES_STORAGE_KEY = "notes";
 
 function createDefaultWidgets() {
   return [
@@ -41,12 +42,54 @@ function getSavedWidgets() {
   if (!savedWidgets) return createDefaultWidgets();
 
   try {
-    return JSON.parse(savedWidgets).map((widget) => ({
+    const parsedWidgets = JSON.parse(savedWidgets).map((widget) => ({
       ...widget,
       type: widget.type === "tabata" ? "hiit" : widget.type,
     }));
+
+    migrateQuickNotes(parsedWidgets);
+
+    return parsedWidgets.filter((widget) => widget.type !== "quickNotes");
   } catch {
     return createDefaultWidgets();
+  }
+}
+
+function migrateQuickNotes(widgets) {
+  const quickNotes = widgets.filter((widget) => widget.type === "quickNotes");
+  if (!quickNotes.length) return;
+
+  let savedNotes = [];
+  try {
+    const parsedNotes = JSON.parse(localStorage.getItem(NOTES_STORAGE_KEY) || "[]");
+    if (Array.isArray(parsedNotes)) savedNotes = parsedNotes;
+  } catch {
+    savedNotes = [];
+  }
+
+  const migratedNotes = quickNotes
+    .filter((widget) => !savedNotes.some((note) => note.id === `quick-note-${widget.id}`))
+    .map((widget) => {
+      const now = new Date().toISOString();
+      return {
+        id: `quick-note-${widget.id}`,
+        title: "",
+        blocks: widget.config?.blocks?.length
+          ? widget.config.blocks
+          : [{ id: crypto.randomUUID(), type: "text", content: widget.config?.note || "", checked: false, url: "", title: "" }],
+        color: "#111417",
+        favorite: false,
+        pinned: false,
+        archived: false,
+        deleted: false,
+        folder: "",
+        createdAt: now,
+        updatedAt: now,
+      };
+    });
+
+  if (migratedNotes.length) {
+    localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify([...migratedNotes, ...savedNotes]));
   }
 }
 
@@ -192,6 +235,7 @@ export function Dashboard() {
             <WidgetContainer>
               {widgets.map((widgetInstance, index) => {
                 const definition = widgetCatalog[widgetInstance.type];
+                if (!definition) return null;
 
                 return (
                   <SortableWidget
@@ -221,8 +265,7 @@ export function Dashboard() {
         </SectionPanel>
 
         {/* Notes */}
-        <SectionPanel title="Notes" storageKey="section-notes">
-          <Notes />
+        <SectionPanel title={t("notes")} storageKey="section-notes">
           <Notes />
         </SectionPanel>
       </div>

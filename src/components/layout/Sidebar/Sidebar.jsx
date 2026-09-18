@@ -11,7 +11,7 @@ export function Sidebar() {
   }
 
   return (
-    <div>
+    <div className="border-style">
       <aside>
         <nav className="p-2 space-y-2">
           <Link to="/favorites" className="flex items-center gap-2">

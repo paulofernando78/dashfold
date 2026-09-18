@@ -17,7 +17,13 @@ import { WaterIntake } from "@/components/features/WaterIntake";
 import { Breathing } from "@/components/features/Breathing";
 
 const widgetWidth = `
-  w-[254px]
+  w-[calc(100vw-1.5rem)]
+  sm:w-[254px]
+`;
+
+const wideWidgetWidth = `
+  w-[calc(100vw-1.5rem)]
+  sm:w-[318px]
 `;
 
 export const widgetCatalog = {
@@ -26,7 +32,7 @@ export const widgetCatalog = {
     Component: Clock,
     title: "clock",
     iconName: "clock",
-    widgetClassName: `w-[318.03px]`,
+    widgetClassName: wideWidgetWidth,
     defaultConfig: {
       location: "São Paulo, São Paulo, Brasil",
       latitude: -23.55052,
@@ -49,7 +55,7 @@ export const widgetCatalog = {
     Component: News,
     title: "news",
     iconName: "news",
-    widgetClassName: "w-[318px]",
+    widgetClassName: wideWidgetWidth,
     defaultConfig: {},
   },
 
@@ -121,7 +127,10 @@ export const widgetCatalog = {
     Component: Calculator,
     title: "calculator",
     iconName: "calculator",
-    widgetClassName: `w-[197p]`,
+    widgetClassName: `
+      w-[calc(100vw-1.5rem)]
+      sm:w-[197px]
+    `,
     defaultConfig: {
       display: "0",
     },

@@ -185,6 +185,7 @@ export function Dashboard() {
           storageKey="section-widget"
           count={widgets.length}
           headerAction={<WidgetPicker onAdd={addWidget} />}
+          snap
         >
           <DragDropProvider onDragEnd={handleDragEnd}>
             <WidgetContainer>

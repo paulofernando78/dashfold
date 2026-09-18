@@ -9,7 +9,8 @@ export function SectionPanel({
   defaultOpen = true,
   storageKey,
   count,
-  headerAction
+  headerAction,
+  snap = false,
 }) {
   const headingId = useId();
   const dragScroll = useDragScroll();
@@ -93,6 +94,7 @@ export function SectionPanel({
             select-none
             touch-pan-x
           "
+          style={{ scrollSnapType: snap ? "x mandatory" : undefined }}
         >
           {children}
         </div>

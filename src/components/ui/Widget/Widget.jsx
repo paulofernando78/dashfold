@@ -4,7 +4,7 @@ import { Icon } from "@/components/ui/Icon";
 import { Dialog } from "@/components/ui/Dialog";
 
 export function WidgetContainer({ children }) {
-  return <div className="flex gap-2">{children}</div>;
+  return <div className="flex w-max gap-2">{children}</div>;
 }
 
 export function WidgetCard({
@@ -23,8 +23,11 @@ export function WidgetCard({
         flex
         flex-col
         h-104
+        snap-start
+        snap-always
         font-['Oswald_Variable']
         card-style
+        ${widgetClassName}
         ${isDragging ? "z-10 opacity-60" : ""}
       `}
     >
@@ -34,7 +37,6 @@ export function WidgetCard({
             min-h-0
             flex-1
             [text-shadow:0_0_6px_rgba(255,255,255,0.2)]
-            ${widgetClassName}
             `}
       >
         <div

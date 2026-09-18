@@ -49,7 +49,9 @@ function getWeatherIconName(code, isDay = true) {
 }
 
 function formatHourTime(time) {
-  return time.slice(11, 16);
+  const hour = Number(time.slice(11, 13));
+  
+  return `${hour}h`;
 }
 
 function formatWeekday(date, locale) {

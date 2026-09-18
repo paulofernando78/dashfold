@@ -154,18 +154,16 @@ export function WidgetBody({
   );
 }
 
-export function WidgetControls({ children }) {
+export function WidgetControls({ children, compact = false }) {
   return (
-    <>
-      <div
-        className="
-          flex
-          gap-2          
-        "
-      >
-        {children}
-      </div>
-    </>
+    <div
+      className={`
+        flex
+        ${compact ? "gap-1 [&>button]:p-1" : "gap-2"}
+      `}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -184,7 +182,7 @@ WidgetControls.Play = ({ isRunning, onClick, disabled = false }) => {
       disabled={disabled}
       className="disabled:cursor-not-allowed disabled:opacity-40 clickable"
     >
-      <Icon name={isRunning ? "circlePause" : "circlePlay"} />
+      <Icon name={isRunning ? "pause" : "play"} />
     </button>
   );
 };

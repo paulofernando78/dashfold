@@ -4,6 +4,7 @@ import { useLanguage } from "@/i18n";
 import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 
 import { NumberInput } from "@/components/ui/NumberInput";
+import { CircularProgress } from "@/components/ui/CircularProgress";
 
 import { playTick } from "@/utils/audio";
 
@@ -143,7 +144,7 @@ export function Pomodoro({
   ]);
 
   const activeFocusModeClass =
-    "text-green-400 [text-shadow:0_0_8px_rgba(0,225,0,0.8)]";
+    "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)]";
 
   const activeBreakModeClass =
     "text-yellow-400 [text-shadow:0_0_8px_rgba(255,255,0,0.8)]";
@@ -159,17 +160,21 @@ export function Pomodoro({
     done: activePomodoroDoneModeClass,
   };
 
-  const inactiveModeClass = {
-    focus: "text-green-400/25 [text-shadow:none]",
-    break: "text-yellow-400/25 [text-shadow:none]",
-    long: "text-blue-400/25 [text-shadow:none]",
-    done: "text-red-400/25 [text-shadow:none]",
-  };
+  const modeClass = activeModeClass[mode];
 
-  const modeClass =
-    isRunning || mode === "done"
-      ? activeModeClass[mode]
-      : inactiveModeClass[mode];
+  const phaseDuration = {
+    focus: focusDuration,
+    break: breakDuration,
+    long: longBreakDuration,
+    done: focusDuration,
+  }[mode];
+
+  const progressClassName = {
+    focus: "text-red-400",
+    break: "text-yellow-400",
+    long: "text-blue-400",
+    done: "text-red-400",
+  }[mode];
 
   function formatTime(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);
@@ -285,28 +290,14 @@ export function Pomodoro({
     <>
       <WidgetBody
         top={
-          <div
-            className="
-              flex
-              flex-col
-              gap-4
-              items-center
-              justify-center
-            "
-          >
-            <span>{totalTime}</span>
-            {!isEditing && (
-              <WidgetControls.Sound
-                isSoundEnabled={isSoundEnabled}
-                onClick={handleToggleSound}
-              />
-            )}
-          </div>
+          <span className="text-4xl">{totalTime}</span>
         }
         middle={
           <div
             className="
-              text-center
+              flex
+              items bg-center
+              justify-center
               uppercase
             "
           >
@@ -358,23 +349,22 @@ export function Pomodoro({
                 />
               </div>
             ) : (
-              <div
-                className={`
-                    flex
-                    flex-col
-                    gap-4
-                  `}
+              <CircularProgress
+                value={time}
+                max={phaseDuration}
+                progressClassName={progressClassName}
+                label={`${t(mode)} ${formatTime(time)}`}
               >
-                <span className="p- text-2xl font-bold">
+                <span className="text-sm font-bold">
                   {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
                 </span>
-                <span className={`text-3xl font-bold uppercase ${modeClass}`}>
+                <span className={`mt-2 text-lg font-bold uppercase ${modeClass}`}>
                   {t(mode)}
                 </span>
-                <span className={`text-5xl ${durationDisplay}`}>
+                <span className={`mt-1 text-4xl ${durationDisplay}`}>
                   {formatTime(time)}
                 </span>
-              </div>
+              </CircularProgress>
             )}
           </div>
         }
@@ -395,6 +385,13 @@ export function Pomodoro({
               aria-label="How Pomodoro works"
               title="How Pomodoro Works"
             >
+              <div className="flex items-center justify-between gap-4">
+                <span>{t("sound")}</span>
+                <WidgetControls.Sound
+                  isSoundEnabled={isSoundEnabled}
+                  onClick={handleToggleSound}
+                />
+              </div>
               <PomodoroInfo />
             </WidgetControls.Info>
             <WidgetControls.Delete onClick={onDelete} />

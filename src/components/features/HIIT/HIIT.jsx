@@ -3,6 +3,7 @@ import { useLanguage } from "@/i18n";
 
 import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
 import { NumberInput } from "@/components/ui/NumberInput";
+import { CircularProgress } from "@/components/ui/CircularProgress";
 import { playTick } from "@/utils/audio";
 
 const DEFAULT_COUNTDOWN_SECONDS = 5;
@@ -217,33 +218,34 @@ export function HIIT({
     done: "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse",
   };
 
-  const inactiveModeClass = {
-    countdown: "text-yellow-400/25 [text-shadow:none]",
-    go: "text-green-400/25 [text-shadow:none]",
-    rest: "text-blue-400/25 [text-shadow:none]",
-    done: "text-red-400/25 [text-shadow:none]",
-  };
+  const modeClass = activeModeClass[mode];
 
-  const modeClass =
-    isRunning || mode === "done"
-      ? activeModeClass[mode]
-      : inactiveModeClass[mode];
+  const phaseDuration = {
+    countdown: countdownSeconds,
+    go: goSeconds,
+    rest: restSeconds,
+    done: goSeconds,
+  }[mode];
+
+  const progressClassName = {
+    countdown: "text-yellow-400",
+    go: "text-green-400",
+    rest: "text-blue-400",
+    done: "text-red-400",
+  }[mode];
 
   return (
     <WidgetBody
       top={
-        <div className="flex flex-col items-center justify-center gap-4">
-          <span>{totalTime}</span>
-          {!isEditing && (
-            <WidgetControls.Sound
-              isSoundEnabled={isSoundEnabled}
-              onClick={() => setIsSoundEnabled((current) => !current)}
-            />
-          )}
-        </div>
+        <span className="text-4xl">{totalTime}</span>
       }
       middle={
-        <div className="text-center uppercase">
+        <div className="
+              flex
+              items bg-center
+              justify-center
+              uppercase
+            ">
           {isEditing ? (
             <div className="mx-auto grid w-max grid-cols-[1fr_auto] gap-4">
               <span className="place-self-center">{t("countdown")}</span>
@@ -284,27 +286,28 @@ export function HIIT({
               />
             </div>
           ) : (
-            <div
-              className={`
-                flex
-                h-full
-                flex-col
-                gap-4
-              `}
+            <CircularProgress
+              value={time}
+              max={phaseDuration}
+              progressClassName={progressClassName}
+              label={`${t(mode)} ${formatTime(time)}`}
             >
-              <span className="text-2xl font-bold">
+              <span className="text-sm font-bold">
                 {t("round")} {displayedRound} {t("of")} {tabataGoal}
               </span>
-              <span className={`text-3xl font-bold ${modeClass}`}>{t(mode)}</span>
+              <span className={`mt-2 text-lg font-bold ${modeClass}`}>
+                {t(mode)}
+              </span>
               <span
                 className="
                   font-['Segoe_UI',sans-serif]
-                  text-5xl
+                  mt-1
+                  text-4xl
                   font-bold"
               >
                 {formatTime(time)}
               </span>
-            </div>
+            </CircularProgress>
           )}
         </div>
       }
@@ -322,10 +325,17 @@ export function HIIT({
           />
           <WidgetControls.Reset onClick={handleReset} />
           <WidgetControls.Info
-              aria-label="How Pomodoro works"
-              title="How Pomodoro Works"
-            >
-            </WidgetControls.Info>
+            aria-label="How HIIT works"
+            title="How HIIT Works"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <span>{t("sound")}</span>
+              <WidgetControls.Sound
+                isSoundEnabled={isSoundEnabled}
+                onClick={() => setIsSoundEnabled((current) => !current)}
+              />
+            </div>
+          </WidgetControls.Info>
           <WidgetControls.Delete onClick={onDelete} />
         </WidgetControls>
       }

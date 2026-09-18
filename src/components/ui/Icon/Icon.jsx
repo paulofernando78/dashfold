@@ -8,7 +8,6 @@ import {
   Calendar,
   Calculator,
   CirclePause,
-  CirclePlay,
   CirclePlus,
   ChartCandlestick,
   Check,
@@ -56,8 +55,10 @@ import {
   NotepadText,
   Newspaper,
   // P
-  Parentheses,
   PaintBucket,
+  Parentheses,
+  Pause,
+  Play,
   Plus,
   // R
   Receipt,
@@ -238,7 +239,6 @@ const icons = {
   calendar: Calendar,
   calculator: Calculator,
   circlePause: CirclePause,
-  circlePlay: CirclePlay,
   circlePlus: CirclePlus,
   markets: ChartCandlestick,
   check: Check,
@@ -286,8 +286,10 @@ const icons = {
   news: Newspaper,
   notepadText: NotepadText,
   // P
-  parentheses: Parentheses,
   paintBucket: PaintBucket,
+  parentheses: Parentheses,
+  pause: Pause,
+  play: Play,
   plus: Plus,
   pomodoro: Pomodoro,
   // R

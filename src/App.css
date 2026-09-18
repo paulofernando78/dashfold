@@ -23,7 +23,7 @@ body {
   min-height: 100vh;
   background: transparent;
   background-attachment: fixed;
-  @apply text-gray-300;
+  @apply text-gray-100;
   font-family: "Montserrat Variable", sans-serif;
 }
 

@@ -171,7 +171,7 @@ export function Dashboard() {
           mx-auto p-3
         "
       >
-        <h2 className="text-3xl font-bold">
+        <h2 className="text-3xl font-bold mb-8">
           {t(greetingKey)}, Paulo.
         </h2>
         {/* Calendar */}

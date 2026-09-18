@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 
 import { WidgetBody, WidgetControls } from "@/components/ui/Widget";
-
 import { Icon } from "@/components/ui/Icon";
 
 import { playAlarm } from "@/utils/audio";
 
 import { NumberInput } from "@/components/ui/NumberInput";
+import { CircularProgress } from "@/components/ui/CircularProgress";
+import { useLanguage } from "@/i18n";
 
 export function Timer({
   hours = 0,
@@ -15,6 +16,7 @@ export function Timer({
   onConfigChange,
   onDelete,
 }) {
+  const { t } = useLanguage();
   const initialTime = hours * 3600 + minutes * 60 + seconds;
 
   const [time, setTime] = useState(initialTime);
@@ -76,19 +78,16 @@ export function Timer({
   }
 
   function addMinutes(minutesToAdd) {
-    const secondsToAdd = minutesToAdd * 60;
-    const nextTime = Math.max(0, time + secondsToAdd);
-
-    const nextHours = Math.floor(nextTime / 3600);
-    const nextMinutes = Math.floor((nextTime % 3600) / 60);
-    const nextSeconds = nextTime % 60;
+    const nextTime = Math.max(0, time + minutesToAdd * 60);
 
     setTime(nextTime);
+    setMode("idle");
+    setIsAlarmPlaying(false);
 
     onConfigChange?.({
-      hours: nextHours,
-      minutes: nextMinutes,
-      seconds: nextSeconds,
+      hours: Math.floor(nextTime / 3600),
+      minutes: Math.floor((nextTime % 3600) / 60),
+      seconds: nextTime % 60,
     });
   }
 
@@ -146,79 +145,79 @@ export function Timer({
   const minutesLeft = Math.floor((time % 3600) / 60);
   const secondsLeft = time % 60;
 
-  const getFormattedTime = `
-    ${String(hoursLeft).padStart(2, "0")}:${String(minutesLeft).padStart(2, "0")}:${String(secondsLeft).padStart(2, "0")}
-    `;
+  const formattedTime =
+    hoursLeft > 0
+      ? `${String(hoursLeft).padStart(2, "0")}:${String(minutesLeft).padStart(2, "0")}:${String(secondsLeft).padStart(2, "0")}`
+      : `${String(minutesLeft).padStart(2, "0")}:${String(secondsLeft).padStart(2, "0")}`;
 
   const activeTimerDoneModeClass =
     "text-red-400 [text-shadow:0_0_8px_rgba(248,113,113,0.8)] animate-pulse";
-  const inactiveModeClass = "text-gray-400";
 
-  const shortCuts = [0.5, 1, 5];
+  const shortcuts = [0.5, 1, 5];
 
-  function formatShortcut(minutes) {
-    if (minutes < 1) {
-      return `0:${String(minutes * 60).padStart(2, "0")}`;
+  function formatShortcut(minutesToFormat) {
+    if (minutesToFormat < 1) {
+      return `0:${String(minutesToFormat * 60).padStart(2, "0")}`;
     }
 
-    return `${minutes}:00`;
+    return `${minutesToFormat}:00`;
   }
 
   return (
     <WidgetBody
-      top={<span>{getFormattedTime}</span>}
+      middlePosition="top"
       middle={
         !isEditing ? (
-          <div
-            className={`
-            flex
-            flex-col
-            items-center
-            gap-2.75
-            `}
-          >
-            <div className="flex flex-col gap-2">
-              {shortCuts.map((minutes) => (
+          <div className="flex flex-col items-center gap-2">
+            <CircularProgress
+              value={time}
+              max={Math.max(initialTime, time, 1)}
+              size={160}
+              progressClassName={
+                mode === "done" ? "text-red-400" : "text-blue-400"
+              }
+              label={`${t("timer")} ${formattedTime}`}
+            >
+              <span className="font-['Segoe_UI',sans-serif] text-4xl font-bold leading-none">
+                {formattedTime}
+              </span>
+              {mode === "done" && (
+                <span
+                  className={`mt-2 text-sm font-bold uppercase ${activeTimerDoneModeClass}`}
+                >
+                  {t("done")}
+                </span>
+              )}
+            </CircularProgress>
+
+            <div className="flex flex-col gap-1">
+              {shortcuts.map((shortcutMinutes) => (
                 <div
-                  key={minutes}
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    gap-2
-                    
-                  "
+                  key={shortcutMinutes}
+                  className="flex items-center justify-between gap-2"
                 >
                   <button
                     type="button"
-                    onClick={() => addMinutes(-minutes)}
-                    className="clickable"
+                    onClick={() => addMinutes(-shortcutMinutes)}
+                    className="clickable p-1"
+                    aria-label={`Remove ${formatShortcut(shortcutMinutes)}`}
                   >
                     <Icon name="minus" />
                   </button>
-                  <span>{formatShortcut(minutes)}</span>
+                  <span className="min-w-10 text-center">
+                    {formatShortcut(shortcutMinutes)}
+                  </span>
                   <button
                     type="button"
-                    onClick={() => addMinutes(minutes)}
-                    className="clickable"
+                    onClick={() => addMinutes(shortcutMinutes)}
+                    className="clickable p-1"
+                    aria-label={`Add ${formatShortcut(shortcutMinutes)}`}
                   >
                     <Icon name="plus" />
                   </button>
                 </div>
               ))}
             </div>
-            <span
-              className={`
-              justify-self-center
-              text-3xl
-              font-bold
-              uppercase
-              pt-6
-              ${mode === "done" ? activeTimerDoneModeClass : inactiveModeClass}
-            `}
-            >
-              done
-            </span>
           </div>
         ) : (
           <div

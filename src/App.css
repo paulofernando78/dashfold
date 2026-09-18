@@ -23,8 +23,21 @@ body {
   min-height: 100vh;
   background: transparent;
   background-attachment: fixed;
-  color: white;
+  @apply text-gray-300;
   font-family: "Montserrat Variable", sans-serif;
+}
+
+input,
+textarea,
+select,
+button {
+  color: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-gray-300);
+  opacity: 1;
 }
 
 input[type="number"].show-spinner {

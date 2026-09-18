@@ -5,6 +5,7 @@ const LANGUAGE_STORAGE_KEY = "language";
 const messages = {
   en: {
     homeDescription: "Everything you need in one place.",
+    lessDistraction: "Less distraction.",
     login: "Login",
     widgets: "Widgets",
     taskBoard: "Task Board",
@@ -62,6 +63,7 @@ const messages = {
   },
   pt: {
     homeDescription: "Tudo o que você precisa em um só lugar.",
+    lessDistraction: "Menos distração.",
     login: "Entrar",
     widgets: "Widgets",
     taskBoard: "Quadro de tarefas",

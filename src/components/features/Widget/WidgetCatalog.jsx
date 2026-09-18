@@ -80,34 +80,6 @@ export const widgetCatalog = {
     },
   },
 
-  // Finance
-  calculator: {
-    category: "finance",
-    Component: Calculator,
-    title: "calculator",
-    iconName: "calculator",
-    widgetClassName: `w-[197p]`,
-    defaultConfig: {
-      display: "0",
-    },
-  },
-  markets: {
-    category: "finance",
-    Component: Markets,
-    title: "markets",
-    iconName: "markets",
-    widgetClassName: widgetWidth,
-    defaultConfig: {},
-  },
-  // purchases: {
-  //   category: "finance",
-  //   Component: Purchases,
-  //   title: "Purchases",
-  //   iconName: "purchases",
-  //   widgetClassName: `w-[220px] ${bg}`,
-  //   defaultConfig: {},
-  // },
-
   // Health
   hiit: {
     category: "health",
@@ -142,4 +114,33 @@ export const widgetCatalog = {
       exhaleSeconds: 4,
     },
   },
+
+  // Finance
+  calculator: {
+    category: "finance",
+    Component: Calculator,
+    title: "calculator",
+    iconName: "calculator",
+    widgetClassName: `w-[197p]`,
+    defaultConfig: {
+      display: "0",
+    },
+  },
+  markets: {
+    category: "finance",
+    Component: Markets,
+    title: "markets",
+    iconName: "markets",
+    widgetClassName: widgetWidth,
+    defaultConfig: {},
+  },
+
+  // purchases: {
+  //   category: "finance",
+  //   Component: Purchases,
+  //   title: "Purchases",
+  //   iconName: "purchases",
+  //   widgetClassName: `w-[220px] ${bg}`,
+  //   defaultConfig: {},
+  // },
 };

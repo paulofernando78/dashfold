@@ -17,7 +17,7 @@ export function Home() {
         <h1 className="mb-4 text-5xl font-bold">DASHFOLD</h1>
         <div className="mb-8 text-gray-300 space-y-1">
           <p>{t("homeDescription")}</p>
-          <p>Less distraction</p>
+          <p>{t("lessDistraction")}</p>
         </div>
         <Link
           to="/dashboard"

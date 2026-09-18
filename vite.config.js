@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
@@ -9,10 +9,7 @@ import { getNews } from "./server/news.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, __dirname, "");
-
-  return {
+export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
@@ -44,10 +41,7 @@ export default defineConfig(({ mode }) => {
           const language = requestUrl.searchParams.get("language") || "en";
 
           try {
-            const news = await getNews({
-              language,
-              apiKey: env.GNEWS_API_KEY,
-            });
+            const news = await getNews({ language });
             response.statusCode = 200;
             response.setHeader("Content-Type", "application/json");
             response.setHeader("Cache-Control", "public, max-age=900");
@@ -68,5 +62,4 @@ export default defineConfig(({ mode }) => {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  };
 });

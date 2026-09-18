@@ -224,13 +224,27 @@ export function QuickNotes({
                 />
               )}
               {block.type === "link" && block.url ? (
-                <div className="flex min-w-0 flex-1 items-center gap-1">
+                <div
+                  className="
+                    flex
+                    min-w-0
+                    flex-1
+                    items-center
+                    gap-1
+                  "
+                >
                   <a
                     href={block.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     onFocus={() => setMenuTargetBlockId(block.id)}
-                    className="min-w-0 flex-1 truncate text-blue-700 underline"
+                    className="
+                      min-w-0
+                      flex-1
+                      truncate
+                      text-blue-700
+                      underline
+                    "
                     title={block.url}
                   >
                     {block.title || getUrlHostname(block.url)}
@@ -238,7 +252,11 @@ export function QuickNotes({
                   <button
                     type="button"
                     onClick={() => handleEditLink(block)}
-                    className="shrink-0 rounded p-1 text-gray-500 hover:bg-black/10"
+                    className="
+                      shrink-0
+                      rounded
+                      p-1
+                    text-gray-500 hover:bg-black/10"
                     aria-label={`Edit ${block.title || block.url}`}
                     title="Edit link"
                   >

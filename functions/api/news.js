@@ -1,14 +1,11 @@
 import { getNews } from "../../server/news.js";
 
-export async function onRequestGet({ request, env }) {
+export async function onRequestGet({ request }) {
   const requestUrl = new URL(request.url);
   const language = requestUrl.searchParams.get("language") || "en";
 
   try {
-    const news = await getNews({
-      language,
-      apiKey: env.GNEWS_API_KEY,
-    });
+    const news = await getNews({ language });
 
     return Response.json(news, {
       headers: { "Cache-Control": "public, max-age=900" },

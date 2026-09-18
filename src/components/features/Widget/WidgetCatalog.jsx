@@ -28,7 +28,6 @@ const wideWidgetWidth = `
 
 export const widgetCatalog = {
   clock: {
-    baseWidth: 318,
     category: "utilities",
     Component: Clock,
     title: "clock",
@@ -52,7 +51,6 @@ export const widgetCatalog = {
     },
   },
   news: {
-    baseWidth: 318,
     category: "utilities",
     Component: News,
     title: "news",
@@ -125,7 +123,6 @@ export const widgetCatalog = {
 
   // Finance
   calculator: {
-    baseWidth: 197,
     category: "finance",
     Component: Calculator,
     title: "calculator",

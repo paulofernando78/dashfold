@@ -2,7 +2,7 @@ export function CircularProgress({
   value,
   max,
   size = 210,
-  strokeWidth = 10,
+  strokeWidth = 13,
   progressClassName = "text-blue-400",
   trackClassName = "text-gray-700/70",
   label = "Countdown progress",

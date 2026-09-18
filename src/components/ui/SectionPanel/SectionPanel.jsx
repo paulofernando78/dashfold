@@ -92,7 +92,7 @@ export function SectionPanel({
             cursor-grab
             active:cursor-grabbing
             select-none
-            touch-pan-x
+            touch-auto
           "
           style={{ scrollSnapType: snap ? "x mandatory" : undefined }}
         >

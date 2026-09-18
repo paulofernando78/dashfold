@@ -15,6 +15,10 @@ export function useDragScroll() {
   }
 
   function handlePointerDown(event) {
+    // Touch screens already provide native horizontal and vertical scrolling.
+    // Capturing touch here prevents the page from scrolling vertically.
+    if (event.pointerType === "touch") return;
+
     if (shouldIgnoreDrag(event.target)) return;
 
     isDraggingRef.current = true;

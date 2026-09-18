@@ -9,6 +9,7 @@ export function WidgetContainer({ children }) {
 
 export function WidgetCard({
   widgetClassName,
+  baseWidth = 254,
   iconName,
   children,
   ref,
@@ -18,36 +19,42 @@ export function WidgetCard({
   return (
     <article
       ref={ref}
+      style={{
+        "--widget-base-width": `${baseWidth}px`,
+        "--widget-base-height": "520px",
+      }}
       className={`
         flex-none
-        flex
-        flex-col
-        h-104
+        h-auto
+        sm:h-130
         snap-start
         snap-always
+        widget-card-scale
         font-['Oswald_Variable']
         card-style
         ${widgetClassName}
         ${isDragging ? "z-10 opacity-60" : ""}
       `}
     >
-      <WidgetHeader iconName={iconName} dragHandleRef={dragHandleRef} />
-      <div
-        className={`
+      <div className="widget-scale-layer flex h-full flex-col">
+        <WidgetHeader iconName={iconName} dragHandleRef={dragHandleRef} />
+        <div
+          className={`
             min-h-0
             flex-1
             [text-shadow:0_0_6px_rgba(255,255,255,0.2)]
             `}
-      >
-        <div
-          className="
+        >
+          <div
+            className="
             flex
             h-full
             min-h-0
             flex-col
           "
-        >
-          <div className="min-h-0 flex-1">{children}</div>
+          >
+            <div className="min-h-0 flex-1">{children}</div>
+          </div>
         </div>
       </div>
     </article>

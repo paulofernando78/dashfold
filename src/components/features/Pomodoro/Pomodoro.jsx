@@ -355,10 +355,10 @@ export function Pomodoro({
                 progressClassName={progressClassName}
                 label={`${t(mode)} ${formatTime(time)}`}
               >
-                <span className="text-sm font-bold">
+                <span className="text-2xl font-bold">
                   {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
                 </span>
-                <span className={`mt-2 text-lg font-bold uppercase ${modeClass}`}>
+                <span className={`mt-2 text-2xl font-bold uppercase ${modeClass}`}>
                   {t(mode)}
                 </span>
                 <span className={`mt-1 text-4xl ${durationDisplay}`}>

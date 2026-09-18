@@ -1,7 +1,7 @@
 export function CircularProgress({
   value,
   max,
-  size = 184,
+  size = 210,
   strokeWidth = 10,
   progressClassName = "text-blue-400",
   trackClassName = "text-gray-700/70",

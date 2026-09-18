@@ -153,6 +153,18 @@ hr {
     ;
 }
 
+/*
+ * On phones, widgets keep their desktop composition and scale as one unit.
+ * The scale is the available mobile width divided by each widget's base width.
+ */
+@media (max-width: 500px) {
+  .widget-scale-layer {
+    width: var(--widget-base-width);
+    height: var(--widget-base-height);
+    zoom: calc((100vw - 1.5rem) / var(--widget-base-width));
+  }
+}
+
 /* Scroll */
 * {
   scrollbar-width: thin;

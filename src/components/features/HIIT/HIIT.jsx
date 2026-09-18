@@ -236,16 +236,16 @@ export function HIIT({
 
   return (
     <WidgetBody
-      top={
-        <span className="text-4xl">{totalTime}</span>
-      }
+      top={<span className="text-4xl">{totalTime}</span>}
       middle={
-        <div className="
+        <div
+          className="
               flex
               items bg-center
               justify-center
               uppercase
-            ">
+            "
+        >
           {isEditing ? (
             <div className="mx-auto grid w-max grid-cols-[1fr_auto] gap-4">
               <span className="place-self-center">{t("countdown")}</span>
@@ -292,21 +292,31 @@ export function HIIT({
               progressClassName={progressClassName}
               label={`${t(mode)} ${formatTime(time)}`}
             >
-              <span className="text-sm font-bold">
-                {t("round")} {displayedRound} {t("of")} {tabataGoal}
-              </span>
-              <span className={`mt-2 text-lg font-bold ${modeClass}`}>
-                {t(mode)}
-              </span>
-              <span
-                className="
-                  font-['Segoe_UI',sans-serif]
-                  mt-1
-                  text-4xl
-                  font-bold"
-              >
-                {formatTime(time)}
-              </span>
+              <div
+                  className="
+                      flex
+                      flex-col
+                      gap-2
+                      text-2xl
+                      font-bold
+                    "
+                >
+                <span>
+                  {displayedRound} of {tabataGoal}
+                </span>
+                <span className={`mt-2 ${modeClass}`}>
+                  {t(mode)}
+                </span>
+                <span
+                  className="
+                    font-['Segoe_UI',sans-serif]
+                    mt-1
+                    text-4xl
+                    font-bold"
+                >
+                  {formatTime(time)}
+                </span>
+              </div>
             </CircularProgress>
           )}
         </div>
@@ -324,19 +334,21 @@ export function HIIT({
             onConfirm={() => applyEditSettings(false)}
           />
           <WidgetControls.Reset onClick={handleReset} />
-          <WidgetControls.Info
+
+          <WidgetControls.Delete onClick={onDelete} />
+          <WidgetControls.Ellipsis
             aria-label="How HIIT works"
             title="How HIIT Works"
           >
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex min-h-8 items-center justify-between gap-4 pr-12">
               <span>{t("sound")}</span>
-              <WidgetControls.Sound
-                isSoundEnabled={isSoundEnabled}
-                onClick={() => setIsSoundEnabled((current) => !current)}
+              <WidgetControls.Toggle
+                checked={isSoundEnabled}
+                onChange={setIsSoundEnabled}
+                label={t("sound")}
               />
             </div>
-          </WidgetControls.Info>
-          <WidgetControls.Delete onClick={onDelete} />
+          </WidgetControls.Ellipsis>
         </WidgetControls>
       }
     />

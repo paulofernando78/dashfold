@@ -158,6 +158,15 @@ hr {
  * The scale is the available mobile width divided by each widget's base width.
  */
 @media (max-width: 500px) {
+  [data-snap="true"] {
+    scroll-snap-type: x mandatory;
+  }
+
+  [data-snap="true"] .widget-card-scale {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
   .widget-scale-layer {
     width: var(--widget-base-width);
     height: var(--widget-base-height);

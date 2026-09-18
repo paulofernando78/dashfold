@@ -289,9 +289,7 @@ export function Pomodoro({
   return (
     <>
       <WidgetBody
-        top={
-          <span className="text-4xl">{totalTime}</span>
-        }
+        top={<span className="text-4xl">{totalTime}</span>}
         middle={
           <div
             className="
@@ -355,15 +353,23 @@ export function Pomodoro({
                 progressClassName={progressClassName}
                 label={`${t(mode)} ${formatTime(time)}`}
               >
-                <span className="text-2xl font-bold">
-                  {t("focus")} {displayedPomodoro} {t("of")} {pomodoroGoal}
-                </span>
-                <span className={`mt-2 text-2xl font-bold uppercase ${modeClass}`}>
-                  {t(mode)}
-                </span>
-                <span className={`mt-1 text-4xl ${durationDisplay}`}>
-                  {formatTime(time)}
-                </span>
+                <div
+                  className="
+                      flex
+                      flex-col
+                      gap-2
+                      text-2xl
+                      font-bold
+                    "
+                >
+                  <span>
+                    {displayedPomodoro} of {pomodoroGoal}
+                  </span>
+                  <span className={`mt-2 ${modeClass}`}>{t(mode)}</span>
+                  <span className={`mt-1 text-4xl ${durationDisplay}`}>
+                    {formatTime(time)}
+                  </span>
+                </div>
               </CircularProgress>
             )}
           </div>
@@ -381,20 +387,21 @@ export function Pomodoro({
               onConfirm={handleConfirmEdit}
             />
             <WidgetControls.Reset onClick={handleReset} />
-            <WidgetControls.Info
+            <WidgetControls.Delete onClick={onDelete} />
+            <WidgetControls.Ellipsis
               aria-label="How Pomodoro works"
               title="How Pomodoro Works"
             >
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex min-h-8 items-center justify-between gap-4 pr-12">
                 <span>{t("sound")}</span>
-                <WidgetControls.Sound
-                  isSoundEnabled={isSoundEnabled}
-                  onClick={handleToggleSound}
+                <WidgetControls.Toggle
+                  checked={isSoundEnabled}
+                  onChange={handleToggleSound}
+                  label={t("sound")}
                 />
               </div>
               <PomodoroInfo />
-            </WidgetControls.Info>
-            <WidgetControls.Delete onClick={onDelete} />
+            </WidgetControls.Ellipsis>
           </WidgetControls>
         }
       />

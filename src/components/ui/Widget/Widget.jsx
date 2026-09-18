@@ -27,16 +27,15 @@ export function WidgetCard({
         flex-none
         h-auto
         sm:h-110
-        snap-start
-        snap-always
         widget-card-scale
+        [perspective:1000px]
         font-['Oswald_Variable']
         card-style
         ${widgetClassName}
         ${isDragging ? "z-10 opacity-60" : ""}
       `}
     >
-      <div className="widget-scale-layer flex h-full flex-col">
+      <div className="widget-scale-layer flex h-full flex-col [backface-visibility:hidden]">
         <WidgetHeader iconName={iconName} dragHandleRef={dragHandleRef} />
         <div
           className={`
@@ -210,6 +209,48 @@ WidgetControls.Sound = ({ isSoundEnabled, onClick }) => {
   );
 };
 
+WidgetControls.Toggle = ({ checked, onChange, label }) => {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      title={label}
+      onClick={() => onChange(!checked)}
+      className={`
+        relative
+        h-6
+        w-11
+        shrink-0
+        rounded-full
+        border
+        transition-colors
+        duration-200
+        ${checked
+          ? "border-blue-400 bg-blue-500"
+          : "border-gray-600 bg-gray-700"}
+      `}
+    >
+      <span
+        aria-hidden="true"
+        className={`
+          absolute
+          top-0.5
+          left-0.5
+          size-4.5
+          rounded-full
+          bg-white
+          shadow
+          transition-transform
+          duration-200
+          ${checked ? "translate-x-5" : "translate-x-0"}
+        `}
+      />
+    </button>
+  );
+};
+
 WidgetControls.Reset = ({ onClick }) => {
   return (
     <button onClick={onClick} className="clickable">
@@ -234,19 +275,99 @@ WidgetControls.Redo = ({ onClick }) => {
   );
 };
 
+async function flipWidget(event, action) {
+  const trigger = event.currentTarget;
+  const widget = event.currentTarget.closest("article");
+  const content = widget?.querySelector(".widget-scale-layer");
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (!content || reduceMotion) {
+    action();
+    return;
+  }
+
+  if (content.dataset.flipping === "true") return;
+
+  content.dataset.flipping = "true";
+  trigger.disabled = true;
+  let exitAnimation;
+  let enterAnimation;
+
+  try {
+    exitAnimation = content.animate(
+      [
+        { transform: "rotateY(0deg)", opacity: 1 },
+        { transform: "rotateY(90deg)", opacity: 0.35 },
+      ],
+      {
+        duration: 180,
+        easing: "ease-in",
+        fill: "forwards",
+      },
+    );
+
+    await exitAnimation.finished;
+    exitAnimation.cancel();
+
+    content.style.transform = "rotateY(-90deg)";
+    content.style.opacity = "0.35";
+
+    action();
+
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    enterAnimation = content.animate(
+      [
+        { transform: "rotateY(-90deg)", opacity: 0.35 },
+        { transform: "rotateY(0deg)", opacity: 1 },
+      ],
+      {
+        duration: 220,
+        easing: "ease-out",
+        fill: "forwards",
+      },
+    );
+
+    await enterAnimation.finished;
+
+    content.style.transform = "rotateY(0deg)";
+    content.style.opacity = "1";
+    enterAnimation.cancel();
+  } finally {
+    exitAnimation?.cancel();
+    enterAnimation?.cancel();
+    content.style.removeProperty("transform");
+    content.style.removeProperty("opacity");
+    delete content.dataset.flipping;
+    trigger.disabled = false;
+  }
+}
+
 WidgetControls.Edit = ({ isEditing, onEdit, onConfirm }) => {
+  const action = isEditing ? onConfirm : onEdit;
+
   return isEditing ? (
-    <button onClick={onConfirm} className="clickable">
+    <button
+      type="button"
+      onClick={(event) => flipWidget(event, action)}
+      className="clickable"
+    >
       <Icon name="check" />
     </button>
   ) : (
-    <button onClick={onEdit} className="clickable">
+    <button
+      type="button"
+      onClick={(event) => flipWidget(event, action)}
+      className="clickable"
+    >
       <Icon name="squarePen" />
     </button>
   );
 };
 
-function WidgetInfo({ children, dialogClassName, ...props }) {
+function WidgetEllipsis({ children, dialogClassName, ...props }) {
   const dialogRef = useRef(null);
 
   return (
@@ -257,7 +378,7 @@ function WidgetInfo({ children, dialogClassName, ...props }) {
         {...props}
         className="clickable"
       >
-        <Icon name="info" />
+        <Icon name="ellipsis" />
       </button>
 
       <Dialog
@@ -270,7 +391,7 @@ function WidgetInfo({ children, dialogClassName, ...props }) {
   );
 }
 
-WidgetControls.Info = WidgetInfo;
+WidgetControls.Ellipsis = WidgetEllipsis;
 
 WidgetControls.Delete = ({ onClick }) => {
   return (

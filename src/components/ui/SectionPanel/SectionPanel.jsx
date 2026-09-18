@@ -94,7 +94,7 @@ export function SectionPanel({
             select-none
             touch-auto
           "
-          style={{ scrollSnapType: snap ? "x mandatory" : undefined }}
+          data-snap={snap || undefined}
         >
           {children}
         </div>
